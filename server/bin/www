@@ -96,7 +96,7 @@ function onListening() {
  */
 
 function connectDatabase() {
-  const uri = 'mongodb+srv://raymond:carbonara@hatchways-2xdg1.mongodb.net/calendapp?retryWrites=true&w=majority';
+  const uri = `mongodb+srv://${process.env.DB_USERPW}@hatchways-2xdg1.mongodb.net/calendapp?retryWrites=true&w=majority`;
 
   //option object to avoid deprecation warnings
   mongoose
