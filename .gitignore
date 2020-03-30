@@ -9,8 +9,7 @@ node_modules/
 # misc
 .DS_Store
 .env.local
-# comment back in when issues are completed
-# /server/.env
+/server/.env
 .env.development.local
 .env.test.local
 .env.production.local
