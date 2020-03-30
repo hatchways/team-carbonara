@@ -1,8 +1,16 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
 
-router.get("/welcome", function(req, res, next) {
-  res.status(200).send({ welcomeMessage: "Step 1 (completed)" });
+//quick test insertion on db
+const User = require('../models/user.model');
+
+router.post('/add', function(req, res, next) {
+  const newUser = new User({ email: 'raymond@hotmail.com' });
+
+  newUser
+    .save()
+    .then(() => res.status(200).json('Added'))
+    .catch(err => res.status(400).json(error));
 });
 
 module.exports = router;
