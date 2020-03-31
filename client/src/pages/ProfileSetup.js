@@ -5,6 +5,8 @@ import FormCreateUrl from '../components/FormCreateUrl';
 import FormTimeZone from '../components/FormTimeZone';
 import ProgressBar from '../components/ProgressBar';
 
+const moment = require('moment-timezone');
+
 const profileSetupStyle = (theme) => ({
   root: {
     margin: theme.spacing.unit * 2,
@@ -16,14 +18,17 @@ const profileSetupStyle = (theme) => ({
 
 function ProfileSetup(props) {
   const [url, setUrl] = useState('');
-  // const [timeZone, setTimeZone] = useState('');
-  console.log(url);
+  const [timeZone, setTimeZone] = useState('');
+  console.log(url, timeZone);
 
   const submitForm = () => {
     console.log({
       url: url,
-      // timezone: timezone
+      timeZone: timeZone, //'America/New_York'
+      offset: moment.tz(timeZone).format('Z'), //'-4:00'
+      //can send utc offset or timezone string to backend
     });
+    // validate url unique/not empty and timeZone presence
     // let status;
     // fetch('/update-user', {
     //   method: 'POST',
@@ -38,8 +43,9 @@ function ProfileSetup(props) {
     //     else throw Error('Server error');
     //   })
     //   .then((res) => {
-    //     setResult(res.response);
-    //     if (status === 200) props.incrementStep();
+    //     if (status === 200) {
+    //       //do something, go to "connected" onboard display
+    //     }
     //   })
     //   .catch((err) => {
     //     console.log(err.message);
@@ -51,8 +57,12 @@ function ProfileSetup(props) {
     <div className={classes.root}>
       <div>Welcome to CalendApp!</div>
       <ProgressBar />
-      <FormCreateUrl setUrl={setUrl} />
-      <FormTimeZone />
+      <div>
+        Create Your CalendApp URL: <FormCreateUrl setUrl={setUrl} />
+      </div>
+      <div>
+        Select your time zone: <FormTimeZone setTimeZone={setTimeZone} />
+      </div>
       <OnBoardButton submitForm={submitForm} />
     </div>
   );
