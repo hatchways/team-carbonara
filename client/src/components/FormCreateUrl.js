@@ -6,11 +6,11 @@ const styles = {
   root: {
     // margin: theme.spacing.unit * 2,
     // border: "2px solid black",
-    display: 'inline',
+    display: 'inline-block',
     width: '100%',
     '& p': {
-      width: '110px',
-      'border-right': '1px solid grey',
+      width: '105px',
+      'border-right': '1px solid #eee',
     },
   },
 };
@@ -21,7 +21,6 @@ function FormCreateUrl(props) {
   return (
     <>
       <FormControl>
-        <FormLabel htmlFor="my-input">Unique Link:</FormLabel>
         <TextField
           className={classes.root}
           id="outlined-basic"
