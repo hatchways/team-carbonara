@@ -10,7 +10,7 @@
     "react-scripts": "^3.4.1"
   },
   "scripts": {
-    "start": ".env react-scripts start",
+    "start": "react-scripts start .env",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
