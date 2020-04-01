@@ -64,7 +64,7 @@ function ProfileSetup(props) {
       <div>
         Select your time zone: <FormTimeZone setTimeZone={setTimeZone} />
       </div>
-      <OnBoardButton router={Link} link="/avail_settings" submitForm={submitForm} />
+      <OnBoardButton router={Link} link="/connected" submitForm={submitForm} />
     </div>
   );
 }
