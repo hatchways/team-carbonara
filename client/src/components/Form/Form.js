@@ -22,25 +22,25 @@ const signupText = {
 
 function Form(props) {
   const { classes, type } = props;
-  const [action, setAction] = useState(null);
+  const [formType, setformType] = useState(null);
 
   //store bool of ternary operator
-  const loginConditional = action === 'login' ? true : false;
+  const formTypeConditional = formType === 'login' ? true : false;
 
   useEffect(() => {
-    if (type === 'login') setAction('login');
+    if (type === 'login') setformType('login');
   }, [type]);
 
   return (
     <Paper elevation={6} className={classes.paper}>
-      <h2 className={classes.loginHeader}>{loginConditional ? loginText.header : signupText.header}</h2>
+      <h2 className={classes.loginHeader}>{formTypeConditional ? loginText.header : signupText.header}</h2>
       <GoogleButton type={type} />
       <div>
         <Divider />
         <div className={classes.helpText}>
-          {loginConditional ? loginText.helpText : signupText.helpText}
-          <a href={loginConditional ? loginText.redirectPath : signupText.redirectPath}>
-            {loginConditional ? loginText.redirectText : signupText.redirectText}
+          {formTypeConditional ? loginText.helpText : signupText.helpText}
+          <a href={formTypeConditional ? loginText.redirectPath : signupText.redirectPath}>
+            {formTypeConditional ? loginText.redirectText : signupText.redirectText}
           </a>
         </div>
       </div>
