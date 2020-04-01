@@ -1,6 +1,6 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import { TextField, FormControl, InputAdornment } from '@material-ui/core';
+import { TextField, FormControl } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 
 const moment = require('moment-timezone');

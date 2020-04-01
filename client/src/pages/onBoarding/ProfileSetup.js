@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import OnBoardButton from '../components/OnBoardButton';
-import FormCreateUrl from '../components/FormCreateUrl';
-import FormTimeZone from '../components/FormTimeZone';
-import ProgressBar from '../components/ProgressBar';
+import OnBoardButton from '../../components/OnBoardButton';
+import FormCreateUrl from '../../components/FormCreateUrl';
+import FormTimeZone from '../../components/FormTimeZone';
+import ProgressBar from '../../components/ProgressBar';
 
 const moment = require('moment-timezone');
 
