@@ -21,8 +21,14 @@ function ProfileSetup(props) {
   const [url, setUrl] = useState('');
   const [timeZone, setTimeZone] = useState('');
   // console.log('changed:', url, timeZone);
+  const [progressStep, setProgressStep] = React.useState(0);
+
+  const handleStep = () => {
+    setProgressStep((prevStep) => prevStep + 1);
+  };
 
   const submitForm = () => {
+    handleStep();
     console.log('submit:', {
       url: url,
       timeZone: timeZone, //'America/New_York'
@@ -57,7 +63,7 @@ function ProfileSetup(props) {
   return (
     <div className={classes.root}>
       <div>Welcome to CalendApp!</div>
-      <ProgressBar />
+      <ProgressBar activeStep={progressStep} setActiveStep={setProgressStep} />
       <div>
         Create Your CalendApp URL: <FormCreateUrl setUrl={setUrl} />
       </div>
