@@ -11,9 +11,9 @@ const styles = {
 };
 
 function OnBoardButton(props) {
-  const { classes, submitForm } = props;
+  const { classes, submitForm, router, link } = props;
   return (
-    <Button className={classes.root} onClick={submitForm}>
+    <Button className={classes.root} onClick={submitForm} component={router} to={link}>
       Continue
     </Button>
   );

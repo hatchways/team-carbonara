@@ -17,7 +17,6 @@ const styles = {
 function FormTimeZone(props) {
   const { classes, setTimeZone } = props;
 
-  console.log(moment.tz('America/New_York').format('Z'));
   return (
     // <FormControl>
     <Autocomplete

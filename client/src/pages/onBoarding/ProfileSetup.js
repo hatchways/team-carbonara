@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import OnBoardButton from '../../components/OnBoardButton';
 import FormCreateUrl from '../../components/FormCreateUrl';
@@ -19,10 +20,10 @@ const profileSetupStyle = (theme) => ({
 function ProfileSetup(props) {
   const [url, setUrl] = useState('');
   const [timeZone, setTimeZone] = useState('');
-  console.log(url, timeZone);
+  // console.log('changed:', url, timeZone);
 
   const submitForm = () => {
-    console.log({
+    console.log('submit:', {
       url: url,
       timeZone: timeZone, //'America/New_York'
       offset: moment.tz(timeZone).format('Z'), //'-4:00'
@@ -63,7 +64,7 @@ function ProfileSetup(props) {
       <div>
         Select your time zone: <FormTimeZone setTimeZone={setTimeZone} />
       </div>
-      <OnBoardButton submitForm={submitForm} />
+      <OnBoardButton router={Link} link="/avail_settings" submitForm={submitForm} />
     </div>
   );
 }
