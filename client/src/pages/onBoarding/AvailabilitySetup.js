@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import OnBoardButton from '../../components/OnBoardButton';
 import ProgressBar from '../../components/ProgressBar';
@@ -27,7 +28,7 @@ function AvailabilitySetup(props) {
     friday: true,
     saturday: false,
   });
-  console.log('changed', hours, days);
+  // console.log('changed', hours, days);
 
   const submitForm = () => {
     console.log('submit', { days: days, hours: hours });
@@ -69,7 +70,7 @@ function AvailabilitySetup(props) {
       <div>
         Available Days: <FormChooseDays setDays={setDays} days={days} />
       </div>
-      <OnBoardButton submitForm={submitForm} />
+      <OnBoardButton router={Link} link="/home" submitForm={submitForm} />
     </div>
   );
 }
