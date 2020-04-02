@@ -1,5 +1,5 @@
 import React from 'react';
-import { withStyles, useTheme, makeStyles } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 import MobileStepper from '@material-ui/core/MobileStepper';
 
 const styles = {
@@ -9,20 +9,17 @@ const styles = {
     // display: 'inline',
     maxWidth: 400,
     flexGrow: 1,
+    progress: {
+      width: '100%',
+    },
   },
 };
 
 function ProgressBar(props) {
-  const { classes, activeStep, setActiveStep } = props;
-
-  const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-  };
+  const { classes, activeStep } = props;
 
   return (
-    <div className={classes.root}>
-      <MobileStepper variant="progress" steps={3} position="static" activeStep={activeStep} className={classes.root} />
-    </div>
+    <MobileStepper className={classes.root} variant="progress" steps={3} position="static" activeStep={activeStep} />
   );
 }
 
