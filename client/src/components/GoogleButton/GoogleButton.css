@@ -1,0 +1,39 @@
+/*CSS for google button.
+ need styling after react runtime*/
+.buttonContainer {
+  display: flex;
+  margin: 0 auto;
+  justify-content: space-around;
+  align-items: center;
+}
+
+#googleButton {
+  text-align: center;
+  height: 50px;
+  width: 50%;
+  background: orange;
+  color: white;
+  padding: 0.7rem;
+  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 0 5px -1px rgba(0, 0, 0, 0.2);
+  font-size: 1rem;
+  letter-spacing: 1px;
+}
+
+#googleButton:hover {
+  box-shadow: 0 0 5px -1px rgba(0, 0, 0, 0.7);
+}
+
+@media only screen and (min-width: 360px) {
+  #googleButton {
+    width: 90%;
+  }
+}
+
+@media only screen and (min-width: 420px) {
+  #googleButton {
+    width: 250px;
+  }
+}
