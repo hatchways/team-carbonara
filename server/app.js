@@ -2,10 +2,9 @@ const createError = require('http-errors');
 const cors = require('cors');
 const express = require('express');
 const session = require('express-session');
-const { join } = require('path');
-const cookieParser = require('cookie-parser');
+const MongoStore = require('connect-mongo')(session);
+const storeOptions = require('./config/storeOptions');
 const logger = require('morgan');
-
 const userRouter = require('./routes/user');
 
 const { json, urlencoded } = express;
@@ -16,17 +15,18 @@ app.use(cors());
 app.use(logger('dev'));
 app.use(json());
 app.use(urlencoded({ extended: false }));
-//Since 1.5 cookie parser not necessary for express-session
-//module will directly read and write cookies
-app.use(cookieParser());
-app.use(express.static(join(__dirname, 'public')));
 
-//session middleware
 app.use(
   session({
-    name: 'sid',
+    name: 'sess_calendapp',
     secret: process.env.SESS_SECRET,
-    cookie: {},
+    store: new MongoStore(storeOptions),
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      maxAge: 1000 * 60 * 60,
+      secure: process.NODE_ENV === 'production',
+    },
   }),
 );
 
