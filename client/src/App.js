@@ -39,7 +39,7 @@ function App(props) {
           //attach signin flow to button
           authObj.attachClickHandler(
             'googleButton',
-            { scope: 'https://www.googleapis.com/auth/calendar https://mail.google.com/' },
+            { scope: 'https://www.googleapis.com/auth/calendar' },
             handleSuccessLogin,
             handleFailureLogin,
           );
@@ -49,9 +49,9 @@ function App(props) {
 
   return (
     <React.Fragment>
-      <CssBaseline />
       <BrowserRouter>
         <MuiThemeProvider theme={theme}>
+          <CssBaseline />
           <Container>
             <h1 className={classes.appName}>
               Calend
