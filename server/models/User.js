@@ -15,13 +15,13 @@ const userSchema = new Schema({
     required: true,
   },
   sub: {
-    type: String,
+    type: Number,
     required: true,
   },
   picture: {
     type: String,
+    required: true,
   },
-  sessionID: {},
 });
 
 const User = mongoose.model('User', userSchema);
