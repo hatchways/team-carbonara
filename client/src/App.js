@@ -4,6 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { theme } from './themes/theme';
 import Form from './components/Form/Form';
+import handleFetchErrors from './utils/handleFetchErrors';
 
 const stylesApp = {
   appName: {
@@ -18,7 +19,19 @@ const stylesApp = {
 //user arg returned from onSuccess
 function handleSuccessLogin(user) {
   //send token to backend, verifiy and create session & or account
-  console.log('Token: ' + user.getAuthResponse().id_token);
+  const id_token = user.getAuthResponse().id_token;
+
+  fetch('http://localhost:3001/api/user/login', {
+    method: 'POST',
+    mode: 'cors',
+    headers: {
+      'Content-Type': 'text/plain',
+    },
+    body: id_token,
+  })
+    .then(handleFetchErrors)
+    .then((response) => console.log('token sent'))
+    .catch((error) => console.log(error));
 }
 
 function handleFailureLogin() {
