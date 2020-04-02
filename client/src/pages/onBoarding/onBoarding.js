@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
+import { Paper, Divider } from '@material-ui/core';
 import OnBoardButton from '../../components/OnBoardButton';
 import ProgressBar from '../../components/ProgressBar';
 
@@ -12,11 +13,21 @@ import FormChooseDays from '../../components/FormChooseDays';
 const moment = require('moment-timezone');
 
 const profileSetupStyle = (theme) => ({
-  root: {
-    margin: theme.spacing.unit * 2,
-    padding: theme.spacing.unit * 2,
-    border: '1px solid grey',
-    width: '500px',
+  paper: {
+    width: '50%',
+    height: '350px',
+    display: 'flex',
+    justifyContent: 'space-around',
+    flexDirection: 'column',
+    margin: '0 auto',
+    padding: '1.5rem',
+  },
+  header: {
+    display: 'flex',
+    flexDirection: 'row',
+    '& h2': {
+      flexGrow: 1,
+    },
   },
 });
 // typography header text
@@ -42,7 +53,7 @@ function OnBoarding(props) {
   });
 
   const [activeStep, setActiveStep] = React.useState(0);
-  console.log(activeStep);
+  // console.log(activeStep);
 
   function getStepContent(step) {
     switch (step) {
@@ -87,12 +98,16 @@ function OnBoarding(props) {
 
   const submitForm = () => {
     handleStep();
-    console.log('submit:', {
-      url: url,
-      timeZone: timeZone, //'America/New_York'
-      offset: moment.tz(timeZone).format('Z'), //'-4:00'
+    console.log(
+      'submit:',
+      {
+        url: url,
+        timeZone: timeZone, //'America/New_York'
+        offset: moment.tz(timeZone).format('Z'),
+      },
+      { days: days, hours: hours }, //'-4:00'
       //can send utc offset or timezone string to backend
-    });
+    );
     // validate url unique/not empty and timeZone presence
     // let status;
     // fetch('/update-user', {
@@ -122,17 +137,17 @@ function OnBoarding(props) {
     //when active step changes, change header message, form components
     //keep button and progress bar
     //if activestep = 2, redirect to finish?
-    <div className={classes.root}>
+    <Paper elevation={6} className={classes.paper}>
       {/* typography component, map to corret message per step */}
-      <div>
-        Welcome to CalendApp! onboarding
-        <ProgressBar activeStep={activeStep} setActiveStep={setActiveStep} />
+      <div className={classes.header}>
+        <h2>Welcome to CalendApp!</h2>
+        <ProgressBar activeStep={activeStep} />
       </div>
-
+      <Divider />
       {getStepContent(activeStep)}
 
       <OnBoardButton submitForm={submitForm} />
-    </div>
+    </Paper>
   );
 }
 
