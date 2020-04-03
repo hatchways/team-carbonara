@@ -19,7 +19,7 @@ const stylesApp = {
 //user arg returned from onSuccess
 function handleSuccessLogin(user) {
   //send token to backend, verifiy and create session & or account
-  const id_token = user.getAuthResponse().id_token;
+  const idToken = user.getAuthResponse().id_token;
 
   fetch('http://localhost:3001/api/user/login', {
     method: 'POST',
@@ -27,7 +27,7 @@ function handleSuccessLogin(user) {
     headers: {
       'Content-Type': 'text/plain',
     },
-    body: id_token,
+    body: idToken,
   })
     .then(handleFetchErrors)
     .then((response) => console.log('token sent'))
