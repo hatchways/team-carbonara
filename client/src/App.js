@@ -4,14 +4,15 @@ import { withStyles } from '@material-ui/core/styles';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { theme } from './themes/theme';
 import Form from './components/Form/Form';
-import OnBoarding from './pages/onBoarding/onBoarding';
+import OnBoarding from './pages/OnBoarding';
 
 const stylesApp = {
   appName: {
     margin: '5rem 0 3rem 0',
+    color: 'orange',
     textAlign: 'center',
     '& span': {
-      color: 'orange',
+      color: 'rgba(0, 0, 0, 0.87)',
     },
   },
 };
@@ -55,7 +56,7 @@ function App(props) {
           <CssBaseline />
           <Container>
             <h1 className={classes.appName}>
-              Calend
+              calend
               <span>app</span>
             </h1>
             <Switch>
@@ -66,7 +67,16 @@ function App(props) {
               <Route path="/signup">
                 <Form type="signup" />
               </Route>
-              <Route path="/onboarding" component={OnBoarding} />
+
+              <Route path="/profile_settings">
+                <OnBoarding type="profile" activeStep={0} />
+              </Route>
+              <Route path="/confirm">
+                <OnBoarding type="confirm" activeStep={50} />
+              </Route>
+              <Route path="/availability">
+                <OnBoarding type="availability" activeStep={100} />
+              </Route>
             </Switch>
           </Container>
         </MuiThemeProvider>
