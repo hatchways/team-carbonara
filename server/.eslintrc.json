@@ -1,5 +1,6 @@
 {
-  "extends": "eslint:recommended",
+  "extends": ["eslint:recommended", "plugin:lodash/canonical"],
+  "plugins": ["lodash"],
   "parserOptions": {
     "ecmaVersion": 8
   },
