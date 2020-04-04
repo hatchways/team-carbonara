@@ -5,8 +5,7 @@ import { Autocomplete } from '@material-ui/lab';
 import Grid from '@material-ui/core/Grid';
 import PropTypes from 'prop-types';
 import stylesOnBoarding from './stylesOnBoarding';
-
-const moment = require('moment-timezone');
+import * as moment from 'moment-timezone';
 
 function ProfileSetup(props) {
   const { classes, setUrl, setTimeZone } = props;

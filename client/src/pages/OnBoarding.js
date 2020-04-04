@@ -9,8 +9,7 @@ import ConnectedPage from '../components/OnBoarding/ConnectedPage';
 import AvailabilitySetup from '../components/OnBoarding/AvailabilitySetup';
 import OnBoardButton from '../components/OnBoarding/OnBoardButton';
 import PropTypes from 'prop-types';
-
-const moment = require('moment-timezone');
+import * as moment from 'moment-timezone';
 
 function OnBoarding(props) {
   const [activeStep, setActiveStep] = React.useState(props.activeStep);
@@ -89,7 +88,7 @@ function OnBoarding(props) {
     profile: {
       header: 'Welcome to CalendApp!',
       button: 'Continue',
-      // submit: submitForm,
+      submit: submitForm,
     },
     confirm: {
       header: 'Your Google calendar is connected!',
@@ -114,7 +113,7 @@ function OnBoarding(props) {
 
       {getStepContent(type)}
 
-      <OnBoardButton submitForm={submitForm} router={Link} link={next} text={text[type].button} />
+      <OnBoardButton submitForm={text[type].submit} router={Link} link={next} text={text[type].button} />
     </Paper>
   );
 }
