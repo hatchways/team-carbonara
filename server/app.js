@@ -1,24 +1,36 @@
 const createError = require('http-errors');
+const cors = require('cors');
 const express = require('express');
-const { join } = require('path');
-const cookieParser = require('cookie-parser');
+const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
+const storeOptions = require('./config/storeOptions');
 const logger = require('morgan');
-
-const indexRouter = require('./routes/index');
-const pingRouter = require('./routes/ping');
+const userRouter = require('./routes/user');
 
 const { json, urlencoded } = express;
 
 var app = express();
 
+app.use(cors());
 app.use(logger('dev'));
 app.use(json());
 app.use(urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/ping', pingRouter);
+app.use(
+  session({
+    name: 'sess_calendapp',
+    secret: process.env.SESS_SECRET,
+    store: new MongoStore(storeOptions),
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      maxAge: 1000 * 60 * 60,
+      secure: process.NODE_ENV === 'production',
+    },
+  }),
+);
+
+app.use('/api/user', userRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

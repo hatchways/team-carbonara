@@ -5,6 +5,7 @@ import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { theme } from './themes/theme';
 import Form from './components/Form/Form';
 import OnBoarding from './pages/OnBoarding';
+import handleFetchErrors from './utils/handleFetchErrors';
 
 const stylesApp = (theme) => ({
   appName: {
@@ -21,7 +22,19 @@ const stylesApp = (theme) => ({
 //user arg returned from onSuccess
 function handleSuccessLogin(user) {
   //send token to backend, verifiy and create session & or account
-  console.log('Token: ' + user.getAuthResponse().id_token);
+  const idToken = user.getAuthResponse().id_token;
+
+  fetch('http://localhost:3001/api/user/login', {
+    method: 'POST',
+    mode: 'cors',
+    headers: {
+      'Content-Type': 'text/plain',
+    },
+    body: idToken,
+  })
+    .then(handleFetchErrors)
+    .then((response) => console.log('token sent'))
+    .catch((error) => console.log(error));
 }
 
 function handleFailureLogin() {
