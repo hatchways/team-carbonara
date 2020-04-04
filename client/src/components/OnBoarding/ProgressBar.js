@@ -2,41 +2,35 @@ import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import LinearProgress from '@material-ui/core/LinearProgress';
 
-const styles = {
-  pie: {
-    // margin: theme.spacing.unit * 2,
-    maxWidth: 400,
-    flex: '1 0 50%',
-    alignSelf: 'center',
-  },
+const styles = (theme) => ({
   root: {
-    borderRadius: 5,
-    width: '100%',
+    flex: '0 0 40%',
+    alignSelf: 'center',
     height: '0.5rem',
+    borderRadius: '5px',
   },
   colorPrimary: {
     backgroundColor: '#ccc',
   },
   barColorPrimary: {
-    backgroundColor: 'orange',
+    backgroundColor: theme.palette.primary.main,
+    borderRadius: '5px',
   },
-};
+});
 
 function ProgressBar(props) {
   const { classes, activeStep } = props;
 
   return (
-    <div className={classes.pie}>
-      <LinearProgress
-        classes={{
-          root: classes.root,
-          colorPrimary: classes.colorPrimary,
-          barColorPrimary: classes.barColorPrimary,
-        }}
-        variant="determinate"
-        value={activeStep}
-      />
-    </div>
+    <LinearProgress
+      classes={{
+        root: classes.root,
+        colorPrimary: classes.colorPrimary,
+        barColorPrimary: classes.barColorPrimary,
+      }}
+      variant="determinate"
+      value={activeStep}
+    />
   );
 }
 

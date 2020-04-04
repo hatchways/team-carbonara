@@ -8,10 +8,12 @@ import ProfileSetup from '../components/OnBoarding/ProfileSetup';
 import ConnectedPage from '../components/OnBoarding/ConnectedPage';
 import AvailabilitySetup from '../components/OnBoarding/AvailabilitySetup';
 import OnBoardButton from '../components/OnBoarding/OnBoardButton';
+import PropTypes from 'prop-types';
 
 const moment = require('moment-timezone');
 
 function OnBoarding(props) {
+  const [activeStep, setActiveStep] = React.useState(props.activeStep);
   const [url, setUrl] = useState('');
   const [timeZone, setTimeZone] = useState('');
   const [hours, setHours] = useState({ start: '', end: '' });
@@ -25,10 +27,7 @@ function OnBoarding(props) {
     Saturday: false,
   });
 
-  const [activeStep, setActiveStep] = React.useState(props.activeStep);
-
-  let next = '';
-
+  let next;
   function getStepContent(type) {
     if (type === 'profile') {
       next = '/confirm';
@@ -39,7 +38,7 @@ function OnBoarding(props) {
       return <ConnectedPage />;
     }
     if (type === 'availability') {
-      next = '/profile_settings';
+      next = '/profile_settings'; //go to dashboard later
       return <AvailabilitySetup setHours={setHours} setDays={setDays} days={days} />;
     } else {
       return 'Unknown step';
@@ -105,13 +104,13 @@ function OnBoarding(props) {
   const { classes, type } = props;
   return (
     <Paper elevation={6} className={classes.paper}>
-      <div className={classes.header}>
-        {/* <div className={classes.headContent}> */}
-        <h2>{text[type].header}</h2>
-        <ProgressBar activeStep={activeStep} />
-        {/* </div> */}
+      <div className={classes.headRow}>
+        <div className={classes.headContent}>
+          <h2>{text[type].header}</h2>
+          <ProgressBar activeStep={activeStep} />
+        </div>
+        <Divider className={classes.divider} />
       </div>
-      <Divider />
 
       {getStepContent(type)}
 
@@ -119,5 +118,11 @@ function OnBoarding(props) {
     </Paper>
   );
 }
+
+ProfileSetup.propTypes = {
+  classes: PropTypes.object.isRequired,
+  type: PropTypes.string.isRequired,
+  activeStep: PropTypes.number.isRequired,
+};
 
 export default withStyles(stylesOnBoarding)(OnBoarding);
