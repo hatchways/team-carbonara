@@ -1,47 +1,18 @@
 import React from 'react';
-import { orange } from '@material-ui/core/colors';
 import { withStyles } from '@material-ui/core/styles';
 import { TextField, FormGroup, FormControlLabel, Checkbox } from '@material-ui/core';
+import PropTypes from 'prop-types';
+import stylesOnBoarding from './stylesOnBoarding';
 
-const onBoardPageStyle = (theme) => ({
+const OrangeCheckbox = withStyles((theme) => ({
   root: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  row: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    '& div': {
-      flexGrow: 1,
-    },
-  },
-  pie: {
-    display: 'flex',
-    '& div': {
-      border: '1px solid #ccc',
-      'border-radius': '5px',
-      '& label': {
-        margin: 'auto',
-        'border-right': '1px solid #eee',
-      },
-    },
-  },
-  label: {
-    fontSize: '0.7rem',
-    flexGrow: 1,
-  },
-});
-
-const OrangeCheckbox = withStyles({
-  root: {
-    color: orange[400],
+    color: theme.palette.primary.light,
     '&$checked': {
-      color: orange[600],
+      color: theme.palette.primary.main,
     },
   },
   checked: {},
-})((props) => <Checkbox color="default" {...props} />);
+}))((props) => <Checkbox color="default" {...props} />);
 
 function AvailabilitySetup(props) {
   const { classes, setHours, hours, setDays, days } = props;
@@ -58,7 +29,8 @@ function AvailabilitySetup(props) {
     return Object.keys(days).map((day) => {
       return (
         <FormControlLabel
-          classes={{ label: classes.label }}
+          id={day + '-checkbox-field'}
+          classes={{ root: classes.checkBoxLabel, label: classes.checkBoxLabelLabel }}
           key={day}
           control={<OrangeCheckbox checked={days[day]} onChange={handleDays} name={day} />}
           label={day + 's'}
@@ -69,21 +41,32 @@ function AvailabilitySetup(props) {
   }
 
   return (
-    <div className={classes.root}>
-      <div className={classes.row}>
+    <>
+      <div>
         <div>Available Hours: </div>
-        <TextField variant="outlined" type="time" name="start" onChange={handleHours} />
-        <span> - </span>
-        <TextField variant="outlined" type="time" name="end" onChange={handleHours} />
-      </div>
-      <div className={classes.row}>
-        <div>Available Days: </div>
-        <div className={classes.pie}>
-          <FormGroup row>{renderCheckBoxes(days)}</FormGroup>
+        <div className={classes.hoursRow}>
+          <TextField id={'start-hours-field'} variant="outlined" type="time" name="start" onChange={handleHours} />
+          <span>-</span>
+          <TextField id={'end-hours-field'} variant="outlined" type="time" name="end" onChange={handleHours} />
         </div>
       </div>
-    </div>
+
+      <div>
+        <div>Available Days: </div>
+        <FormGroup row className={classes.checkBoxGroup}>
+          {renderCheckBoxes(days)}
+        </FormGroup>
+      </div>
+    </>
   );
 }
 
-export default withStyles(onBoardPageStyle)(AvailabilitySetup);
+AvailabilitySetup.propTypes = {
+  classes: PropTypes.object.isRequired,
+  setHours: PropTypes.func.isRequired,
+  hours: PropTypes.object.isRequired,
+  setDays: PropTypes.func.isRequired,
+  days: PropTypes.object.isRequired,
+};
+
+export default withStyles(stylesOnBoarding)(AvailabilitySetup);

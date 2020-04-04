@@ -1,17 +1,8 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { Divider } from '@material-ui/core';
-
-const pageStyle = (theme) => ({
-  root: {
-    display: 'flex',
-    flexDirection: 'column',
-    '& div': {
-      padding: theme.spacing(2),
-      flexGrow: 1,
-    },
-  },
-});
+import PropTypes from 'prop-types';
+import stylesOnBoarding from './stylesOnBoarding';
 
 const email = 'hello@gmail.com';
 
@@ -19,14 +10,25 @@ function ConnectedPage(props) {
   const { classes } = props;
 
   return (
-    <div className={classes.root}>
-      <h3>Here's how CalendApp will work with {email}: </h3>
+    <div className={classes.connectedPage}>
+      <h3>
+        Here's how CalendApp will work with <span>{email}</span>:
+      </h3>
       <Divider />
-      <div>1. We will check {email} for conflicts.</div>
+      <div>
+        1. We will check "<span>{email}</span>" for conflicts
+      </div>
       <Divider />
-      <div>2. We will add event to {email}.</div>
+      <div>
+        2. We will add event to "<span>{email}</span>"
+      </div>
+      <Divider />
     </div>
   );
 }
 
-export default withStyles(pageStyle)(ConnectedPage);
+ConnectedPage.propTypes = {
+  classes: PropTypes.object.isRequired,
+};
+
+export default withStyles(stylesOnBoarding)(ConnectedPage);

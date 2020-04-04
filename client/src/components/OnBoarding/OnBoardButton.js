@@ -2,13 +2,16 @@ import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 
-const styles = {
+const styles = (theme) => ({
   root: {
-    background: 'orange',
-    width: '100px',
+    background: `linear-gradient(to right, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
+    color: '#eee',
+    width: '8rem',
+    height: '2.5rem',
     alignSelf: 'center',
+    margin: '0 0 0.5rem 0',
   },
-};
+});
 
 function OnBoardButton(props) {
   const { classes, submitForm, router, link, text } = props;

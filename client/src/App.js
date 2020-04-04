@@ -1,21 +1,22 @@
 import React, { useEffect } from 'react';
-import { MuiThemeProvider, Container, CssBaseline } from '@material-ui/core';
+import { ThemeProvider, Container, CssBaseline } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { theme } from './themes/theme';
 import Form from './components/Form/Form';
 import OnBoarding from './pages/OnBoarding';
 
-const stylesApp = {
+const stylesApp = (theme) => ({
   appName: {
     margin: '5rem 0 3rem 0',
-    color: 'orange',
+    color: '#ff6d00',
+    // color: theme.palette.primary.main,
     textAlign: 'center',
     '& span': {
       color: 'rgba(0, 0, 0, 0.87)',
     },
   },
-};
+});
 
 //user arg returned from onSuccess
 function handleSuccessLogin(user) {
@@ -52,7 +53,7 @@ function App(props) {
   return (
     <React.Fragment>
       <BrowserRouter>
-        <MuiThemeProvider theme={theme}>
+        <ThemeProvider theme={theme}>
           <CssBaseline />
           <Container>
             <h1 className={classes.appName}>
@@ -79,7 +80,7 @@ function App(props) {
               </Route>
             </Switch>
           </Container>
-        </MuiThemeProvider>
+        </ThemeProvider>
       </BrowserRouter>
     </React.Fragment>
   );
