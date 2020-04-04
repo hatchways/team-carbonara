@@ -11,12 +11,10 @@ const stylesOnBoarding = {
   headRow: {
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'flex-end',
     height: '5rem',
   },
   headContent: {
-    flex: '0 0 20%',
-    height: '30%',
+    height: '100%',
     display: 'flex',
     justifyContent: 'space-between',
     flexDirection: 'row',
@@ -24,9 +22,6 @@ const stylesOnBoarding = {
       flex: '0 0 50%',
       alignSelf: 'center',
     },
-  },
-  divider: {
-    marginTop: '2rem',
   },
   //profile_settings
   urlField: {
