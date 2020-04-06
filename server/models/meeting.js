@@ -3,8 +3,9 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const meetingSchema = new Schema({
-    user_id: {
-        type: String,
+    user: {
+        type: Schema.Types.ObjectId,
+        ref: 'users',
         required: true,
     },
     duration: {

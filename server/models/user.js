@@ -1,24 +1,40 @@
 const mongoose = require('mongoose');
-
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-    url: {
-        type: String,
-        required: true,
-    },
-    timezone: {
-        type: Map,
-        required: true,
-    },
-    availability: {
-        type: Map,
-        required: true,
-    },
-    calendars: {
-        type: Array,
-        required: true,
-    },
+  email: {
+    type: String,
+    required: true,
+  },
+  given_name: {
+    type: String,
+    required: true,
+  },
+  family_name: {
+    type: String,
+    required: true,
+  },
+  sub: {
+    type: Number,
+    required: true,
+  },
+  picture: {
+    type: String,
+    required: true,
+  },
+  url: {
+    type: String,
+  },
+  timezone: {
+    type: Map,
+  },
+  availability: {
+    type: Map,
+    of: String,
+  },
+  calendars: {
+    type: Array,
+  },
 });
 
 const User = mongoose.model('User', userSchema);
