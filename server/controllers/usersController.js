@@ -54,4 +54,28 @@ const userLogin = async (req, res) => {
   }
 };
 
-module.exports = { userLogin };
+const isUnique = (req, res) => {
+  User.findOne({ url: req.query.url })
+    .then(user => {
+      if (user) {
+        return res.json({ 'response': false });
+      } else {
+        return res.json({ 'response': true });
+      }
+    });
+};
+
+const update = (req, res) => {
+  User.findOneAndUpdate(
+    { id: req.params.id },
+    req.body,
+    { new: true },
+    (err, user) => {
+    if (err) {
+      res.send(err);
+    }
+    res.json(user);
+  });
+};
+
+module.exports = { userLogin, isUnique, update };

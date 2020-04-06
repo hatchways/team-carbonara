@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react';
-import { ThemeProvider, Container, CssBaseline } from '@material-ui/core';
+import { ThemeProvider, CssBaseline } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { theme } from './themes/theme';
 import Form from './components/Form/Form';
 import OnBoarding from './pages/OnBoarding';
 import handleFetchErrors from './utils/handleFetchErrors';
+import Dashboard from './pages/dashboard/dashboard';
 
 const stylesApp = (theme) => ({
   appName: {
@@ -68,12 +69,16 @@ function App(props) {
       <BrowserRouter>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          <Container>
+          <main>
             <h1 className={classes.appName}>
               calend
               <span>app</span>
             </h1>
             <Switch>
+              {/* H1 rendering with dashboard, person integrating protected routes will need to fix */}
+              <Route path="/dashboard">
+                <Dashboard />
+              </Route>
               <Redirect exact from="/" to="/login" />
               <Route path="/login">
                 <Form type="login" />
@@ -81,7 +86,6 @@ function App(props) {
               <Route path="/signup">
                 <Form type="signup" />
               </Route>
-
               <Route path="/profile_settings">
                 <OnBoarding type="profile" activeStep={0} />
               </Route>
@@ -92,7 +96,7 @@ function App(props) {
                 <OnBoarding type="availability" activeStep={100} />
               </Route>
             </Switch>
-          </Container>
+          </main>
         </ThemeProvider>
       </BrowserRouter>
     </React.Fragment>
