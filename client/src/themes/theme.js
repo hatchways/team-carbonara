@@ -1,5 +1,5 @@
 import { createMuiTheme } from '@material-ui/core';
-import { orange, lightGreen, deepPurple } from '@material-ui/core/colors';
+import { orange, deepPurple } from '@material-ui/core/colors';
 
 export const theme = createMuiTheme({
   typography: {
@@ -15,7 +15,7 @@ export const theme = createMuiTheme({
   },
   palette: {
     primary: { main: orange.A700, light: orange[400] },
-    green: { main: lightGreen[700] },
+    secondary: { main: '#d8e2f2', light: '#ebf2ff' },
     purple: { main: deepPurple.A200 },
   },
 });
