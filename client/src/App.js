@@ -24,6 +24,7 @@ const stylesApp = (theme) => ({
 function handleSuccessLogin(user) {
   //send token to backend, verifiy and create session & or account
   const idToken = user.getAuthResponse().id_token;
+  console.log(user.getAuthResponse(), 'TOKEN', idToken);
 
   fetch('http://localhost:3001/api/user/login', {
     method: 'POST',
