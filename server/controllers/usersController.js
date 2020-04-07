@@ -34,6 +34,7 @@ const userLogin = async (req, res) => {
 
   //Checks if user exists in database
   const userExists = await User.findOne({ sub: user.sub });
+  // console.log('exists', userExists);
 
   if (userExists) {
     //assign userID to session
@@ -43,6 +44,7 @@ const userLogin = async (req, res) => {
 
   //Create new user
   const newUser = new User(user);
+  // console.log('newuser', newUser, await newUser.save());
 
   try {
     //Implied VALIDATION via Google
@@ -55,22 +57,17 @@ const userLogin = async (req, res) => {
 };
 
 const isUnique = (req, res) => {
-  User.findOne({ url: req.query.url })
-    .then(user => {
-      if (user) {
-        return res.json({ 'response': false });
-      } else {
-        return res.json({ 'response': true });
-      }
-    });
+  User.findOne({ url: req.query.url }).then((user) => {
+    if (user) {
+      return res.json({ response: false });
+    } else {
+      return res.json({ response: true });
+    }
+  });
 };
 
 const update = (req, res) => {
-  User.findOneAndUpdate(
-    { id: req.params.id },
-    req.body,
-    { new: true },
-    (err, user) => {
+  User.findOneAndUpdate({ id: req.params.id }, req.body, { new: true }, (err, user) => {
     if (err) {
       res.send(err);
     }
