@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar/Navbar';
 import useStylesDashboard from './stylesDashboard';
 import { withTheme } from '@material-ui/core/styles';
@@ -15,6 +15,12 @@ function Dashboard() {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
+  //remove appname node from App.js
+  useEffect(() => {
+    const appName = document.getElementById('appName');
+    appName.remove();
+  }, []);
 
   return (
     <div className={classes.container}>
