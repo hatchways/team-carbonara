@@ -3,7 +3,7 @@ import { Avatar } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import useStylesNavbar from './stylesNavbar';
 
-function Navbar() {
+function Navbar({ picture, name }) {
   const classes = useStylesNavbar();
   return (
     <header className={classes.navbar}>
@@ -23,8 +23,8 @@ function Navbar() {
           </Link>
         </nav>
         <div className={classes.profile}>
-          <Avatar src="https://lh3.googleusercontent.com/-1f-lik6wjVI/AAAAAAAAAAI/AAAAAAAAAAA/AAKWJJMYmqRdLc1CHHPO_sJXKNQk8g7IXA/s96-c/photo.jpg" />
-          <span>Raymond Lo</span>
+          <Avatar src={picture} />
+          <span>{name}</span>
         </div>
       </div>
     </header>
