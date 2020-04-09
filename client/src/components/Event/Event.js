@@ -4,13 +4,15 @@ import { Paper, Typography, Button } from '@material-ui/core';
 import { withTheme } from '@material-ui/core/styles';
 import { FaRegClock } from 'react-icons/fa';
 import { MdSettings } from 'react-icons/md';
+import PropTypes from 'prop-types';
 
-function Event(props) {
+function Event({ duration, meetingName }) {
   const classes = useStylesEvent();
 
   let color = null;
 
-  switch (props.meetingType) {
+  //might remove this
+  switch (duration) {
     case 15:
       color = 'darkmagenta';
       break;
@@ -20,6 +22,8 @@ function Event(props) {
     case 60:
       color = 'darkorange';
       break;
+    default:
+      color = 'crimson';
   }
 
   const stripeCSS = {
@@ -35,13 +39,13 @@ function Event(props) {
         <MdSettings className={classes.settingsIcon} size={30} />
       </div>
       <div className={classes.eventDesc}>
-        <h3>{props.meetingType} minute meeting</h3>
+        <h3>{meetingName}</h3>
         <Typography variant="subtitle1">One-on-one</Typography>
       </div>
       <div className={classes.linksContainer}>
         <div>
           <FaRegClock size={16} />
-          <span>{props.meetingType} min</span>
+          <span>{duration} min</span>
         </div>
         <Button className={classes.linkButton} variant="outlined">
           Copy Link
@@ -50,5 +54,10 @@ function Event(props) {
     </Paper>
   );
 }
+
+Event.propTypes = {
+  meetingName: PropTypes.string.isRequired,
+  duration: PropTypes.number.isRequired,
+};
 
 export default withTheme(Event);
