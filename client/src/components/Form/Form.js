@@ -23,8 +23,7 @@ const signupText = {
   redirectPath: '/login',
 };
 
-function Form(props) {
-  const { classes, type } = props;
+function Form({ classes, type }) {
   const [formType, setformType] = useState(null);
 
   //store bool of ternary operator
@@ -75,10 +74,18 @@ function Form(props) {
       .then((response) => {
         auth.login(() => {
           //redirect to profile setup if user was created
-          if (response.status === 201) {
-            history.push('/profile_settings');
-          } else {
-            history.push('/dashboard');
+          switch (response.status) {
+            case 201:
+              history.push('/profile_settings');
+              break;
+
+            case 200:
+              history.push('/dashboard');
+              break;
+
+            //any other status codes will return back to login
+            default:
+              return;
           }
         });
       })
