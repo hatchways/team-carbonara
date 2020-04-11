@@ -6,6 +6,7 @@ const availabilityController = require('../controllers/availabilityController');
 // router.post('/login', express.text(), availabilityController.userLogin);
 
 router.get('/days', availabilityController.daysAvailable);
+//use 3 letter capitalized ?month= params
 
 router.get('/timeslots?day=', availabilityController.timeslotsAvailable);
 
