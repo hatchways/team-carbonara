@@ -8,6 +8,6 @@ const availabilityController = require('../controllers/availabilityController');
 router.get('/days', availabilityController.daysAvailable);
 //use 3 letter capitalized ?month= params
 
-router.get('/timeslots?day=', availabilityController.timeslotsAvailable);
+router.get('/timeslots', availabilityController.timeslotsAvailable);
 
 module.exports = router;
