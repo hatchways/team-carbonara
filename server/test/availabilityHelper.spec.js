@@ -8,7 +8,7 @@ const assert = chai.assert;
 
 describe('test days', () => {
   it('returns expected days', () => {
-    const days = availDays(mayBusy, userAvail, userAvail.timeZone, clientTz, reqYear, reqMonth, reqMeet);
+    const days = availDays(4, mayBusy, userAvail, userAvail.timeZone, clientTz, 60);
     // console.log(days)
     assert.deepEqual(days, [4, 5, 6, 7, 8, 11, 12, 13, 14, 15, 18, 19, 20, 21, 22, 25, 26, 27, 28, 29]);
   });
@@ -16,23 +16,20 @@ describe('test days', () => {
 
 describe('test timeslots', () => {
   it('returns expected slots', () => {
-    const slots = availSlots(may20th, userAvail.hours, userAvail.timeZone, clientTz, [2020, 4, 20], reqMeet);
-    // console.log(slots)
+    const slots = availSlots([2020, 4, 20], may20th, userAvail.hours, userAvail.timeZone, clientTz, 60);
+    // console.log(slots);
     assert.deepEqual(slots, [
-      '2020-05-20T09:00:00-04:00',
-      '2020-05-20T14:00:00-04:00',
-      '2020-05-20T14:30:00-04:00',
-      '2020-05-20T15:00:00-04:00',
-      '2020-05-20T15:30:00-04:00',
-      '2020-05-20T16:00:00-04:00',
+      '2020-05-20T08:00:00-05:00',
+      '2020-05-20T13:00:00-05:00',
+      '2020-05-20T13:30:00-05:00',
+      '2020-05-20T14:00:00-05:00',
+      '2020-05-20T14:30:00-05:00',
+      '2020-05-20T15:00:00-05:00',
     ]);
   });
 });
 
-const reqMeet = 60;
-const reqYear = 2020;
-const reqMonth = 'May';
-
+const clientTz = 'US/Central';
 const userAvail = {
   days: {
     Sunday: false,
@@ -57,8 +54,6 @@ const userAvail = {
   timeZone: 'America/New_York',
   offset: '-04:00',
 };
-
-const clientTz = 'US/Central';
 
 const busyData = [
   //resp.data.calendars.primary.busy
