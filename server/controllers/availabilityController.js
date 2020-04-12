@@ -30,17 +30,17 @@ const getFreebusy = async (token, startISO, endISO) => {
 const daysAvailable = async (req, res) => {
   //send from /uniqueurl/meeting
   const reqMonth = req.query.month; //0-index
-  const reqMeet = 60; //req.params.meetTime; //minutes
-  const clientTz = 'US/Central'; //req.params.clientTz;
-  const uniqueurl = req.params.uniqueurl;
+  const reqMeet = 60; //req.query.meetTime; //minutes
+  const clientTz = 'US/Central'; //req.query.clientTz;
+  const uniqueurl = req.query.uniqueurl;
 
-  const year = reqMonth === 0 && moment().month() !== 0 ? moment().year() + 1 : moment().year();
+  const year = reqMonth < moment().month() ? moment().year() + 1 : moment().year();
   const user = await User.findOne({ url: uniqueurl });
 
   //if access_token expired
   //getRefreshToken() -> set to session?
 
-  const startISO = moment.tz([year, 0, 31], clientTz).month(reqMonth).format();
+  const startISO = moment.tz([year, 0, 1], clientTz).month(reqMonth).format();
   const endISO = moment.tz([year, 0, 31], clientTz).month(reqMonth).format();
 
   const freebusy = await getFreebusy(process.env.ACCESS_TOKEN, startISO, endISO);
@@ -55,19 +55,19 @@ const timeslotsAvailable = async (req, res) => {
   //send from /uniqueurl/meeting
   const reqMonth = req.query.month; //0-index
   const reqDay = req.query.day; //1-index
-  const reqMeet = 60; //req.params.meetTime; //minutes
-  const clientTz = 'US/Central'; //req.params.clientTz;
-  const uniqueurl = req.params.uniqueurl;
+  const reqMeet = 60; //req.query.meetTime; //minutes
+  const clientTz = 'US/Central'; //req.query.clientTz;
+  const uniqueurl = req.query.uniqueurl;
 
-  const year = reqMonth === 0 && moment().month() !== 0 ? moment().year() + 1 : moment().year();
+  const year = reqMonth < moment().month() ? moment().year() + 1 : moment().year();
   const date = [year, reqMonth, req.query.day];
 
   const user = await User.findOne({ url: uniqueurl });
 
   //refresh token if expired
 
-  const startISO = moment.tz([year, reqMonth, reqDay], clientTz);
-  const endISO = moment.tz([year, reqMonth, reqDay + 1], clientTz);
+  const startISO = moment.tz([year, reqMonth, reqDay], clientTz).format();
+  const endISO = moment.tz([year, reqMonth, reqDay + 1], clientTz).format();
 
   const freebusy = await getFreebusy(process.env.ACCESS_TOKEN, startISO, endISO);
 
