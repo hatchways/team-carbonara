@@ -7,7 +7,7 @@ chai.use(chaiHttp);
 const assert = chai.assert;
 
 describe('test days', () => {
-  it('returns expected days', () => {
+  it('returns expected days, omits busy days and unavailable days', () => {
     const mayBusy = [
       { start: '2020-04-01T04:00:00Z', end: '2020-05-03T04:00:00Z' },
       { start: '2020-05-13T00:00:00Z', end: '2020-05-13T01:00:00Z' },
@@ -23,7 +23,7 @@ describe('test days', () => {
 });
 
 describe('test timeslots', () => {
-  it('returns expected slots', () => {
+  it('returns no slots for a fully busy day', () => {
     const may20th = [
       { start: '2020-05-20T13:00:00Z', end: '2020-05-20T13:30:00Z' },
       { start: '2020-05-20T14:00:00Z', end: '2020-05-20T18:00:00Z' },
@@ -33,6 +33,23 @@ describe('test timeslots', () => {
     const slots = availSlots([2020, 4, 20], may20th, userAvail.hours, userAvail.timeZone, clientTz, 60);
     // console.log(slots);
     assert.deepEqual(slots, []);
+  });
+});
+
+describe('test timeslots', () => {
+  it('returns expected slots in client timezone', () => {
+    const may20th = [{ start: '2020-05-20T14:00:00Z', end: '2020-05-20T18:00:00Z' }];
+
+    const slots = availSlots([2020, 4, 20], may20th, userAvail.hours, userAvail.timeZone, clientTz, 60);
+    // console.log(slots);
+    assert.deepEqual(slots, [
+      '2020-05-20T08:00:00-05:00',
+      '2020-05-20T13:00:00-05:00',
+      '2020-05-20T13:30:00-05:00',
+      '2020-05-20T14:00:00-05:00',
+      '2020-05-20T14:30:00-05:00',
+      '2020-05-20T15:00:00-05:00',
+    ]);
   });
 });
 
