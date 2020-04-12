@@ -5,62 +5,74 @@ const { google } = require('googleapis');
 const calendar = google.calendar('v3');
 const { availDays, availSlots } = require('../utils/availabilityHelpers.js');
 
-//get available days for a req month
-const daysAvailable = async (req, res) => {
+const getFreebusy = async (token, startISO, endISO) => {
   const oauth2client = new google.auth.OAuth2(process.env.CLIENT_ID, process.env.CLIENT_SECRET, `postmessage`);
 
-  //send from /uniqueurl/meeting
-  const reqYear = 2020; //req.params.year;
-  const reqMonth = req.query.month;
-  const reqMeet = 60; //req.params.meetTime; //minutes
-  const clientTz = 'US/Central'; //req.params.clientTz;
-  const uniqueurl = req.params.uniqueurl;
-  //get current_user from session
-  const user = await User.findOne({ url: uniqueurl });
-
-  //if access_token expired
-  //getRefreshToken(current_user) -> set to session?
-
   oauth2client.setCredentials({
-    access_token: process.env.ACCESS_TOKEN, //temporary, use access token from session
+    access_token: token,
   });
-
-  //freebusy request
-  const freebusy = calendar.freebusy
+  const resp = calendar.freebusy
     .query({
       auth: oauth2client,
       resource: {
         items: [{ id: 'primary' }],
-        timeMin: new Date(2020, 3, 1).toISOString(),
-        //use client month/date start times
-        timeMax: new Date(2020, 4, 30).toISOString(),
+        timeMin: startISO,
+        timeMax: endISO,
       },
     })
     .then((resp) => resp.data.calendars.primary)
     .catch((err) => console.log('ERROR HERE', err));
 
-  // console.log('log', freebusy);
-  // console.log('args', mayBusy, userAvail, reqYear, req.query.month, reqMeet);
-  const resp = availDays(freebusy, user.availability, user.timezone, clientTz, reqYear, reqMonth, reqMeet);
+  return resp;
+};
 
-  console.log('testDays', resp);
-  console.log('aftertest');
+//get available days for a req month
+const daysAvailable = async (req, res) => {
+  //send from /uniqueurl/meeting
+  const reqMonth = req.query.month; //0-index
+  const reqMeet = 60; //req.params.meetTime; //minutes
+  const clientTz = 'US/Central'; //req.params.clientTz;
+  const uniqueurl = req.params.uniqueurl;
+
+  const year = reqMonth === 0 && moment().month() !== 0 ? moment().year() + 1 : moment().year();
+  const user = await User.findOne({ url: uniqueurl });
+
+  //if access_token expired
+  //getRefreshToken() -> set to session?
+
+  const startISO = moment.tz([year, 0, 31], clientTz).month(reqMonth).format();
+  const endISO = moment.tz([year, 0, 31], clientTz).month(reqMonth).format();
+
+  const freebusy = await getFreebusy(process.env.ACCESS_TOKEN, startISO, endISO);
+
+  const resp = availDays(reqMonth, freebusy, user.availability, user.timezone, clientTz, reqMeet);
+
   res.status(200).send({ days: resp });
 };
 
 //get available slots for a req day
-const timeslotsAvailable = (req, res) => {
-  const reqMeet = 60; //minutes
-  const reqYear = 2020;
-  const reqMonth = 4;
+const timeslotsAvailable = async (req, res) => {
+  //send from /uniqueurl/meeting
+  const reqMonth = req.query.month; //0-index
+  const reqDay = req.query.day; //1-index
+  const reqMeet = 60; //req.params.meetTime; //minutes
   const clientTz = 'US/Central'; //req.params.clientTz;
-  const date = [reqYear, reqMonth, req.query.day];
-  //client will hold availability for days
-  //freebusy( 12am.date.isoStr.clientTz, 12am.date+1.isoStr.clientTz)
+  const uniqueurl = req.params.uniqueurl;
 
-  console.log('testTimeSlots', availSlots(freebusy, user.availability, user.timezone, clientTz, date, reqMeet));
-  console.log('pie');
-  res.status(200).send('testing');
+  const year = reqMonth === 0 && moment().month() !== 0 ? moment().year() + 1 : moment().year();
+  const date = [year, reqMonth, req.query.day];
+
+  const user = await User.findOne({ url: uniqueurl });
+
+  //refresh token if expired
+
+  const startISO = moment.tz([year, reqMonth, reqDay], clientTz);
+  const endISO = moment.tz([year, reqMonth, reqDay + 1], clientTz);
+
+  const freebusy = await getFreebusy(process.env.ACCESS_TOKEN, startISO, endISO);
+
+  const resp = availSlots(date, freebusy, user.availability, user.timezone, clientTz, reqMeet);
+  res.status(200).send({ slots: resp });
 };
 
 module.exports = { daysAvailable, timeslotsAvailable };
