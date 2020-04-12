@@ -85,10 +85,11 @@ function availDays(freebusy, userAvail, userTz, clientTz, reqYear, reqMonth, req
   let day = getStartDate(monthNum); //1 or current day of month (no past days)
   let b = 0;
   let avail = [];
+  let x;
   console.log('num', numDays, day, freebusy[b]);
 
   while (day <= numDays) {
-    console.log('enter while', reqYear, monthNum, day, userAvail);
+    // console.log('enter while', reqYear, monthNum, day, userAvail);
     let block = freebusy[b];
     let start = moment.tz(
       `${reqYear}/${monthNum}/${day} ${userAvail.hours.start.hour}:${userAvail.hours.start.minute}`,
@@ -103,30 +104,25 @@ function availDays(freebusy, userAvail, userTz, clientTz, reqYear, reqMonth, req
     let busyStart;
     let busyEnd;
 
-    console.log(block, start.format(), end.format(), day, numDays);
-
+    // console.log(block, start.format(), end.format(), day, numDays);
+    //invalid weekday
     if (!userAvail.days[weekdays[start.day()]]) {
-      //invalid weekday
       day++;
-      console.log('invalid weekday go to', day);
     } else if (!block) {
       //valid weekday, no more busy blocks
       avail.push(start.format());
       day++;
-      console.log('no more busy', start.format(), day, numDays);
     } else {
       busyStart = moment(block.start);
       busyEnd = moment(block.end);
       if (busyStart.isSameOrBefore(start)) {
-        console.log('entered here');
         if (busyEnd.isSameOrBefore(start)) {
           b++;
-          console.log('nextblock', b, block, !freebusy[b], day, numDays);
         } else if (busyEnd.isSameOrAfter(end)) {
-          console.log('skip day, busy');
+          //skip day, busy;
           day++;
         } else if (busyEnd.isBefore(end)) {
-          let x = recursIsDayAvail(freebusy, b, end, reqMeet, start);
+          x = recursIsDayAvail(freebusy, b, end, reqMeet, start);
           b = x[1];
           if (x[0]) {
             avail.push(x[2].format()); //meeting start time
@@ -139,20 +135,14 @@ function availDays(freebusy, userAvail, userTz, clientTz, reqYear, reqMonth, req
           }
         }
       } else if (busyStart.isAfter(start)) {
-        console.log(
-          'busystart after start',
-          start.format(),
-          busyStart.format(),
-          Math.abs(start.diff(busyStart, 'minutes')),
-        );
         if (Math.abs(start.diff(busyStart, 'minutes')) > reqMeet) {
-          console.log('meet btwn start and block');
+          //meeting btwn start and busyblock;
           avail.push(start.format());
           day++;
         } else if (busyEnd.isSameOrAfter(end)) {
           day++;
         } else if (busyEnd.isBefore(end)) {
-          let x = recursIsDayAvail(freebusy, b, end, reqMeet, start);
+          x = recursIsDayAvail(freebusy, b, end, reqMeet, start);
           b = x[1];
           if (x[0]) {
             avail.push(x[2].format());
@@ -176,7 +166,6 @@ function availDays(freebusy, userAvail, userTz, clientTz, reqYear, reqMonth, req
 
 function addToSlots(blockStart, blockEnd, hoursEnd, reqMeet, slotTime, slots) {
   while (blockStart.isBefore(hoursEnd)) {
-    console.log('entered here', blockStart.format(), blockEnd.format());
     if (Math.abs(blockStart.diff(blockEnd, 'minutes')) >= reqMeet) {
       slots.push(blockStart.format());
       blockStart.add(slotTime, 'm');
@@ -187,7 +176,7 @@ function addToSlots(blockStart, blockEnd, hoursEnd, reqMeet, slotTime, slots) {
   return slots;
 }
 
-function availSlots(date, userHours, userTz, busy, reqMeet, clientTz) {
+function availSlots(busy, userHours, userTz, clientTz, date, reqMeet) {
   //need freebusy for 1 client day
   //compare with user avail hours -> may be busy.start , end , unavail, start, busy.end
   //translate into clientTz
@@ -213,7 +202,6 @@ function availSlots(date, userHours, userTz, busy, reqMeet, clientTz) {
 
     if (busyEnd.isSameOrBefore(curr)) {
       b++;
-      console.log(b, busy[b], !busy[b]);
     } else {
       if (busyStart.isAfter(curr)) {
         if (busyStart.isAfter(end)) {
@@ -232,4 +220,4 @@ function availSlots(date, userHours, userTz, busy, reqMeet, clientTz) {
   return slots;
 }
 
-module.exports = { availDays, recursIsDayAvail, availSlots };
+module.exports = { availDays, availSlots };
