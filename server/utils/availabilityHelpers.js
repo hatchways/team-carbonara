@@ -11,18 +11,9 @@ const weekdays = {
   6: 'Saturday',
 };
 
-const currYear = moment().year();
-
-function getStartDate(queryMonth) {
-  //use client start date? //moment.tz.date
-  const today = new Date();
-  return queryMonth === today.getMonth() ? moment().date() : 1;
-}
-
 function recursIsDayAvail(freebusy, busyIndex, availEnd, meetTime, availStart) {
   //if day is valid weekday, but has some busy blocks in it
   //returns [bool, int, moment]
-  // console.log('args', freebusy, busyIndex, availEnd.format(), meetTime, availStart.format());
   let currBusy = freebusy[busyIndex];
   let nextBusy = freebusy[busyIndex + 1];
 
@@ -50,7 +41,7 @@ function recursIsDayAvail(freebusy, busyIndex, availEnd, meetTime, availStart) {
   } else if (moment(nextBusy.end).isSameOrAfter(availEnd)) {
     return [false, busyIndex];
   } else {
-    return recursIsDayAvail(freebusy, busyIndex, availEnd, meetTime, availStart);
+    return recursIsDayAvail(freebusy, busyIndex + 1, availEnd, meetTime, availStart);
   }
 }
 
@@ -64,19 +55,18 @@ function availDays(reqMonth, freebusy, userAvail, userTz, clientTz, reqMeet) {
   // console.log('clientinfo', clientTz, clientDayStart.format(), sigTzOffset);
 
   const monthNum = reqMonth + 1;
-  const year = reqMonth === 0 && moment().month() !== 0 ? currYear + 1 : currYear;
+  const year = reqMonth < moment().month() ? moment().year() + 1 : moment().year();
+  let day = reqMonth === moment().month() ? moment().date() : 1; //1 or current day of month (no past days)
 
-  const numDays = moment([year, 0, 31]).month(monthNum).date();
+  const numDays = moment([year, 0, 31]).month(reqMonth).date();
   //edge case: client month starts before user month starts -> some mo/1 may not render
   //use client month to fetch freebusy
-  let day = getStartDate(monthNum); //1 or current day of month (no past days)
   let b = 0;
   let avail = [];
   let x;
-  console.log('num', numDays, day, freebusy[b]);
 
+  //change to moment(curr) is before moment(monthEnd)
   while (day <= numDays) {
-    // console.log('enter while', year, monthNum, day, userAvail);
     let block = freebusy[b];
     let start = moment.tz(
       `${year}/${monthNum}/${day} ${userAvail.hours.start.hour}:${userAvail.hours.start.minute}`,
@@ -91,7 +81,6 @@ function availDays(reqMonth, freebusy, userAvail, userTz, clientTz, reqMeet) {
     let busyStart;
     let busyEnd;
 
-    // console.log(block, start.format(), end.format(), day, numDays);
     //invalid weekday
     if (!userAvail.days[weekdays[start.day()]]) {
       day++;
@@ -100,6 +89,7 @@ function availDays(reqMonth, freebusy, userAvail, userTz, clientTz, reqMeet) {
       avail.push(start.format());
       day++;
     } else {
+      //valid weekday w/ busy blocks
       busyStart = moment(block.start);
       busyEnd = moment(block.end);
       if (busyStart.isSameOrBefore(start)) {
@@ -111,19 +101,21 @@ function availDays(reqMonth, freebusy, userAvail, userTz, clientTz, reqMeet) {
         } else if (busyEnd.isBefore(end)) {
           x = recursIsDayAvail(freebusy, b, end, reqMeet, start);
           b = x[1];
+
           if (x[0]) {
             avail.push(x[2].format()); //meeting start time
-            console.log('here', clientDayStart.year(year).month(reqMonth).date(day).format(), x[2].format());
             if (clientDayStart.year(year).month(reqMonth).date(day).isAfter(x[2])) {
               x = recursIsDayAvail(freebusy, b, end, reqMeet, clientDayStart.year(year).month(reqMonth).date(day));
               b = x[1];
               if (x[0]) avail.push(x[2].format());
             }
             day++;
+          } else {
+            day++;
           }
         }
       } else if (busyStart.isAfter(start)) {
-        if (Math.abs(start.diff(busyStart, 'minutes')) > reqMeet) {
+        if (Math.abs(start.diff(busyStart, 'minutes')) >= reqMeet) {
           //meeting btwn start and busyblock;
           avail.push(start.format());
           day++;
@@ -134,20 +126,19 @@ function availDays(reqMonth, freebusy, userAvail, userTz, clientTz, reqMeet) {
           b = x[1];
           if (x[0]) {
             avail.push(x[2].format());
-            console.log('here2', clientDayStart.year(year).month(reqMonth).date(day).format(), x[2].format());
-
             if (clientDayStart.year(year).month(reqMonth).date(day).isAfter(x[2])) {
               x = recursIsDayAvail(freebusy, b, end, reqMeet, clientDayStart.year(year).month(reqMonth).date(day));
               b = x[1];
               if (x[0]) avail.push(x[2].format());
             }
             day++;
+          } else {
+            day++;
           }
         }
       }
     }
   }
-  console.log('finish loop');
 
   let clientAvail = avail.map((time) => moment.tz(time, clientTz).date());
 
@@ -156,11 +147,11 @@ function availDays(reqMonth, freebusy, userAvail, userTz, clientTz, reqMeet) {
   return clientAvail;
 }
 
-function addToSlots(blockStart, blockEnd, hoursEnd, reqMeet, slotTime, slots) {
-  while (blockStart.isBefore(hoursEnd)) {
-    if (Math.abs(blockStart.diff(blockEnd, 'minutes')) >= reqMeet) {
-      slots.push(blockStart.format());
-      blockStart.add(slotTime, 'm');
+function addToSlots(availStart, availEnd, hoursEnd, reqMeet, slotTime, slots) {
+  while (availStart.isBefore(hoursEnd)) {
+    if (Math.abs(availStart.diff(availEnd, 'minutes')) >= reqMeet) {
+      slots.push(availStart.format());
+      availStart.add(slotTime, 'm');
     } else {
       break;
     }
@@ -195,7 +186,7 @@ function availSlots(date, busy, userHours, userTz, clientTz, reqMeet) {
     if (busyEnd.isSameOrBefore(curr)) {
       b++;
     } else {
-      if (busyStart.isAfter(curr)) {
+      if (busyStart.isSameOrAfter(curr)) {
         if (busyStart.isAfter(end)) {
           addToSlots(curr, end, end, reqMeet, slotTime, slots);
         } else {
