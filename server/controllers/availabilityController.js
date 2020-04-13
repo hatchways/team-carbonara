@@ -1,9 +1,8 @@
-// const _ = require('lodash');
 const User = require('../models/User');
 const moment = require('moment');
 const { google } = require('googleapis');
 const calendar = google.calendar('v3');
-const { availDays, availSlots } = require('../utils/availabilityHelpers.js');
+const { availDays, availSlots } = require('../utils/availabilityHelper.js');
 
 const getFreebusy = async (token, startISO, endISO) => {
   const oauth2client = new google.auth.OAuth2(process.env.CLIENT_ID, process.env.CLIENT_SECRET, `postmessage`);
@@ -35,12 +34,14 @@ const daysAvailable = async (req, res) => {
   const uniqueurl = req.query.uniqueurl;
 
   const year = reqMonth < moment().month() ? moment().year() + 1 : moment().year();
+  let day = reqMonth === moment().month() ? moment().date() : 1; //1 or current day of month (no past days)
+
   const user = await User.findOne({ url: uniqueurl });
 
   //if access_token expired
   //getRefreshToken() -> set to session?
 
-  const startISO = moment.tz([year, 0, 1], clientTz).month(reqMonth).format();
+  const startISO = moment.tz([year, reqMonth, day], clientTz).format();
   const endISO = moment.tz([year, 0, 31], clientTz).month(reqMonth).format();
 
   const freebusy = await getFreebusy(process.env.ACCESS_TOKEN, startISO, endISO);

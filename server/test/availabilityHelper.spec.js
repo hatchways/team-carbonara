@@ -1,6 +1,6 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const { availDays, availSlots } = require('../utils/availabilityHelpers.js');
+const { availDays, availSlots } = require('../utils/availabilityHelper.js');
 
 chai.should();
 chai.use(chaiHttp);
@@ -17,7 +17,7 @@ describe('test days', () => {
     ];
 
     const days = availDays(4, mayBusy, userAvail, userAvail.timeZone, clientTz, 60);
-    // console.log(days)
+
     assert.deepEqual(days, [4, 5, 6, 7, 8, 11, 12, 13, 14, 15, 18, 19, 21, 22, 25, 26, 27, 28, 29]);
   });
 });
@@ -31,7 +31,7 @@ describe('test timeslots', () => {
     ];
 
     const slots = availSlots([2020, 4, 20], may20th, userAvail.hours, userAvail.timeZone, clientTz, 60);
-    // console.log(slots);
+
     assert.deepEqual(slots, []);
   });
 });
@@ -41,7 +41,7 @@ describe('test timeslots', () => {
     const may20th = [{ start: '2020-05-20T14:00:00Z', end: '2020-05-20T18:00:00Z' }];
 
     const slots = availSlots([2020, 4, 20], may20th, userAvail.hours, userAvail.timeZone, clientTz, 60);
-    // console.log(slots);
+
     assert.deepEqual(slots, [
       '2020-05-20T08:00:00-05:00',
       '2020-05-20T13:00:00-05:00',
