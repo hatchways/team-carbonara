@@ -12,7 +12,8 @@ const userSchema = new Schema({
   },
   family_name: {
     type: String,
-    required: true,
+    // required: true,
+    // error when family name not available
   },
   sub: {
     type: String,

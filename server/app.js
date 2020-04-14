@@ -6,6 +6,7 @@ const MongoStore = require('connect-mongo')(session);
 const storeOptions = require('./config/storeOptions');
 const logger = require('morgan');
 const userRouter = require('./routes/users');
+const availabilityRouter = require('./routes/availability');
 
 const { json, urlencoded } = express;
 
@@ -32,6 +33,7 @@ app.use(
 );
 
 app.use('/api/user', userRouter);
+app.use('/api/availability', availabilityRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
