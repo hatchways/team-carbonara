@@ -224,7 +224,7 @@ function availSlots(date, freebusy, userHours, userTz, clientTz, reqMeet) {
     }
   }
   let clientSlots = slots.map((time) => moment.tz(time, clientTz).format());
-  return clientSlots;
+  return slots.map((time) => moment.tz(time, clientTz).format());
 }
 
 module.exports = { availDays, availSlots };
