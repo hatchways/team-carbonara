@@ -26,11 +26,22 @@ const userSchema = new Schema({
     type: String,
   },
   timezone: {
-    type: Map,
+    type: String,
   },
   availability: {
-    type: Map,
-    of: String,
+    days: {
+      Monday: Boolean,
+      Tuesday: Boolean,
+      Wednesday: Boolean,
+      Thursday: Boolean,
+      Friday: Boolean,
+      Saturday: Boolean,
+      Sunday: Boolean,
+    },
+    hours: {
+      end: String,
+      start: String,
+    },
   },
   calendars: {
     type: Array,
