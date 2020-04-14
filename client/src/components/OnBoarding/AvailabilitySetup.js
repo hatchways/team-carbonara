@@ -3,6 +3,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { TextField, FormGroup, FormControlLabel, Checkbox } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import stylesOnBoarding from './stylesOnBoarding';
+import OnBoardButton from './OnBoardButton';
 
 const OrangeCheckbox = withStyles((theme) => ({
   root: {
@@ -14,9 +15,7 @@ const OrangeCheckbox = withStyles((theme) => ({
   checked: {},
 }))((props) => <Checkbox color="default" {...props} />);
 
-function AvailabilitySetup(props) {
-  const { classes, setHours, hours, setDays, days } = props;
-
+function AvailabilitySetup({ classes, setHours, hours, setDays, days, btnText, submitForm }) {
   const handleDays = (e) => {
     setDays({ ...days, [e.target.name]: e.target.checked });
   };
@@ -41,13 +40,27 @@ function AvailabilitySetup(props) {
   }
 
   return (
-    <>
+    <React.Fragment>
       <div>
         <div>Available Hours: </div>
         <div className={classes.hoursRow}>
-          <TextField id={'start-hours-field'} variant="outlined" type="time" name="start" onChange={handleHours} />
+          <TextField
+            id="start-hours-field"
+            value={hours.start}
+            variant="outlined"
+            type="time"
+            name="start"
+            onChange={handleHours}
+          />
           <span>-</span>
-          <TextField id={'end-hours-field'} variant="outlined" type="time" name="end" onChange={handleHours} />
+          <TextField
+            id="end-hours-field"
+            value={hours.end}
+            variant="outlined"
+            type="time"
+            name="end"
+            onChange={handleHours}
+          />
         </div>
       </div>
 
@@ -57,7 +70,8 @@ function AvailabilitySetup(props) {
           {renderCheckBoxes(days)}
         </FormGroup>
       </div>
-    </>
+      <OnBoardButton text={btnText} submitForm={submitForm} />
+    </React.Fragment>
   );
 }
 
@@ -67,6 +81,8 @@ AvailabilitySetup.propTypes = {
   hours: PropTypes.object.isRequired,
   setDays: PropTypes.func.isRequired,
   days: PropTypes.object.isRequired,
+  btnText: PropTypes.string.isRequired,
+  submitForm: PropTypes.func.isRequired,
 };
 
 export default withStyles(stylesOnBoarding)(AvailabilitySetup);
