@@ -36,6 +36,7 @@ const userSchema = new Schema({
   calendars: {
     type: Array,
   },
+  meetings: [{ duration: Number, meetingName: String }],
 });
 
 const User = mongoose.model('User', userSchema);

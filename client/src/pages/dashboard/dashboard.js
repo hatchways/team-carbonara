@@ -1,24 +1,64 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar/Navbar';
 import useStylesDashboard from './stylesDashboard';
 import { withTheme } from '@material-ui/core/styles';
 import { Tabs, Tab, Button, Avatar } from '@material-ui/core';
 import DashPanel from '../../components/DashPanel/DashPanel';
 import Event from '../../components/Event/Event';
+import handleFetchErrors from '../../utils/handleFetchErrors';
+import NewEventDialog from '../../components/NewEventDialog/NewEventDialog';
 
 function Dashboard() {
   const classes = useStylesDashboard();
 
+  const [user, setUser] = useState({ meetings: [] });
   //Tracks active tab
   const [value, setValue] = useState(0);
+  //dialog state
+  const [open, setOpen] = useState(false);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  //POSSIBLE TODO: find another way to render the new meeting in UI
+  function renderNewMeeting(meeting) {
+    const userClone = Object.assign({}, user);
+    userClone.meetings.push(meeting);
+    setUser(userClone);
+  }
+
+  useEffect(() => {
+    //remove appname node
+    const appName = document.getElementById('appName');
+    appName.remove();
+
+    //google sub id
+    const subId = window.gapi.auth2.getAuthInstance().currentUser.get().getId();
+
+    //fetch user info
+    fetch(`http://localhost:3001/api/user/${subId}`)
+      .then(handleFetchErrors)
+      .then((res) => res.json())
+      .then((data) => {
+        setUser(data);
+      })
+      .catch((e) => {
+        console.error('Error: ' + e);
+      });
+  }, []);
+
   return (
     <div className={classes.container}>
-      <Navbar />
+      <Navbar picture={user.picture} name={user.given_name} />
       <main className={classes.dashBody}>
         <div className={classes.subHeader}>
           <h1>My CalendApp</h1>
@@ -30,20 +70,22 @@ function Dashboard() {
         <DashPanel value={value} index={0}>
           <header className={classes.panelHeader}>
             <div className={classes.profileContainer}>
-              <Avatar src="https://lh3.googleusercontent.com/-1f-lik6wjVI/AAAAAAAAAAI/AAAAAAAAAAA/AAKWJJMYmqRdLc1CHHPO_sJXKNQk8g7IXA/s96-c/photo.jpg" />
+              <Avatar src={user.picture} />
               <div className={classes.profileInfo}>
-                <span>Raymond Lo</span>
-                <span>calendapp.com/raymond-lo</span>
+                <span>{user.given_name}</span>
+                {/* profle url here */}
+                <span>calendapp.com/PROFILE_URL</span>
               </div>
             </div>
-            <Button className={classes.addEventBtn} size="large" variant="outlined">
+            <Button onClick={handleClickOpen} className={classes.addEventBtn} size="large" variant="outlined">
               + New Event Type
             </Button>
+            <NewEventDialog renderNewMeeting={renderNewMeeting} sub={user.sub} open={open} handleClose={handleClose} />
           </header>
           <section className={classes.events}>
-            <Event meetingType={15} />
-            <Event meetingType={30} />
-            <Event meetingType={60} />
+            {user.meetings.map((meeting, index) => (
+              <Event key={index} duration={meeting.duration} meetingName={meeting.meetingName} />
+            ))}
           </section>
           <Button size="large" variant="contained" className={classes.getStartedBtn}>
             Getting Started Guide

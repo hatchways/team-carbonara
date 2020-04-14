@@ -8,6 +8,7 @@ const useStylesEvent = makeStyles((theme) => ({
     flexDirection: 'column',
     justifyContent: 'space-between',
     padding: '0 2rem 2rem 2rem',
+    margin: '1rem',
   },
   eventDesc: {
     display: 'flex',
