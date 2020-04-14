@@ -24,7 +24,7 @@ describe('test days', () => {
 });
 
 describe('test days', () => {
-  it('returns expected days for significant difference timezone', () => {
+  it('returns expected days for significant difference client timezone', () => {
     const mayBusy = [
       { start: '2020-04-01T04:00:00Z', end: '2020-05-03T04:00:00Z' },
       { start: '2020-05-13T00:00:00Z', end: '2020-05-13T01:00:00Z' },
@@ -54,7 +54,7 @@ describe('test timeslots', () => {
 });
 
 describe('test timeslots', () => {
-  it('returns expected slots in client timezone', () => {
+  it('returns expected slots for client timezone', () => {
     const may20th = [{ start: '2020-05-20T14:00:00Z', end: '2020-05-20T18:00:00Z' }];
 
     const slots = availSlots([2020, 4, 20], may20th, userAvail.hours, userAvail.timeZone, clientTz, 60);
@@ -71,11 +71,10 @@ describe('test timeslots', () => {
 });
 
 describe('test timeslots', () => {
-  it('returns expected slots in significant difference client timezone', () => {
+  it('returns expected slots for significant difference client timezone', () => {
     const may20th = [{ start: '2020-05-20T14:00:00Z', end: '2020-05-20T18:00:00Z' }];
 
     const slots = availSlots([2020, 4, 20], may20th, userAvail.hours, userAvail.timeZone, 'Asia/Seoul', 60);
-    console.log(slots);
 
     assert.deepEqual(slots, [
       '2020-05-20T00:00:00+09:00',
