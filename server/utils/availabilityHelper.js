@@ -1,8 +1,9 @@
 const moment = require('moment-timezone');
 
+//day is valid weekday, but has some busy blocks btwn dayStart, dayEnd
+//check for at least one valid meeting time
+//returns [bool, int, moment]
 function recursIsDayAvail(freebusy, busyIndex, start, end, reqMeet, userStart, userEnd, userTz) {
-  //if day is valid weekday, but has some busy blocks btwn dayStart, dayEnd
-  //returns [bool, int, moment]
   let busy = freebusy[busyIndex];
   let curr = moment(start);
   const dayEnd = moment(end);
@@ -11,28 +12,33 @@ function recursIsDayAvail(freebusy, busyIndex, start, end, reqMeet, userStart, u
     return [false, busyIndex + 1];
   }
   if (busy && curr.isBetween(busy.start, busy.end, null, '[)')) {
+    //currTime is in busy block, move currTime forward.
+    //includes busyStart, excludes busyEnd since meetings can start then.
     curr = moment(busy.end);
     return recursIsDayAvail(freebusy, busyIndex + 1, curr, dayEnd, reqMeet, userStart, userEnd);
   }
-  if (busy && curr.isSameOrAfter(busy.end)) {
-    return recursIsDayAvail(freebusy, busyIndex + 1, curr, dayEnd, reqMeet, userStart, userEnd);
-  }
+  // if (busy && curr.isSameOrAfter(busy.end)) {
+  //
+  //   return recursIsDayAvail(freebusy, busyIndex + 1, curr, dayEnd, reqMeet, userStart, userEnd);
+  // }
   if (userEnd.isBefore(userStart) && (curr.isBefore(userEnd) || curr.isSameOrAfter(userStart))) {
-    //time is valid ds->ue us->de , check if meeting valid
+    //time is valid dayStart->userEnd...userStart->dayEnd
     if (curr.isBefore(userEnd)) {
       if (busy && moment(busy.start).isBefore(userEnd)) {
-        //curr->busy.start->userEnd
+        //dayStart->curr->busy.start->userEnd, check for meet before busy
         if (Math.abs(curr.diff(busy.start, 'minutes')) >= reqMeet) {
           return [true, busyIndex, curr.format()];
         } else {
+          //if no available meeting, move currTime and busyIndex forward
           curr = moment(busy.end);
           return recursIsDayAvail(freebusy, busyIndex + 1, curr, dayEnd, reqMeet, userStart, userEnd);
         }
       } else {
-        //curr -> userEnd (->busy.start)
+        //dayStart->curr->userEnd (->busy.start), check for meet before userEnd
         if (Math.abs(curr.diff(userEnd, 'minutes')) >= reqMeet) {
           return [true, busyIndex, curr.format()];
         } else {
+          //userEnd->userStart is invalid, move curr to userStart
           curr = moment(userStart);
           return recursIsDayAvail(freebusy, busyIndex, curr, dayEnd, reqMeet, userStart, userEnd);
         }
@@ -40,7 +46,7 @@ function recursIsDayAvail(freebusy, busyIndex, start, end, reqMeet, userStart, u
     } else {
       //curr is after userStart, before dayEnd (valid time)
       if (busy && moment(busy.start).isBefore(dayEnd)) {
-        //curr->busy.start->dayEnd
+        //userStart->curr->busy.start->dayEnd, check for meeting before busy
         if (Math.abs(curr.diff(busy.start, 'minutes')) >= reqMeet) {
           return [true, busyIndex, curr.format()];
         } else {
@@ -48,16 +54,16 @@ function recursIsDayAvail(freebusy, busyIndex, start, end, reqMeet, userStart, u
           return recursIsDayAvail(freebusy, busyIndex + 1, curr, dayEnd, reqMeet, userStart, userEnd);
         }
       } else {
-        //curr->dayend (->busy)
+        //userStart->curr->dayEnd (->busy)
         return Math.abs(curr.diff(dayEnd, 'minutes')) >= reqMeet
           ? [true, busyIndex, curr.format()]
           : [false, busyIndex];
       }
     }
   } else if (userStart.isBefore(userEnd) && curr.isBetween(userStart, userEnd, null, '[)')) {
-    //valid time for us->ue(->de)
+    //valid time for dayStart...userStart->userEnd...dayEnd
     if (busy && moment(busy.start).isBefore(userEnd)) {
-      //userStart->curr->busy->userEnd
+      //userStart->curr->busy->userEnd, check for meet before busy
       if (Math.abs(curr.diff(busy.start, 'minutes')) >= reqMeet) {
         return [true, busyIndex, curr];
       } else {
@@ -65,7 +71,7 @@ function recursIsDayAvail(freebusy, busyIndex, start, end, reqMeet, userStart, u
         return recursIsDayAvail(freebusy, busyIndex + 1, curr, dayEnd, reqMeet, userStart, userEnd);
       }
     } else {
-      //curr->userEnd (->busy)
+      //userStart->curr->userEnd (->busy)
       return Math.abs(curr.diff(dayEnd, 'minutes')) >= reqMeet ? [true, busyIndex, curr.format()] : [false, busyIndex];
     }
   } else {
@@ -80,9 +86,8 @@ function recursIsDayAvail(freebusy, busyIndex, start, end, reqMeet, userStart, u
   }
 }
 
+//return available days in client timezone, checks for booked/unavailable days -> return arr of ints of valid days
 function availDays(reqMonth, freebusy, userAvail, userTz, clientTz, reqMeet) {
-  //return available days in user timezone, checks for booked days -> make arr of available blocks
-  // { 0: 'Sunday' , ... }
   const weekdays = {
     0: 'Sunday',
     1: 'Monday',
@@ -100,15 +105,15 @@ function availDays(reqMonth, freebusy, userAvail, userTz, clientTz, reqMeet) {
   const avail = [];
 
   //used clientTz month to fetch freebusy
-  const currDay = moment.tz([year, reqMonth, startDay], clientTz);
+  const currDay = moment.tz([year, reqMonth, startDay], clientTz); //12am client time
   const monthEnd = moment.tz([year, 0, 31], clientTz).month(reqMonth);
 
   while (currDay.isBefore(monthEnd)) {
     block = freebusy[b];
-    start = moment.tz(currDay.format(), userTz); //same as currDay
+    start = moment.tz(currDay.format(), userTz); //same as currDay, use userTz for available hours comparison
     end = moment(start.format()).add(1, 'day');
-    //invalid weekday
     if (!userAvail.days[weekdays[start.day()]]) {
+      //invalid weekday
       currDay.add(1, 'day');
     } else if (!block) {
       //valid weekday, no more busy blocks
@@ -119,7 +124,7 @@ function availDays(reqMonth, freebusy, userAvail, userTz, clientTz, reqMeet) {
       busyStart = moment(block.start);
       busyEnd = moment(block.end);
       if (start.isSameOrAfter(busyEnd)) {
-        // console.log('start after busyend, go to next busy ');
+        // console.log('start after current busyEnd, go to next busy ');
         b++;
       } else if (busyStart.isSameOrAfter(end)) {
         // console.log('busystart after dayend, add day');
@@ -132,7 +137,8 @@ function availDays(reqMonth, freebusy, userAvail, userTz, clientTz, reqMeet) {
         userStart = moment(start.format()).hour(userAvail.hours.start.hour).minute(userAvail.hours.start.minute);
         userEnd = moment(start.format()).hour(userAvail.hours.end.hour).minute(userAvail.hours.end.minute);
         if (userStart.isBefore(start)) userStart.add(1, 'day');
-        // console.log(start.format(), start.isSameOrBefore(end), start.format('hhmm'), end.format());
+        //if client 12am is btwn userStart and userEnd, use userStart for next day
+
         x = recursIsDayAvail(freebusy, b, start.format(), end.format(), reqMeet, userStart, userEnd, userTz);
         if (x[0]) avail.push(x[2]);
         b = x[1];
@@ -148,6 +154,8 @@ function availDays(reqMonth, freebusy, userAvail, userTz, clientTz, reqMeet) {
   return clientAvail;
 }
 
+//in block of available time, add valid timeslots
+//checks for meeting every 30min for any length meeting. (15min for 15min meeting)
 function addToSlots(currStart, availEnd, reqMeet, slotTime, slots) {
   while (currStart.isBefore(availEnd)) {
     if (Math.abs(currStart.diff(availEnd, 'minutes')) >= reqMeet) {
@@ -157,22 +165,25 @@ function addToSlots(currStart, availEnd, reqMeet, slotTime, slots) {
       break;
     }
   }
-
   return slots;
 }
 
+//takes in freebusy for client 12am-12am, finds and returns available time slots
 function availSlots(date, freebusy, userHours, userTz, clientTz, reqMeet) {
   const slots = [];
-  const slotTime = reqMeet > 15 ? 30 : 15;
-  let b = 0;
+  const slotTime = reqMeet > 15 ? 30 : 15; //check for a meeting every {slotTime} minutes
 
-  //client date -> usertz -> set to userhours times
+  let b = 0;
   let busyStart, busyEnd, busy;
+
+  //12am client time -> userTz (same moment)
   let curr = moment.tz(date, clientTz).tz(userTz);
   const end = moment(curr.format()).add(1, 'day');
+
   const userStart = moment(curr.format()).hour(userHours.start.hour).minute(userHours.start.minute);
   const userEnd = moment(curr.format()).hour(userHours.end.hour).minute(userHours.end.minute);
 
+  //if dayStart is between userHours, userStart will end up before dayStart
   const endFirst = userStart.isBefore(curr);
   if (endFirst) userStart.add(1, 'day');
 
@@ -220,10 +231,10 @@ function availSlots(date, freebusy, userHours, userTz, clientTz, reqMeet) {
     } else {
       if (curr.isBefore(userStart)) {
         curr = userStart;
-      } else break;
+      } else break; //break loop if currTime passes user hours (userStart-> userEnd) and doesn't reach dayEnd
     }
   }
-  let clientSlots = slots.map((time) => moment.tz(time, clientTz).format());
+
   return slots.map((time) => moment.tz(time, clientTz).format());
 }
 
