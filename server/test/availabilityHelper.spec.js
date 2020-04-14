@@ -1,6 +1,7 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const { availDays, availSlots } = require('../utils/availabilityHelper.js');
+const moment = require('moment-timezone');
 
 chai.should();
 chai.use(chaiHttp);
@@ -19,6 +20,22 @@ describe('test days', () => {
     const days = availDays(4, mayBusy, userAvail, userAvail.timeZone, clientTz, 60);
 
     assert.deepEqual(days, [4, 5, 6, 7, 8, 11, 12, 13, 14, 15, 18, 19, 21, 22, 25, 26, 27, 28, 29]);
+  });
+});
+
+describe('test days', () => {
+  it('returns expected days for significant difference timezone', () => {
+    const mayBusy = [
+      { start: '2020-04-01T04:00:00Z', end: '2020-05-03T04:00:00Z' },
+      { start: '2020-05-13T00:00:00Z', end: '2020-05-13T01:00:00Z' },
+      { start: '2020-05-20T13:00:00Z', end: '2020-05-20T13:30:00Z' },
+      { start: '2020-05-20T14:00:00Z', end: '2020-05-20T18:00:00Z' },
+      { start: '2020-05-20T18:30:00Z', end: '2020-05-20T22:00:00Z' },
+    ];
+
+    const days = availDays(4, mayBusy, userAvail, userAvail.timeZone, 'Asia/Seoul', 60);
+
+    assert.deepEqual(days, [5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 26, 27, 28, 29, 30]);
   });
 });
 

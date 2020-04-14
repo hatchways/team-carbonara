@@ -37,6 +37,7 @@ const daysAvailable = async (req, res) => {
   let day = reqMonth === moment().month() ? moment().date() : 1; //1 or current day of month (no past days)
 
   const user = await User.findOne({ url: uniqueurl });
+  //if (!user) res.send("User not found error, denied access")
 
   //if access_token expired
   //getRefreshToken() -> set to session?
