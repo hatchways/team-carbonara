@@ -3,12 +3,9 @@ import { withStyles } from '@material-ui/core/styles';
 import { Divider } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import stylesOnBoarding from './stylesOnBoarding';
+import OnBoardButton from './OnBoardButton';
 
-const email = 'hello@gmail.com';
-
-function ConnectedPage(props) {
-  const { classes } = props;
-
+function ConnectedPage({ btnText, handleConfirmSubmit, classes, email }) {
   return (
     <div className={classes.connectedPage}>
       <h3>
@@ -23,12 +20,16 @@ function ConnectedPage(props) {
         2. We will add event to "<span>{email}</span>"
       </div>
       <Divider />
+      <OnBoardButton text={btnText} submitForm={handleConfirmSubmit} />
     </div>
   );
 }
 
 ConnectedPage.propTypes = {
   classes: PropTypes.object.isRequired,
+  email: PropTypes.string.isRequired,
+  btnText: PropTypes.string.isRequired,
+  handleConfirmSubmit: PropTypes.func.isRequired,
 };
 
 export default withStyles(stylesOnBoarding)(ConnectedPage);
