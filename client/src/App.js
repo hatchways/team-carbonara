@@ -7,6 +7,7 @@ import Form from './components/Form/Form';
 import OnBoarding from './pages/OnBoarding';
 import Dashboard from './pages/dashboard/dashboard';
 import PrivateRoute from './components/PrivateRoute/PrivateRoute';
+import Confirm from './components/NewAppointment/Confirm';
 
 const stylesApp = (theme) => ({
   appName: {
@@ -41,6 +42,8 @@ function App(props) {
               <Route path="/signup">
                 <Form type="signup" />
               </Route>
+              <Route path="/confirm" component={Confirm} />
+
               <PrivateRoute path="/dashboard" component={Dashboard} />
               <PrivateRoute path="/profile_settings" type="profile" activeStep={0} component={OnBoarding} />
               <PrivateRoute path="/confirm" type="confirm" activeStep={50} component={OnBoarding} />
