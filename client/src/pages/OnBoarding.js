@@ -12,7 +12,7 @@ import PropTypes from 'prop-types';
 import * as moment from 'moment-timezone';
 
 function OnBoarding(props) {
-  const [activeStep, setActiveStep] = React.useState(props.activeStep);
+  const [activeStep, setActiveStep] = useState(props.activeStep);
   const [url, setUrl] = useState('');
   const [timeZone, setTimeZone] = useState('');
   const [hours, setHours] = useState({ start: '', end: '' });
@@ -37,10 +37,8 @@ function OnBoarding(props) {
       return <ConnectedPage />;
     }
     if (type === 'availability') {
-      next = '/profile_settings'; //go to dashboard later
-      return <AvailabilitySetup setHours={setHours} setDays={setDays} days={days} />;
-    } else {
-      return 'Unknown step';
+      next = '/dashboard'; //go to dashboard later
+      return <AvailabilitySetup hours={hours} setHours={setHours} setDays={setDays} days={days} />;
     }
   }
 
@@ -118,7 +116,7 @@ function OnBoarding(props) {
   );
 }
 
-ProfileSetup.propTypes = {
+OnBoarding.propTypes = {
   classes: PropTypes.object.isRequired,
   type: PropTypes.string.isRequired,
   activeStep: PropTypes.number.isRequired,
