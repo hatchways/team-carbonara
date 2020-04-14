@@ -3,10 +3,10 @@ const stylesOnBoarding = {
     width: '50%',
     height: '400px',
     display: 'flex',
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
     flexDirection: 'column',
     margin: '0 auto',
-    padding: '1.5rem',
+    padding: '0 1.5rem',
   },
   headRow: {
     display: 'flex',
@@ -29,6 +29,9 @@ const stylesOnBoarding = {
       borderLeft: '1px solid #eee',
       paddingLeft: '0.8rem',
     },
+  },
+  btnContainer: {
+    margin: 'auto',
   },
   //connected
   connectedPage: {
