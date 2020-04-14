@@ -107,7 +107,6 @@ function availDays(reqMonth, freebusy, userAvail, userTz, clientTz, reqMeet) {
     block = freebusy[b];
     start = moment.tz(currDay.format(), userTz); //same as currDay
     end = moment(start.format()).add(1, 'day');
-
     //invalid weekday
     if (!userAvail.days[weekdays[start.day()]]) {
       currDay.add(1, 'day');
