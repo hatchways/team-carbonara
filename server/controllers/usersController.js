@@ -81,23 +81,34 @@ const getUser = async (req, res) => {
 };
 
 const isUnique = (req, res) => {
-  User.findOne({ url: req.query.url }).then((user) => {
-    if (user) {
-      return res.json({ response: false });
-    } else {
-      return res.json({ response: true });
-    }
-  });
+  User.findOne({ url: req.query.url })
+    .then((user) => {
+      if (!user) {
+        res.status(200).json({ isUnique: true });
+      } else {
+        res.status(200).json({ isUnique: false });
+      }
+    })
+    .catch((err) => res.status(500).send('Server Error:' + err));
 };
 
-const updateUser = (req, res) => {
-  User.findOneAndUpdate({ id: req.params.id }, req.body, { new: true }, (err, user) => {
-    if (err) {
-      console.error(err);
-      return res.status(400).send(err);
-    }
-    res.status(204).end();
-  });
+const updateUser = async (req, res) => {
+  const sub = req.params.id;
+
+  try {
+    const user = await User.findOne({ sub });
+
+    user.url = req.body.url;
+    user.availability.hours = req.body.hours;
+    user.timezone = req.body.timeZone;
+    user.availability.days = req.body.days;
+    await user.save();
+
+    res.status(200).send('User profile updated');
+  } catch (err) {
+    console.error(err);
+    res.status(400).send(err);
+  }
 };
 
 const updateMeetings = async (req, res) => {
@@ -106,7 +117,7 @@ const updateMeetings = async (req, res) => {
   try {
     const user = await User.findOne({ sub });
     user.meetings.push(req.body);
-    user.save();
+    await user.save();
     res.status(204).end();
   } catch (err) {
     console.error(err);

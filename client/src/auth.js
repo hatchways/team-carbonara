@@ -1,8 +1,13 @@
 class Auth {
   authenticated = false;
+  sub = null;
+  email = null;
 
-  login(cb) {
+  login(cb, user) {
     this.authenticated = true;
+    //store info
+    this.sub = user.getBasicProfile().getId();
+    this.email = user.getBasicProfile().getEmail();
     cb();
   }
 
@@ -13,6 +18,14 @@ class Auth {
 
   isAuthenticated() {
     return this.authenticated;
+  }
+
+  getSub() {
+    return this.sub;
+  }
+
+  getEmail() {
+    return this.email;
   }
 }
 
