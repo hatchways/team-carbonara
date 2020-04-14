@@ -70,6 +70,30 @@ describe('test timeslots', () => {
   });
 });
 
+describe('test timeslots', () => {
+  it('returns expected slots in significant difference client timezone', () => {
+    const may20th = [{ start: '2020-05-20T14:00:00Z', end: '2020-05-20T18:00:00Z' }];
+
+    const slots = availSlots([2020, 4, 20], may20th, userAvail.hours, userAvail.timeZone, 'Asia/Seoul', 60);
+    console.log(slots);
+
+    assert.deepEqual(slots, [
+      '2020-05-20T00:00:00+09:00',
+      '2020-05-20T00:30:00+09:00',
+      '2020-05-20T01:00:00+09:00',
+      '2020-05-20T01:30:00+09:00',
+      '2020-05-20T02:00:00+09:00',
+      '2020-05-20T02:30:00+09:00',
+      '2020-05-20T03:00:00+09:00',
+      '2020-05-20T03:30:00+09:00',
+      '2020-05-20T04:00:00+09:00',
+      '2020-05-20T04:30:00+09:00',
+      '2020-05-20T05:00:00+09:00',
+      '2020-05-20T22:00:00+09:00',
+    ]);
+  });
+});
+
 const clientTz = 'US/Central';
 const userAvail = {
   days: {
