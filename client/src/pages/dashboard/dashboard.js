@@ -7,6 +7,7 @@ import DashPanel from '../../components/DashPanel/DashPanel';
 import Event from '../../components/Event/Event';
 import handleFetchErrors from '../../utils/handleFetchErrors';
 import NewEventDialog from '../../components/NewEventDialog/NewEventDialog';
+import auth from '../../auth';
 
 function Dashboard() {
   const classes = useStylesDashboard();
@@ -42,7 +43,7 @@ function Dashboard() {
     appName.remove();
 
     //google sub id
-    const subId = window.gapi.auth2.getAuthInstance().currentUser.get().getId();
+    const subId = auth.getSub();
 
     //fetch user info
     fetch(`http://localhost:3001/api/user/${subId}`)
@@ -73,8 +74,7 @@ function Dashboard() {
               <Avatar src={user.picture} />
               <div className={classes.profileInfo}>
                 <span>{user.given_name}</span>
-                {/* profle url here */}
-                <span>calendapp.com/PROFILE_URL</span>
+                <span>calendapp.com/{user.url}</span>
               </div>
             </div>
             <Button onClick={handleClickOpen} className={classes.addEventBtn} size="large" variant="outlined">
