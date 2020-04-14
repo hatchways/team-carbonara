@@ -106,14 +106,8 @@ const userAvail = {
   },
   //change data input format?
   hours: {
-    start: {
-      hour: 9,
-      minute: 0,
-    },
-    end: {
-      hour: 17,
-      minute: 0,
-    },
+    start: '9:00',
+    end: '17:00',
   },
   timeZone: 'America/New_York',
   offset: '-04:00',
