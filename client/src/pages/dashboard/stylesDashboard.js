@@ -51,7 +51,6 @@ const useStylesDashboard = makeStyles((theme) => ({
   },
   events: {
     display: 'flex',
-    justifyContent: 'space-between',
     flexWrap: 'wrap',
   },
   '@media (max-width: 1680px)': {
