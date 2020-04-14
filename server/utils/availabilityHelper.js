@@ -149,61 +149,82 @@ function availDays(reqMonth, freebusy, userAvail, userTz, clientTz, reqMeet) {
   return clientAvail;
 }
 
-function addToSlots(currStart, dayEnd, hoursEnd, reqMeet, slotTime, slots) {
-  while (currStart.isBefore(hoursEnd)) {
-    if (Math.abs(currStart.diff(dayEnd, 'minutes')) >= reqMeet) {
+function addToSlots(currStart, availEnd, reqMeet, slotTime, slots) {
+  while (currStart.isBefore(availEnd)) {
+    if (Math.abs(currStart.diff(availEnd, 'minutes')) >= reqMeet) {
       slots.push(currStart.format());
       currStart.add(slotTime, 'm');
     } else {
       break;
     }
   }
+
   return slots;
 }
 
-function availSlots(date, busy, userHours, userTz, clientTz, reqMeet) {
-  //need freebusy for 1 client day
-  //compare with user avail hours -> may be busy.start , end , unavail, start, busy.end
-  //translate into clientTz
-  // const sigTzOffset = clientDayStart.isBetween(
-  //   moment.tz(`${userHours.start.hour}:${userHours.start.minute}`, 'h:mm', userTz),
-  //   moment.tz(`${userHours.start.hour}:${userHours.start.minute}`, 'h:mm', userTz),
-  // );
+function availSlots(date, freebusy, userHours, userTz, clientTz, reqMeet) {
   const slots = [];
   const slotTime = reqMeet > 15 ? 30 : 15;
   let b = 0;
-  //if no significant offset
 
   //client date -> usertz -> set to userhours times
-  let curr = moment(date).hour(userHours.start.hour).minute(userHours.start.minute);
-  let end = moment(date).hour(userHours.end.hour).minute(userHours.end.minute);
+  let busyStart, busyEnd, busy;
+  let curr = moment.tz(date, clientTz).tz(userTz);
+  const end = moment(curr.format()).add(1, 'day');
+  const userStart = moment(curr.format()).hour(userHours.start.hour).minute(userHours.start.minute);
+  const userEnd = moment(curr.format()).hour(userHours.end.hour).minute(userHours.end.minute);
 
-  while (busy[b] && curr.isBefore(end)) {
+  const endFirst = userStart.isBefore(curr);
+  if (endFirst) userStart.add(1, 'day');
+
+  while (curr.isBefore(end)) {
     if (Math.abs(curr.diff(end, 'minutes')) < reqMeet) {
       break;
     }
-    let busyStart = moment(busy[b].start);
-    let busyEnd = moment(busy[b].end);
+    busy = freebusy[b];
+    if (busy) {
+      busyStart = moment(busy.start);
+      busyEnd = moment(busy.end);
+    }
 
     if (busyEnd.isSameOrBefore(curr)) {
+      curr = busyEnd;
       b++;
-    } else {
-      if (busyStart.isSameOrAfter(curr)) {
-        if (busyStart.isAfter(end)) {
-          addToSlots(curr, end, end, reqMeet, slotTime, slots);
-        } else {
-          addToSlots(curr, busyStart, end, reqMeet, slotTime, slots);
-          curr = busyEnd;
-          b++;
-        }
+    }
+    if (endFirst && curr.isBefore(userEnd)) {
+      if (busy && busyStart.isBefore(userEnd)) {
+        addToSlots(curr, busyStart, reqMeet, slotTime, slots);
+        curr = busyEnd;
+        b++;
+      } else {
+        addToSlots(curr, userEnd, reqMeet, slotTime, slots);
+        curr = userStart;
       }
+    } else if (endFirst && curr.isSameOrAfter(userStart)) {
+      if (busy && busyStart.isBefore(end)) {
+        addToSlots(curr, busyStart, reqMeet, slotTime, slots);
+        curr = busyEnd;
+        b++;
+      } else {
+        addToSlots(curr, end, reqMeet, slotTime, slots);
+        curr = end;
+      }
+    } else if (!endFirst && curr.isBetween(userStart, userEnd, null, '[)')) {
+      if (busy && busyStart.isBefore(userEnd)) {
+        addToSlots(curr, busyStart, reqMeet, slotTime, slots);
+        curr = busyEnd;
+        b++;
+      } else {
+        addToSlots(curr, userEnd, reqMeet, slotTime, slots);
+        curr = end;
+      }
+    } else {
+      if (curr.isBefore(userStart)) {
+        curr = userStart;
+      } else break;
     }
   }
-  if (!busy[b]) {
-    addToSlots(curr, end, end, reqMeet, slotTime, slots);
-  }
   let clientSlots = slots.map((time) => moment.tz(time, clientTz).format());
-
   return clientSlots;
 }
 
