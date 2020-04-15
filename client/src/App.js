@@ -42,7 +42,14 @@ function App(props) {
               <Route path="/signup">
                 <Form type="signup" />
               </Route>
-              <Route path="/confirm" component={Confirm} />
+              <Route path="/confirm">
+                <Confirm
+                  user="Jenny"
+                  meetingName="30 Minute Meeting"
+                  meetTime={30}
+                  apptTime="2020-05-20T14:00:00-04:00"
+                />
+              </Route>
 
               <PrivateRoute path="/dashboard" component={Dashboard} />
               <PrivateRoute path="/profile_settings" type="profile" activeStep={0} component={OnBoarding} />
