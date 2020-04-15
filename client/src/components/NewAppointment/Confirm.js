@@ -1,85 +1,95 @@
 import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
-import { Paper, Divider } from '@material-ui/core';
-import { TextField, TextareaAutosize, Button, IconButton } from '@material-ui/core';
+import stylesConfirm from './stylesConfirm';
+import { Paper, TextField, TextareaAutosize, Button, IconButton } from '@material-ui/core';
 import { FiClock, FiArrowLeftCircle } from 'react-icons/fi';
 import { FaRegCalendarCheck, FaGlobeAmericas } from 'react-icons/fa';
 import PropTypes from 'prop-types';
 import * as moment from 'moment-timezone';
 
-const styles = {
-  paper: {
-    width: '80%',
-    height: '600px',
-    display: 'flex',
-    justifyContent: 'space-between',
-    flexDirection: 'row',
-    margin: '0 auto',
-    marginBottom: '200px',
-  },
-  meetingInfo: {
-    flex: '0 0 30%',
-    padding: '1.5rem',
-    borderRight: '1px solid #eee',
-  },
-  confirmForm: {
-    flex: '0 0 70%',
-    padding: '1.5rem',
-    flexDirection: 'column',
-  },
-};
-
 function Confirm(props) {
   const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-  const months = ['January', 'February', 'March', 'April', 'May'];
+  const months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
   const clientTz = moment.tz.guess();
 
   const [nameField, setName] = useState({ name: '', error: false, errorText: '' });
   const [emailField, setEmail] = useState({ email: '', error: false, errorText: '' });
+  const [comment, setComment] = useState('');
 
-  const handleName = async (e) => {
-    e.target.value === ''
+  const handleName = (e) => {
+    !e || !e.target.value
       ? setName({ name: '', error: true, errorText: 'Name is required.' })
       : setName({ name: e.target.value, error: false, errorText: '' });
   };
 
-  const handleEmail = async (e) => {
-    e.target.value === ''
+  const handleEmail = (e) => {
+    !e || !e.target.value
       ? setEmail({ email: '', error: true, errorText: 'Email is required.' })
       : setEmail({ email: e.target.value, error: false, errorText: '' });
   };
-  console.log(nameField, emailField);
+
+  let history = useHistory();
+  const handleBackButton = () => {
+    // history.push('/uniqueurl/meeting');
+  };
+
+  const submitForm = () => {
+    if (!nameField.name || !emailField.email) {
+      handleName();
+      handleEmail();
+      return;
+    } else {
+      //send nameField.name, emailField.email, comment to backend to make appointment
+      //send to gcal to add to user calendar
+      //send emails
+    }
+  };
 
   const { classes, user, meetingName, meetTime, apptTime } = props;
   const appt = moment(apptTime);
   return (
     <Paper elevation={6} className={classes.paper}>
       <div className={classes.meetingInfo}>
-        <IconButton aria-label="back-to-scheduler">
+        <IconButton className={classes.backButton} aria-label="back-to-scheduler" onClick={handleBackButton}>
           <FiArrowLeftCircle />
         </IconButton>
         <h4>Meeting with {user}</h4>
         <h1>{meetingName}</h1>
-        <div>
-          <FiClock /> {meetTime}min
-        </div>
-        <div>
-          <FaRegCalendarCheck /> {appt.format('hh:mma')} - {appt.add(meetTime, 'm').format('hh:mma')},{' '}
-          {weekdays[appt.day()]}, {months[appt.month()]} {appt.date()}, {appt.year()}
-        </div>
-        <div>
-          <FaGlobeAmericas /> {clientTz + ' (GMT' + moment.tz(clientTz).format('Z') + ')'}
+        <div className={classes.eventDetails}>
+          <div>
+            <FiClock /> {meetTime}min
+          </div>
+          <div className={classes.eventTime}>
+            <FaRegCalendarCheck /> {appt.format('hh:mma')} - {appt.add(meetTime, 'm').format('hh:mma')},{' '}
+            {weekdays[appt.day()]}, {months[appt.month()]} {appt.date()}, {appt.year()}
+          </div>
+          <div>
+            <FaGlobeAmericas /> {clientTz.replace('_', ' ') + ' (GMT' + moment.tz(clientTz).format('Z') + ')'}
+          </div>
         </div>
       </div>
 
-      <Divider orientation="vertical" />
-
       <div className={classes.confirmForm}>
         <h2>Enter Details</h2>
-        <div>
+        <form className={classes.form}>
           <div>Name:</div>
           <TextField
             required
+            className={classes.textField}
             error={nameField.error}
             helperText={nameField.errorText}
             id="name-field"
@@ -87,11 +97,10 @@ function Confirm(props) {
             name="name"
             onChange={handleName}
           />
-        </div>
-        <div>
           <div>Email: </div>
           <TextField
             required
+            className={classes.textField}
             error={emailField.error}
             helperText={emailField.errorText}
             id="email-field"
@@ -99,20 +108,18 @@ function Confirm(props) {
             name="email"
             onChange={handleEmail}
           />
-        </div>
 
-        <div>Meeting Notes: </div>
-        <div>
+          <div>Meeting Notes: </div>
           <TextareaAutosize
-            className={classes.texarea}
+            className={classes.textArea}
             aria-label="meeting-comments"
             rowsMin={7}
-            placeholder="Minimum 3 rows"
+            onChange={(e) => setComment(e.target.value)}
           />
-        </div>
-        <Button variant="contained" color="primary">
-          Schedule Event
-        </Button>
+          <Button className={classes.button} variant="contained" color="primary" onClick={submitForm}>
+            Schedule Event
+          </Button>
+        </form>
       </div>
     </Paper>
   );
@@ -120,6 +127,10 @@ function Confirm(props) {
 
 Confirm.propTypes = {
   classes: PropTypes.object.isRequired,
+  user: PropTypes.string.isRequired,
+  meetingName: PropTypes.string.isRequired,
+  meetTime: PropTypes.number.isRequired,
+  apptTime: PropTypes.string.isRequired,
 };
 
-export default withStyles(styles)(Confirm);
+export default withStyles(stylesConfirm)(Confirm);
