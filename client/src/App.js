@@ -21,9 +21,7 @@ const stylesApp = (theme) => ({
   },
 });
 
-function App(props) {
-  const { classes } = props;
-
+function App({ classes }) {
   return (
     <React.Fragment>
       <BrowserRouter>

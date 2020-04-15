@@ -9,14 +9,13 @@ const styles = (theme) => ({
     width: '8rem',
     height: '2.5rem',
     alignSelf: 'center',
-    margin: '0 0 0.5rem 0',
+    margin: '1rem 0 0.5rem 0',
   },
 });
 
-function OnBoardButton(props) {
-  const { classes, submitForm, router, link, text } = props;
+function OnBoardButton({ classes, submitForm, text }) {
   return (
-    <Button className={classes.root} onClick={submitForm} component={router} to={link}>
+    <Button className={classes.root} onClick={submitForm}>
       {text}
     </Button>
   );
