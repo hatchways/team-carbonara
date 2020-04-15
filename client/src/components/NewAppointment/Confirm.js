@@ -44,7 +44,7 @@ function Confirm(props) {
 
   let history = useHistory();
   const handleBackButton = () => {
-    // history.push('/uniqueurl/meeting');
+    // history.push('/uniqueurl/meeting'); //back to scheduler
   };
 
   const submitForm = () => {
@@ -54,8 +54,12 @@ function Confirm(props) {
       return;
     } else {
       //send nameField.name, emailField.email, comment to backend to make appointment
+      //include meeting name, duration, event time (client), timezone(client),
+      //attach to user (id/sub/url)
       //send to gcal to add to user calendar
       //send emails
+      //if be success history.push('/finish'); //event created dialog
+      //else error, return to scheduler?
     }
   };
 
