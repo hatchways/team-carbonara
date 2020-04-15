@@ -6,7 +6,7 @@ const stylesConfirm = (theme) => ({
     justifyContent: 'space-between',
     flexDirection: 'row',
     margin: '0 auto',
-    marginBottom: '200px',
+    marginBottom: '100px',
   },
   backButton: {
     fontSize: '2rem',
@@ -67,6 +67,7 @@ const stylesConfirm = (theme) => ({
     paper: {
       flexDirection: 'column',
       position: 'relative',
+      height: '100%',
     },
     backButton: {
       position: 'absolute',
@@ -98,6 +99,18 @@ const stylesConfirm = (theme) => ({
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
+    },
+  },
+  '@media (max-width: 600px)': {
+    eventDetails: {
+      flexDirection: 'column',
+      alignItems: 'left',
+      '& div': {
+        padding: '0 0.5rem',
+      },
+    },
+    form: {
+      width: '90%',
     },
   },
 });
