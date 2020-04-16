@@ -8,6 +8,7 @@ import OnBoarding from './pages/OnBoarding';
 import Dashboard from './pages/Dashboard/Dashboard';
 import PrivateRoute from './components/PrivateRoute/PrivateRoute';
 import Calendar from './pages/Calendar/Calendar';
+import Confirm from './components/NewAppointment/Confirm';
 
 const stylesApp = (theme) => ({
   appName: {

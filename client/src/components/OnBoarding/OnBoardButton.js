@@ -6,6 +6,7 @@ const styles = (theme) => ({
   root: {
     background: `linear-gradient(to right, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
     color: '#eee',
+    textTransform: 'none',
     width: '8rem',
     height: '2.5rem',
     alignSelf: 'center',
