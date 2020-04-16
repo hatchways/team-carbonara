@@ -38,10 +38,6 @@ function Dashboard() {
   }
 
   useEffect(() => {
-    //remove appname node
-    const appName = document.getElementById('appName');
-    appName.remove();
-
     //google sub id
     const subId = auth.getSub();
 
@@ -51,6 +47,15 @@ function Dashboard() {
       .then((res) => res.json())
       .then((data) => {
         setUser(data);
+        //store some basic user info in localStorage
+        //access them in calendar UI
+        //remove it when loggin out?
+        const name = `${data.given_name} ${data.family_name}`;
+        const availability = data.availability;
+        const timezone = data.timezone;
+
+        const localStorageData = { name, availability, timezone };
+        localStorage.setItem('user', JSON.stringify(localStorageData));
       })
       .catch((e) => {
         console.error('Error: ' + e);
@@ -84,7 +89,13 @@ function Dashboard() {
           </header>
           <section className={classes.events}>
             {user.meetings.map((meeting, index) => (
-              <Event key={index} duration={meeting.duration} meetingName={meeting.meetingName} />
+              <Event
+                url={user.url}
+                user={`${user.given_name} ${user.family_name}`}
+                key={index}
+                duration={meeting.duration}
+                meetingName={meeting.meetingName}
+              />
             ))}
           </section>
           <Button size="large" variant="contained" className={classes.getStartedBtn}>
