@@ -8,6 +8,7 @@
     "moment-timezone": "^0.5.28",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
+    "react-calendar": "^3.0.1",
     "react-dom": "^16.8.6",
     "react-icons": "^3.9.0",
     "react-router-dom": "^5.0.1",
