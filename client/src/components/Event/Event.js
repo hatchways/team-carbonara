@@ -5,13 +5,13 @@ import { withTheme } from '@material-ui/core/styles';
 import { FaRegClock } from 'react-icons/fa';
 import { MdSettings } from 'react-icons/md';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
-function Event({ duration, meetingName }) {
+function Event({ duration, meetingName, url, user }) {
   const classes = useStylesEvent();
 
   let color = null;
 
-  //might remove this
   switch (duration) {
     case 15:
       color = 'darkmagenta';
@@ -45,7 +45,15 @@ function Event({ duration, meetingName }) {
       <div className={classes.linksContainer}>
         <div>
           <FaRegClock size={16} />
-          <span>{duration} min</span>
+          {/* target=_blank opens route in new tab */}
+          <Link
+            target="_blank"
+            to={{
+              pathname: `/${url}/${duration}`,
+            }}
+          >
+            {duration} min
+          </Link>
         </div>
         <Button className={classes.linkButton} variant="outlined">
           Copy Link
