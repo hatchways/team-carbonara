@@ -52,15 +52,37 @@ function Confirm(props) {
       handleName();
       handleEmail();
       return;
-    } else {
-      //send nameField.name, emailField.email, comment to backend to make appointment
-      //include meeting name, duration, event time (client), timezone(client),
-      //attach to user (id/sub/url)
-      //send to gcal to add to user calendar
-      //send emails
-      //if be success history.push('/finish'); //event created dialog
-      //else error, return to scheduler?
     }
+
+    const appointmentInfo = {
+      guestName: nameField.name,
+      guestEmail: emailField.email,
+      guestComment: comment,
+      guestTz: clientTz,
+      meetingName,
+      meetTime,
+      apptTime,
+    };
+    console.log(appointmentInfo);
+    fetch('http://localhost:3001/api/appointments', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(appointmentInfo),
+    }).then((res) => {
+      console.log('fetched');
+      if (res.status !== 201) {
+        history.push('/login'); //go to finish page?
+      } else {
+        history.push('/finish');
+      }
+    });
+    //attach to user (id/sub/url)
+    //send to gcal to add to user calendar
+    //send emails
+    //if be success history.push('/finish'); //event created dialog
+    //else error, return to scheduler?
   };
 
   const { classes, user, meetingName, meetTime, apptTime } = props;
