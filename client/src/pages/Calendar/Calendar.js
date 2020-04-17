@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 import handleFetchErrors from '../../utils/handleFetchErrors';
 import Calendar from 'react-calendar';
 import { FaClock } from 'react-icons/fa';
-import TimeSlots from '../../components/TimeSlotsContainer/TimeSlotsContainer';
+import TimeSlotsContainer from '../../components/TimeSlotsContainer/TimeSlotsContainer';
 import './CalendarComponent.css';
 
 function getDayOfWeek(index) {
@@ -60,10 +60,12 @@ function parseDayAvailbility(daysAvailableObj) {
 
 function CalendarPage() {
   const classes = useStylesCalendar();
+  const [dateObj, setDateObj] = useState(null);
   const [strDate, setDate] = useState(null);
   const [user, setUser] = useState({
     unavailableDays: [],
   });
+  const [meeting, setMeeting] = useState('');
   const [showTimeSlots, setShowTimeSlots] = useState(false);
   //mock data
   const [timeSlots, setTimeSlots] = useState([
@@ -84,11 +86,26 @@ function CalendarPage() {
   let { eventDuration, url } = useParams();
 
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem('user'));
-    const unavailableDays = parseDayAvailbility(data.availability['days']);
-    data.unavailableDays = unavailableDays;
-    setUser(data);
-  }, []);
+    //fetch user data
+    fetch(`http://localhost:3001/api/user/${url}/${eventDuration}`)
+      .then(handleFetchErrors)
+      .then((res) => res.json())
+      .then((data) => {
+        const unavailableDays = parseDayAvailbility(data.availability['days']);
+        data.unavailableDays = unavailableDays;
+        setUser(data);
+
+        //find specific meeting type
+        const meeting = data.meetings.filter((meeting) => {
+          if (meeting.duration == eventDuration) {
+            return true;
+          }
+          return false;
+        });
+        setMeeting(meeting[0]);
+      })
+      .catch((e) => console.log('Error ' + e));
+  }, [url, eventDuration]);
 
   function fetchAvailableTimeSlots(date, month) {
     fetch(
@@ -107,6 +124,7 @@ function CalendarPage() {
     const month = value.getMonth() + 1;
     const strDay = getDayOfWeek(value.getDay());
     const strMonth = getMonth(value.getMonth());
+    setDateObj(value);
     setDate(`${strDay}, ${strMonth} ${date}`);
     setShowTimeSlots(true);
 
@@ -126,8 +144,10 @@ function CalendarPage() {
   return (
     <Paper elevation={6} className={classes.calendarContainer}>
       <div className={classes.eventInfo}>
-        <Typography variant="h6">{user.name}</Typography>
-        <Typography variant="h4">{eventDuration} Minute Meeting</Typography>
+        <Typography variant="h6">{`${user.given_name} ${user.family_name}`}</Typography>
+        <Typography className={classes.meetingName} variant="h4">
+          {meeting.meetingName}
+        </Typography>
         <div className={classes.duration}>
           <FaClock size={20} />
           <Typography variant="body1">{eventDuration} min</Typography>
@@ -144,7 +164,16 @@ function CalendarPage() {
             tileDisabled={tileDisabled}
           />
         </div>
-        {showTimeSlots ? <TimeSlots availableTimes={timeSlots} date={strDate} /> : null}
+        {showTimeSlots ? (
+          <TimeSlotsContainer
+            givenName={user.given_name}
+            familyName={user.family_name}
+            meeting={meeting}
+            availableTimes={timeSlots}
+            date={strDate}
+            dateObj={dateObj}
+          />
+        ) : null}
       </div>
     </Paper>
   );
