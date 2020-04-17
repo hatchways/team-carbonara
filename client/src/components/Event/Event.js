@@ -2,7 +2,6 @@ import React from 'react';
 import useStylesEvent from './stylesEvent';
 import { Paper, Typography, Button } from '@material-ui/core';
 import { withTheme } from '@material-ui/core/styles';
-import { FaRegClock } from 'react-icons/fa';
 import { MdSettings } from 'react-icons/md';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
@@ -44,7 +43,6 @@ function Event({ duration, meetingName, url, user }) {
       </div>
       <div className={classes.linksContainer}>
         <div>
-          <FaRegClock size={16} />
           {/* target=_blank opens route in new tab */}
           <Link
             target="_blank"
