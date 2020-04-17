@@ -2,12 +2,16 @@ class Auth {
   authenticated = false;
   sub = null;
   email = null;
+  name = null;
 
-  login(cb, user) {
+  login(cb, userObj) {
     this.authenticated = true;
     //store info
-    this.sub = user.getBasicProfile().getId();
-    this.email = user.getBasicProfile().getEmail();
+    const user = userObj.getBasicProfile();
+
+    this.sub = user.getId();
+    this.email = user.getEmail();
+    this.name = user.getName();
     cb();
   }
 
@@ -26,6 +30,10 @@ class Auth {
 
   getEmail() {
     return this.email;
+  }
+
+  getName() {
+    return this.name;
   }
 }
 
