@@ -1,7 +1,16 @@
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-async function emailUserNewAppt(userEmail, userName, guestName, guestEmail, guestTz, guestComment, meetingName) {
+async function emailUserNewAppt(
+  userEmail,
+  userName,
+  guestName,
+  guestEmail,
+  guestTz,
+  guestComment,
+  meetingName,
+  eventTime,
+) {
   const msg = {
     to: userEmail,
     from: process.env.SENDER_EMAIL_ADDRESS,
@@ -15,7 +24,7 @@ async function emailUserNewAppt(userEmail, userName, guestName, guestEmail, gues
         comments: guestComment,
       },
       meetingName: meetingName,
-      eventTime: '09:00am - Wednesday, May 20, 2020 (America/New York GMT-4:00)',
+      eventTime: eventTime,
     },
   };
 
