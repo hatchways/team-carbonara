@@ -28,6 +28,7 @@ function App({ classes }) {
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <Switch>
+            <Route path="/:url/:eventDuration/confirm" component={Confirm} />
             <Route path="/:url/:eventDuration" component={Calendar} />
             <PrivateRoute path="/dashboard" component={Dashboard} />
             <React.Fragment>
