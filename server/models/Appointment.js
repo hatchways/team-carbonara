@@ -3,25 +3,32 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const appointmentSchema = new Schema({
-  meeting_id: {
+  user: { type: Schema.Types.ObjectId, ref: 'User' },
+  guestName: {
     type: String,
     required: true,
   },
-  name: {
+  guestEmail: {
     type: String,
     required: true,
   },
-  email: {
+  guestComment: {
+    type: String,
+  },
+  guestTz: {
     type: String,
     required: true,
   },
-  time: {
+  meetingName: {
+    type: String,
+    required: true,
+  },
+  meetTime: {
+    type: Number,
+    required: true,
+  },
+  apptTime: {
     type: Date,
-    required: true,
-  },
-  timezone: {
-    type: Map,
-    of: String,
     required: true,
   },
 });
