@@ -21,6 +21,11 @@ const create = async (req, res) => {
       meetTime: meetTime,
       apptTime: apptTime,
     });
+    const eventTime = `${moment(apptTime)
+      .tz(user.timezone)
+      .format('h:mma - dddd, MMMM Do YYYY')} (${user.timezone.replace('_', ' ')} GMT' + ${moment
+      .tz(user.timezone)
+      .format('Z')})`;
     try {
       await insertEvent(
         process.env.ACCESS_TOKEN,
@@ -34,7 +39,16 @@ const create = async (req, res) => {
       );
       await newAppointment.save();
 
-      await emailUserNewAppt(user.email, user.given_name, guestName, guestEmail, guestTz, guestComment, meetingName);
+      await emailUserNewAppt(
+        user.email,
+        user.given_name,
+        guestName,
+        guestEmail,
+        guestTz.replace('_', ' '),
+        guestComment,
+        meetingName,
+        eventTime,
+      );
 
       res.status(201).send('New event created');
     } catch (err) {
