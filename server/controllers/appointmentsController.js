@@ -1,10 +1,12 @@
 const Appointment = require('../models/Appointment');
 const User = require('../models/User');
 const { emailUserNewAppt } = require('../utils/emailHelper.js');
+const { insertEvent } = require('../utils/gcalHelper.js');
+const moment = require('moment-timezone');
 
 const create = async (req, res) => {
-  console.log(req.body);
   const { guestName, guestEmail, guestComment, guestTz, meetingName, meetTime, apptTime, url } = req.body;
+  const endTime = moment(apptTime).add(meetTime, 'm').format();
 
   try {
     const user = await User.findOne({ url });
@@ -19,18 +21,30 @@ const create = async (req, res) => {
       meetTime: meetTime,
       apptTime: apptTime,
     });
+    try {
+      await insertEvent(
+        process.env.ACCESS_TOKEN,
+        apptTime,
+        endTime,
+        user.timezone,
+        meetingName,
+        guestEmail,
+        guestName,
+        guestComment,
+      );
+      await newAppointment.save();
 
-    const appt = await newAppointment.save();
-    res.status(201).send(appt);
+      await emailUserNewAppt(user.email, user.given_name, guestName, guestEmail, guestTz, guestComment, meetingName);
+
+      res.status(201).send('New event created');
+    } catch (err) {
+      console.error(err);
+      res.status(500).send(err);
+    }
   } catch (err) {
-    console.log(err);
+    console.error(err);
     res.status(400).json(err);
   }
-
-  //find user
-  //send appt to gcal
-
-  // emailUserNewAppt(user.email, user.given_name, guestName, guestEmail, guestTz, guestComment, meetingName);
 };
 
 const index = (req, res) => {

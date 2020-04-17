@@ -21,11 +21,8 @@ async function emailUserNewAppt(userEmail, userName, guestName, guestEmail, gues
 
   try {
     sgMail.send(msg);
-  } catch (error) {
-    console.error(error);
-    if (error.response) {
-      console.error(error.response.body);
-    }
+  } catch (err) {
+    throw Error(err);
   }
 }
 
