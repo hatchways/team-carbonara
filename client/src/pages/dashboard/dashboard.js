@@ -47,15 +47,6 @@ function Dashboard() {
       .then((res) => res.json())
       .then((data) => {
         setUser(data);
-        //store some basic user info in localStorage
-        //access them in calendar UI
-        //remove it when loggin out?
-        const name = `${data.given_name} ${data.family_name}`;
-        const availability = data.availability;
-        const timezone = data.timezone;
-
-        const localStorageData = { name, availability, timezone };
-        localStorage.setItem('user', JSON.stringify(localStorageData));
       })
       .catch((e) => {
         console.error('Error: ' + e);
