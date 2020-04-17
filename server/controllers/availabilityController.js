@@ -1,29 +1,7 @@
 const User = require('../models/User');
 const moment = require('moment');
-const { google } = require('googleapis');
-const calendar = google.calendar('v3');
 const { availDays, availSlots } = require('../utils/availabilityHelper.js');
-
-const getFreebusy = async (token, startISO, endISO) => {
-  const oauth2client = new google.auth.OAuth2(process.env.CLIENT_ID, process.env.CLIENT_SECRET, `postmessage`);
-
-  oauth2client.setCredentials({
-    access_token: token,
-  });
-  const resp = await calendar.freebusy
-    .query({
-      auth: oauth2client,
-      resource: {
-        items: [{ id: 'primary' }],
-        timeMin: startISO,
-        timeMax: endISO,
-      },
-    })
-    .then((resp) => resp.data.calendars.primary.busy)
-    .catch((err) => console.log('ERROR HERE', err));
-
-  return resp;
-};
+const { getFreebusy } = require('../utils/gcalHelper.js');
 
 //get available days for a req month
 const daysAvailable = async (req, res) => {
