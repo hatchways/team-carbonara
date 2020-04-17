@@ -62,8 +62,8 @@ function Confirm({ classes }) {
       guestEmail: emailField.email,
       guestComment: comment,
       guestTz: clientTz,
-      meetingName: location.meeting.meetingName,
-      meetTime: location.meeting.duration,
+      meetingName: location.state.meeting.meetingName,
+      meetTime: location.state.meeting.duration,
       apptTime: appt,
       url,
     };
