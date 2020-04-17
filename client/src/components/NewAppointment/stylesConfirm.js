@@ -1,22 +1,46 @@
 const stylesConfirm = (theme) => ({
   paper: {
-    width: '80%',
-    height: '600px',
+    width: '65%',
+    height: '700px',
+    maxWidth: '1000px',
     display: 'flex',
     justifyContent: 'space-between',
     flexDirection: 'row',
-    margin: '0 auto',
-    marginBottom: '100px',
+    margin: '5rem auto',
   },
   backButton: {
     fontSize: '2rem',
     padding: '0',
     color: theme.palette.primary.light,
+    marginBottom: '2rem',
+  },
+  name: {
+    color: 'gray',
+    letterSpacing: '1px',
+    fontWeight: 'bold',
+    marginBottom: '0.5rem',
+  },
+  meetingName: {
+    color: '#484848',
+    textTransform: 'capitalize',
+    fontWeight: 'bold',
+    letterSpacing: '1px',
+    marginBottom: '0.5rem',
   },
   meetingInfo: {
     flex: '0 0 35%',
     padding: '1.5rem',
     borderRight: '1px solid #eee',
+  },
+  meetingDuration: {
+    color: 'gray',
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: '1rem',
+    '& span': {
+      marginLeft: '0.5rem',
+      fontWeight: 'bold',
+    },
   },
   eventDetails: {
     fontSize: '1rem',
@@ -26,6 +50,20 @@ const stylesConfirm = (theme) => ({
   },
   eventTime: {
     color: theme.palette.purple.main,
+    fontWeight: 'bold',
+    marginBottom: '0.5rem',
+    display: 'flex',
+    '& span': {
+      marginLeft: '0.5rem',
+    },
+  },
+  timeZone: {
+    display: 'flex',
+    color: 'gray',
+    fontWeight: 'bold',
+    '& span': {
+      marginLeft: '0.5rem',
+    },
   },
   form: {
     width: '66%',
