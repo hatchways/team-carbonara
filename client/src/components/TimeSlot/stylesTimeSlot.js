@@ -1,5 +1,4 @@
 import { makeStyles } from '@material-ui/core/styles';
-import { nominalTypeHack } from 'prop-types';
 
 const useStylesTimeSlot = makeStyles({
   container: {
@@ -19,6 +18,9 @@ const useStylesTimeSlot = makeStyles({
     cursor: 'pointer',
     '&:hover': {
       border: '2px solid darkorange',
+    },
+    '&:focus': {
+      outline: '0',
     },
   },
   confirmBtn: {
