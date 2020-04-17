@@ -38,10 +38,6 @@ function Dashboard() {
   }
 
   useEffect(() => {
-    //remove appname node
-    const appName = document.getElementById('appName');
-    appName.remove();
-
     //google sub id
     const subId = auth.getSub();
 
@@ -84,7 +80,13 @@ function Dashboard() {
           </header>
           <section className={classes.events}>
             {user.meetings.map((meeting, index) => (
-              <Event key={index} duration={meeting.duration} meetingName={meeting.meetingName} />
+              <Event
+                url={user.url}
+                user={`${user.given_name} ${user.family_name}`}
+                key={index}
+                duration={meeting.duration}
+                meetingName={meeting.meetingName}
+              />
             ))}
           </section>
           <Button size="large" variant="contained" className={classes.getStartedBtn}>

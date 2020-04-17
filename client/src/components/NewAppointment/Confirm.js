@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import stylesConfirm from './stylesConfirm';
-import { Paper, TextField, TextareaAutosize, Button, IconButton } from '@material-ui/core';
-import { FiClock, FiArrowLeftCircle } from 'react-icons/fi';
-import { FaRegCalendarCheck, FaGlobeAmericas } from 'react-icons/fa';
+import { Paper, TextField, TextareaAutosize, Button, IconButton, Typography } from '@material-ui/core';
+import { FiArrowLeftCircle } from 'react-icons/fi';
+import { FaRegCalendarCheck, FaGlobeAmericas, FaClock } from 'react-icons/fa';
 import PropTypes from 'prop-types';
 import * as moment from 'moment-timezone';
 
-function Confirm(props) {
+function Confirm({ classes }) {
   const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   const months = [
     'January',
@@ -25,6 +25,9 @@ function Confirm(props) {
     'December',
   ];
   const clientTz = moment.tz.guess();
+  const location = useLocation();
+  const { url } = useParams();
+  const appt = moment(location.state.date.toISOString());
 
   const [nameField, setName] = useState({ name: '', error: false, errorText: '' });
   const [emailField, setEmail] = useState({ email: '', error: false, errorText: '' });
@@ -59,9 +62,9 @@ function Confirm(props) {
       guestEmail: emailField.email,
       guestComment: comment,
       guestTz: clientTz,
-      meetingName,
-      meetTime,
-      apptTime,
+      meetingName: location.meeting.meetingName,
+      meetTime: location.meeting.duration,
+      apptTime: appt,
       url,
     };
     console.log(appointmentInfo);
@@ -81,26 +84,33 @@ function Confirm(props) {
     });
   };
 
-  const { classes, user, meetingName, meetTime, apptTime, url } = props;
-  const appt = moment(apptTime);
   return (
     <Paper elevation={6} className={classes.paper}>
       <div className={classes.meetingInfo}>
         <IconButton className={classes.backButton} aria-label="back-to-scheduler" onClick={handleBackButton}>
-          <FiArrowLeftCircle />
+          <FiArrowLeftCircle size={45} />
         </IconButton>
-        <h4>Meeting with {user}</h4>
-        <h1>{meetingName}</h1>
+        <Typography variant="h6" className={classes.name}>
+          {location.state.name}
+        </Typography>
+        <Typography variant="h4" className={classes.meetingName}>
+          {location.state.meeting.meetingName}
+        </Typography>
         <div className={classes.eventDetails}>
-          <div>
-            <FiClock /> {meetTime}min
+          <div className={classes.meetingDuration}>
+            <FaClock size={23} />
+            <span>{location.state.meeting.duration} min</span>
           </div>
           <div className={classes.eventTime}>
-            <FaRegCalendarCheck /> {appt.format('hh:mma')} - {appt.add(meetTime, 'm').format('hh:mma')},{' '}
-            {weekdays[appt.day()]}, {months[appt.month()]} {appt.date()}, {appt.year()}
+            <FaRegCalendarCheck size={23} />{' '}
+            <span>
+              {appt.format('hh:mma')} - {appt.add(location.state.meeting.duration, 'm').format('hh:mma')},{' '}
+              {weekdays[appt.day()]}, {months[appt.month()]} {appt.date()}, {appt.year()}
+            </span>
           </div>
-          <div>
-            <FaGlobeAmericas /> {clientTz.replace('_', ' ') + ' (GMT' + moment.tz(clientTz).format('Z') + ')'}
+          <div className={classes.timeZone}>
+            <FaGlobeAmericas size={23} />
+            <span>{clientTz.replace('_', ' ') + ' (GMT' + moment.tz(clientTz).format('Z') + ')'}</span>
           </div>
         </div>
       </div>
@@ -149,11 +159,6 @@ function Confirm(props) {
 
 Confirm.propTypes = {
   classes: PropTypes.object.isRequired,
-  user: PropTypes.string.isRequired,
-  meetingName: PropTypes.string.isRequired,
-  meetTime: PropTypes.number.isRequired,
-  apptTime: PropTypes.string.isRequired,
-  url: PropTypes.string.isRequired,
 };
 
 export default withStyles(stylesConfirm)(Confirm);

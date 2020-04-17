@@ -80,6 +80,18 @@ const getUser = async (req, res) => {
   }
 };
 
+const getUserByUrl = async (req, res) => {
+  const userUrl = req.params.url;
+
+  try {
+    const user = await User.findOne({ url: userUrl });
+    res.status(200).json(user);
+  } catch (err) {
+    console.error(err);
+    res.status(400).send(err);
+  }
+};
+
 const isUnique = (req, res) => {
   User.findOne({ url: req.query.url })
     .then((user) => {
@@ -125,4 +137,4 @@ const updateMeetings = async (req, res) => {
   }
 };
 
-module.exports = { userLogin, getUser, isUnique, updateUser, updateMeetings };
+module.exports = { userLogin, getUser, getUserByUrl, isUnique, updateUser, updateMeetings };
