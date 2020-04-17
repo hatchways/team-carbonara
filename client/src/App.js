@@ -46,6 +46,7 @@ function App({ classes }) {
                   meetingName="30 Minute Meeting"
                   meetTime={30}
                   apptTime="2020-05-20T14:00:00-04:00"
+                  url="jkam"
                 />
               </Route>
 

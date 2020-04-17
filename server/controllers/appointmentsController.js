@@ -1,18 +1,64 @@
 const Appointment = require('../models/Appointment');
+const User = require('../models/User');
+const { emailUserNewAppt } = require('../utils/emailHelper.js');
+const { insertEvent } = require('../utils/gcalHelper.js');
+const moment = require('moment-timezone');
 
-const create = (req, res) => {
-  const newAppointment = new Appointment({
-    meeting_id: req.body.meeting_id,
-    name: req.body.name,
-    email: req.body.email,
-    time: req.body.time,
-    timezone: req.body.timezone,
-  });
+const create = async (req, res) => {
+  const { guestName, guestEmail, guestComment, guestTz, meetingName, meetTime, apptTime, url } = req.body;
+  const endTime = moment(apptTime).add(meetTime, 'm').format();
 
-  newAppointment
-    .save()
-    .then(() => res.status(200).json('Appointment saved'))
-    .catch((err) => res.status(400).json(error));
+  try {
+    const user = await User.findOne({ url });
+
+    const newAppointment = new Appointment({
+      user: user._id,
+      guestName: guestName,
+      guestEmail: guestEmail,
+      guestComment: guestComment,
+      guestTz: guestTz,
+      meetingName: meetingName,
+      meetTime: meetTime,
+      apptTime: apptTime,
+    });
+    const eventTime = `${moment(apptTime)
+      .tz(user.timezone)
+      .format('h:mma - dddd, MMMM Do YYYY')} (${user.timezone.replace('_', ' ')} GMT' + ${moment
+      .tz(user.timezone)
+      .format('Z')})`;
+    try {
+      await insertEvent(
+        process.env.ACCESS_TOKEN,
+        apptTime,
+        endTime,
+        user.timezone,
+        meetingName,
+        guestEmail,
+        guestName,
+        guestComment,
+      );
+      await newAppointment.save();
+
+      await emailUserNewAppt(
+        user.email,
+        user.given_name,
+        guestName,
+        guestEmail,
+        guestTz.replace('_', ' '),
+        guestComment,
+        meetingName,
+        eventTime,
+      );
+
+      res.status(201).send('New event created');
+    } catch (err) {
+      console.error(err);
+      res.status(500).send(err);
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(400).json(err);
+  }
 };
 
 const index = (req, res) => {
