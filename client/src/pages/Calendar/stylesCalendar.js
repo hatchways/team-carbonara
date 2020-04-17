@@ -44,6 +44,40 @@ const useStylesCalendar = makeStyles({
     display: 'flex',
     padding: '2rem 0 2rem 2rem',
   },
+  meetingName: {
+    textTransform: 'capitalize',
+  },
+  '@media (max-width: 1600px)': {
+    eventInfo: {
+      textAlign: 'center',
+    },
+    calendarContainer: {
+      flexDirection: 'column',
+      height: '100%',
+      width: '50%',
+    },
+    duration: {
+      justifyContent: 'center',
+    },
+    calendar: {
+      paddingRight: '0',
+    },
+  },
+  '@media (max-width: 1400px)': {
+    calendarContainer: {
+      width: '55%',
+    },
+  },
+  '@media (max-width: 1260px)': {
+    calendarContainer: {
+      width: '70%',
+    },
+  },
+  '@media (max-width: 1000px)': {
+    calendarContainer: {
+      width: '85%',
+    },
+  },
 });
 
 export default useStylesCalendar;
