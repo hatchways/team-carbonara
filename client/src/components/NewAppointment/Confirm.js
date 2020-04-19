@@ -77,7 +77,7 @@ function Confirm({ classes }) {
     }).then((res) => {
       console.log('fetched');
       if (res.status !== 201) {
-        history.push('/login'); //go back to scheduler, error alert?
+        history.push('/jkam/60/confirm'); //go back to scheduler, error alert?
       } else {
         history.push('/finish');
       }
