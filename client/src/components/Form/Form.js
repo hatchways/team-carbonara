@@ -42,6 +42,7 @@ function Form({ classes, type }) {
     function handleSuccessLogin(user) {
       //send token to backend, verifiy and create session & or account
       const idToken = user.getAuthResponse().id_token;
+      console.log(user.getAuthResponse());
 
       fetch('http://localhost:3001/api/user/login', {
         method: 'POST',
@@ -77,9 +78,23 @@ function Form({ classes, type }) {
       //init GoogleAuth object
       window.gapi.auth2
         .init({
+          authParameters: { response_type: 'code', access_type: 'offline', prompt: 'consent' },
           client_id: process.env.REACT_APP_CLIENT_ID,
         })
         .then((authObj) => {
+          const auth2 = window.gapi.auth2.getAuthInstance();
+          console.log(auth2);
+          //immediate popup on render
+          auth2
+            .grantOfflineAccess({
+              access_type: 'offline',
+              prompt: 'consent',
+              scope: 'https://www.googleapis.com/auth/calendar',
+            })
+            .then((res) => {
+              console.log(res);
+              //auth code, post to backend to trade for tokens
+            });
           //attach signin flow to button
           authObj.attachClickHandler(
             'googleButton',
