@@ -3,11 +3,14 @@ import Navbar from '../../components/Navbar/Navbar';
 import useStylesDashboard from './stylesDashboard';
 import { withTheme } from '@material-ui/core/styles';
 import { Tabs, Tab, Button, Avatar } from '@material-ui/core';
+import { Route, Switch } from 'react-router-dom';
 import DashPanel from '../../components/DashPanel/DashPanel';
 import Event from '../../components/Event/Event';
 import handleFetchErrors from '../../utils/handleFetchErrors';
 import NewEventDialog from '../../components/NewEventDialog/NewEventDialog';
 import auth from '../../auth';
+import Upgrade from '../Upgrade/Upgrade';
+import Checkout from '../Checkout/Checkout';
 
 function Dashboard() {
   const classes = useStylesDashboard();
@@ -56,44 +59,59 @@ function Dashboard() {
   return (
     <div className={classes.container}>
       <Navbar picture={user.picture} name={user.given_name} />
-      <main className={classes.dashBody}>
-        <div className={classes.subHeader}>
-          <h1>My CalendApp</h1>
-          <Tabs value={value} onChange={handleChange} indicatorColor="primary" textColor="primary">
-            <Tab label="Event Types" />
-            <Tab label="Scheduled Events" />
-          </Tabs>
-        </div>
-        <DashPanel value={value} index={0}>
-          <header className={classes.panelHeader}>
-            <div className={classes.profileContainer}>
-              <Avatar src={user.picture} />
-              <div className={classes.profileInfo}>
-                <span>{user.given_name}</span>
-                <span>calendapp.com/{user.url}</span>
-              </div>
+      <Switch>
+        <Route exact path="/dashboard/user/upgrade">
+          <Upgrade sub={user.sub} subscriber={user.subscriber} />
+        </Route>
+        <Route exact path="/dashboard/user/upgrade/checkout">
+          <Checkout email={user.email} sub={user.sub} />
+        </Route>
+        <Route path="/">
+          <main className={classes.dashBody}>
+            <div className={classes.subHeader}>
+              <h1>My CalendApp</h1>
+              <Tabs value={value} onChange={handleChange} indicatorColor="primary" textColor="primary">
+                <Tab label="Event Types" />
+                <Tab label="Scheduled Events" />
+              </Tabs>
             </div>
-            <Button onClick={handleClickOpen} className={classes.addEventBtn} size="large" variant="outlined">
-              + New Event Type
-            </Button>
-            <NewEventDialog renderNewMeeting={renderNewMeeting} sub={user.sub} open={open} handleClose={handleClose} />
-          </header>
-          <section className={classes.events}>
-            {user.meetings.map((meeting, index) => (
-              <Event
-                url={user.url}
-                user={`${user.given_name} ${user.family_name}`}
-                key={index}
-                duration={meeting.duration}
-                meetingName={meeting.meetingName}
-              />
-            ))}
-          </section>
-          <Button size="large" variant="contained" className={classes.getStartedBtn}>
-            Getting Started Guide
-          </Button>
-        </DashPanel>
-      </main>
+            <DashPanel value={value} index={0}>
+              <header className={classes.panelHeader}>
+                <div className={classes.profileContainer}>
+                  <Avatar src={user.picture} />
+                  <div className={classes.profileInfo}>
+                    <span>{user.given_name}</span>
+                    <span>calendapp.com/{user.url}</span>
+                  </div>
+                </div>
+                <Button onClick={handleClickOpen} className={classes.addEventBtn} size="large" variant="outlined">
+                  + New Event Type
+                </Button>
+                <NewEventDialog
+                  renderNewMeeting={renderNewMeeting}
+                  sub={user.sub}
+                  open={open}
+                  handleClose={handleClose}
+                />
+              </header>
+              <section className={classes.events}>
+                {user.meetings.map((meeting, index) => (
+                  <Event
+                    url={user.url}
+                    user={`${user.given_name} ${user.family_name}`}
+                    key={index}
+                    duration={meeting.duration}
+                    meetingName={meeting.meetingName}
+                  />
+                ))}
+              </section>
+              <Button size="large" variant="contained" className={classes.getStartedBtn}>
+                Getting Started Guide
+              </Button>
+            </DashPanel>
+          </main>
+        </Route>
+      </Switch>
     </div>
   );
 }
