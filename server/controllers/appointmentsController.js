@@ -21,14 +21,11 @@ const create = async (req, res) => {
       meetTime: meetTime,
       apptTime: apptTime,
     });
-    const eventTime = `${moment(apptTime)
-      .tz(user.timezone)
-      .format('h:mma - dddd, MMMM Do YYYY')} (${user.timezone.replace('_', ' ')} GMT' + ${moment
-      .tz(user.timezone)
-      .format('Z')})`;
+    const eventTime = `${moment(apptTime).tz(user.timezone).format('h:mma - dddd, MMMM Do YYYY')}
+    (${user.timezone.replace('_', ' ')} GMT${moment.tz(user.timezone).format('Z')})`;
     try {
       await insertEvent(
-        process.env.ACCESS_TOKEN,
+        user.access_token,
         apptTime,
         endTime,
         user.timezone,
