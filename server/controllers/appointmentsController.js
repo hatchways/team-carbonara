@@ -60,10 +60,13 @@ const create = async (req, res) => {
   }
 };
 
-const index = (req, res) => {
-  Appointment.find({ user: req.params.user_id })
-    .then((appointments) => res.json(appointments))
-    .catch((err) => res.status(404).json({ noappointmentsfound: 'No appointments found from that user' }));
+const userIndex = async (req, res) => {
+  try {
+    const resp = await Appointment.find({ user: req.params.user_id });
+    res.status(200).send(resp);
+  } catch (err) {
+    res.status(404).json({ Error: 'User does not exist' });
+  }
 };
 
-module.exports = { create, index };
+module.exports = { create, userIndex };
