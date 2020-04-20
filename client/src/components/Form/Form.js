@@ -20,15 +20,13 @@ function Form({ classes, type }) {
 
   const handleSignUp = () => {
     const auth2 = window.gapi.auth2.getAuthInstance();
-    console.log('auth2', auth2);
     auth2
       .grantOfflineAccess({
         access_type: 'offline',
         scope: 'https://www.googleapis.com/auth/calendar',
       })
       .then((res) => {
-        console.log('AUTH2 AFTER', auth2);
-        //auth code, post to backend to trade for tokens
+        //res is auth code, post to backend to trade for tokens
         fetch('http://localhost:3001/api/user/login', {
           method: 'POST',
           mode: 'cors',
@@ -50,12 +48,11 @@ function Form({ classes, type }) {
                   history.push('/dashboard');
                   break;
 
-                //any other status codes will return back to login
+                //any other status codes will return back to signup
                 default:
                   return;
               }
-            }, auth2.currentUser);
-            //this won't work with auth class
+            }, auth2.currentUser.je.Pt);
           })
           .catch((error) => console.log(error));
       });
@@ -72,7 +69,6 @@ function Form({ classes, type }) {
     function handleSuccessLogin(user) {
       //send token to backend, verifiy and create session & or account
       const idToken = user.getAuthResponse().id_token;
-      console.log(user.getAuthResponse(), 'user', user);
 
       fetch('http://localhost:3001/api/user/login', {
         method: 'POST',
@@ -96,11 +92,12 @@ function Form({ classes, type }) {
                 break;
 
               //any other status codes will return back to login
+              //go to signup in case of token errors
               default:
                 history.push('/signup');
                 return;
             }
-          }, user);
+          }, user.getBasicProfile());
         })
         .catch((error) => console.log(error));
     }
@@ -113,8 +110,6 @@ function Form({ classes, type }) {
           client_id: process.env.REACT_APP_CLIENT_ID,
         })
         .then((authObj) => {
-          console.log('authobj', authObj);
-
           //attach signin flow to button
           authObj.attachClickHandler(
             'googleButton',
