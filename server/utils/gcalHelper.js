@@ -12,18 +12,16 @@ async function getFreebusy(access, refresh, startISO, endISO, url) {
 
   oauth2Client.on('tokens', (tokens) => {
     console.log(tokens);
-    //   await oauth2Client.setCredentials(tokens);
     if (tokens.refresh_token) {
       // store the refresh_token in my database!
       const user = User.findOne({ url });
       user.refresh_token = tokens.refresh_token;
       user.save();
-      console.log('oy refresh', tokens.refresh_token);
+      // console.log(tokens.refresh_token);
     }
-    console.log('oy access', tokens.access_token);
+    // console.log(tokens.access_token);
   });
   try {
-    console.log('before', oauth2Client.credentials);
     const resp = await calendar.freebusy.query({
       auth: oauth2Client,
       resource: {
@@ -32,11 +30,10 @@ async function getFreebusy(access, refresh, startISO, endISO, url) {
         timeMax: endISO,
       },
     });
-    console.log('after', oauth2Client.credentials);
 
     return resp.data.calendars.primary.busy;
   } catch (err) {
-    throw ('Error at freebusy', err);
+    throw ('Error at gcal freebusy', err);
   }
 }
 
@@ -92,7 +89,7 @@ async function insertEvent(
       resource: event,
     });
   } catch (err) {
-    throw ('Error at insert', err);
+    throw ('Error at gcal insert', err);
   }
 }
 
