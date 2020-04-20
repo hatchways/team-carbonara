@@ -5,6 +5,8 @@
   "dependencies": {
     "@material-ui/core": "^4.9.4",
     "@material-ui/lab": "^4.0.0-alpha.47",
+    "@stripe/react-stripe-js": "^1.1.2",
+    "@stripe/stripe-js": "^1.4.0",
     "moment-timezone": "^0.5.28",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",

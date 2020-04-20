@@ -15,10 +15,10 @@ function Navbar({ picture, name }) {
           <Link className={classes.link} to="/dashboard">
             Home
           </Link>
-          <Link className={classes.link} to="/integration">
+          <Link className={classes.link} to="/dashboard">
             Integration
           </Link>
-          <Link className={classes.link} to="/upgrade">
+          <Link className={classes.link} to="/dashboard/user/upgrade">
             Upgrade
           </Link>
         </nav>
