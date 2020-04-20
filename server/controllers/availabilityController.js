@@ -20,9 +20,7 @@ const daysAvailable = async (req, res) => {
       const startISO = moment.tz([year, reqMonth, day], clientTz).format();
       const endISO = moment.tz([year, 0, 31], clientTz).month(reqMonth).format();
 
-      console.log(reqMonth, startISO, endISO);
-
-      const freebusy = await getFreebusy(user.access_token, startISO, endISO);
+      const freebusy = await getFreebusy(user.access_token, user.refresh_token, startISO, endISO, uniqueurl);
 
       const availableDays = availDays(reqMonth, freebusy, user.availability, user.timezone, clientTz, reqMeet);
 
@@ -52,7 +50,7 @@ const timeslotsAvailable = async (req, res) => {
       const startISO = moment.tz([year, reqMonth, reqDay], clientTz).format();
       const endISO = moment.tz([year, reqMonth, reqDay + 1], clientTz).format();
 
-      const freebusy = await getFreebusy(user.access_token, startISO, endISO);
+      const freebusy = await getFreebusy(user.access_token, user.refresh_token, startISO, endISO, uniqueurl);
 
       const availableSlots = availSlots(date, freebusy, user.availability.hours, user.timezone, clientTz, reqMeet);
 

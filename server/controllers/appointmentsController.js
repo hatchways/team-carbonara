@@ -26,6 +26,7 @@ const create = async (req, res) => {
     try {
       await insertEvent(
         user.access_token,
+        user.refresh_token,
         apptTime,
         endTime,
         user.timezone,
@@ -33,6 +34,7 @@ const create = async (req, res) => {
         guestEmail,
         guestName,
         guestComment,
+        url,
       );
       await newAppointment.save();
 

@@ -28,7 +28,6 @@ function Form({ classes, type }) {
       })
       .then((res) => {
         console.log('AUTH2 AFTER', auth2);
-        // debugger;
         //auth code, post to backend to trade for tokens
         fetch('http://localhost:3001/api/user/login', {
           method: 'POST',
