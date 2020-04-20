@@ -109,9 +109,11 @@ function CalendarPage() {
 
   function fetchAvailableTimeSlots(date, month) {
     fetch(
-      `http://localhost:3001/api/availability/timeslots?month=${month}&day=${date}&meetTime=${eventDuration}&clientTz=${user.timezone}&uniqueurl=${url}`,
+      `http://localhost:3001/api/availability/timeslots?month=${
+        month - 1
+      }&day=${date}&meetTime=${eventDuration}&clientTz=${user.timezone}&uniqueurl=${url}`,
     )
-      .then(handleFetchErrors)
+      // .then(handleFetchErrors)
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
@@ -128,7 +130,7 @@ function CalendarPage() {
     setDate(`${strDay}, ${strMonth} ${date}`);
     setShowTimeSlots(true);
 
-    // fetchAvailableTimeSlots(date, month);
+    fetchAvailableTimeSlots(date, month);
   }
 
   function tileDisabled(activeStartDate) {
