@@ -6,14 +6,18 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
+  customerId: {
+    type: String,
+  },
   given_name: {
     type: String,
     required: true,
   },
   family_name: {
     type: String,
-    // required: true,
-    // error when family name not available
+  },
+  subscriber: {
+    type: Boolean,
   },
   sub: {
     type: String,
