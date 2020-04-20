@@ -75,7 +75,6 @@ function Form({ classes, type }) {
       const idToken = user.getAuthResponse().id_token;
       console.log(user.getAuthResponse(), 'user', user);
 
-      //no token for first sign up, send code to backend
       fetch('http://localhost:3001/api/user/login', {
         method: 'POST',
         mode: 'cors',
@@ -99,6 +98,7 @@ function Form({ classes, type }) {
 
               //any other status codes will return back to login
               default:
+                history.push('/signup');
                 return;
             }
           }, user);
