@@ -7,8 +7,8 @@ const { getFreebusy } = require('../utils/gcalHelper.js');
 const daysAvailable = async (req, res) => {
   //send from /uniqueurl/meeting
   const reqMonth = parseInt(req.query.month); //0-index
-  const reqMeet = 60; //req.query.meetTime; //minutes
-  const clientTz = 'US/Central'; //req.query.clientTz;
+  const reqMeet = parseInt(req.query.meetTime); //req.query.meetTime; //minutes
+  const clientTz = req.query.clientTz; //req.query.clientTz;
   const uniqueurl = req.query.uniqueurl;
 
   const year = reqMonth < moment().month() ? moment().year() + 1 : moment().year();
