@@ -9,27 +9,54 @@ import handleFetchErrors from '../../utils/handleFetchErrors';
 import auth from '../../auth';
 
 //obj to store values for signup/login
-const loginText = {
-  header: 'Log into your account',
-  helpText: "Don't have an account? ",
-  redirectText: 'Sign Up',
-  redirectPath: '/signup',
-};
-
-const signupText = {
-  header: 'Register an account',
-  helpText: 'Already have an account? ',
-  redirectText: 'Login',
-  redirectPath: '/login',
-};
 
 function Form({ classes, type }) {
   const [formType, setformType] = useState(null);
 
   //store bool of ternary operator
-  const formTypeConditional = formType === 'login' ? true : false;
+  const isLoginForm = formType === 'login' ? true : false;
 
   let history = useHistory();
+
+  const handleSignUp = () => {
+    const auth2 = window.gapi.auth2.getAuthInstance();
+    auth2
+      .grantOfflineAccess({
+        access_type: 'offline',
+        scope: 'https://www.googleapis.com/auth/calendar',
+      })
+      .then((res) => {
+        //res is auth code, post to backend to trade for tokens
+        fetch('http://localhost:3001/api/user/login', {
+          method: 'POST',
+          mode: 'cors',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ code: res.code }),
+        })
+          .then(handleFetchErrors)
+          .then((response) => {
+            auth.login(() => {
+              //redirect to profile setup if user was created
+              switch (response.status) {
+                case 201:
+                  history.push('/profile_settings');
+                  break;
+
+                case 200:
+                  history.push('/dashboard');
+                  break;
+
+                //any other status codes will return back to signup
+                default:
+                  return;
+              }
+            }, auth2.currentUser.je.Pt);
+          })
+          .catch((error) => console.log(error));
+      });
+  };
 
   useEffect(() => {
     if (type === 'login') setformType('login');
@@ -47,9 +74,9 @@ function Form({ classes, type }) {
         method: 'POST',
         mode: 'cors',
         headers: {
-          'Content-Type': 'text/plain',
+          'Content-Type': 'application/json',
         },
-        body: idToken,
+        body: JSON.stringify({ token: idToken }),
       })
         .then(handleFetchErrors)
         .then((response) => {
@@ -65,10 +92,12 @@ function Form({ classes, type }) {
                 break;
 
               //any other status codes will return back to login
+              //go to signup in case of token errors
               default:
+                history.push('/signup');
                 return;
             }
-          }, user);
+          }, user.getBasicProfile());
         })
         .catch((error) => console.log(error));
     }
@@ -77,6 +106,7 @@ function Form({ classes, type }) {
       //init GoogleAuth object
       window.gapi.auth2
         .init({
+          authParameters: { response_type: 'code', access_type: 'offline', prompt: 'consent' },
           client_id: process.env.REACT_APP_CLIENT_ID,
         })
         .then((authObj) => {
@@ -91,16 +121,31 @@ function Form({ classes, type }) {
     });
   }, [type, history]);
 
+  const loginText = {
+    header: 'Log into your account',
+    helpText: "Don't have an account? ",
+    redirectText: 'Sign Up',
+    redirectPath: '/signup',
+  };
+
+  const signupText = {
+    header: 'Register an account',
+    helpText: 'Already have an account? ',
+    redirectText: 'Login',
+    redirectPath: '/login',
+    handleClick: handleSignUp,
+  };
+
   return (
     <Paper elevation={6} className={classes.paper}>
-      <h2 className={classes.loginHeader}>{formTypeConditional ? loginText.header : signupText.header}</h2>
-      <GoogleButton type={type} />
+      <h2 className={classes.loginHeader}>{isLoginForm ? loginText.header : signupText.header}</h2>
+      <GoogleButton type={type} click={isLoginForm ? loginText.handleClick : signupText.handleClick} />
       <div>
         <Divider />
         <div className={classes.helpText}>
-          {formTypeConditional ? loginText.helpText : signupText.helpText}
-          <a href={formTypeConditional ? loginText.redirectPath : signupText.redirectPath}>
-            {formTypeConditional ? loginText.redirectText : signupText.redirectText}
+          {isLoginForm ? loginText.helpText : signupText.helpText}
+          <a href={isLoginForm ? loginText.redirectPath : signupText.redirectPath}>
+            {isLoginForm ? loginText.redirectText : signupText.redirectText}
           </a>
         </div>
       </div>

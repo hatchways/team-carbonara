@@ -7,56 +7,61 @@ const { getFreebusy } = require('../utils/gcalHelper.js');
 const daysAvailable = async (req, res) => {
   //send from /uniqueurl/meeting
   const reqMonth = parseInt(req.query.month); //0-index
-  const reqMeet = 60; //req.query.meetTime; //minutes
-  const clientTz = 'US/Central'; //req.query.clientTz;
+  const reqMeet = parseInt(req.query.meetTime); //req.query.meetTime; //minutes
+  const clientTz = req.query.clientTz; //req.query.clientTz;
   const uniqueurl = req.query.uniqueurl;
 
   const year = reqMonth < moment().month() ? moment().year() + 1 : moment().year();
   let day = reqMonth === moment().month() ? moment().date() : 1; //1 or current day of month (no past days)
 
-  const user = await User.findOne({ url: uniqueurl });
-  //.catch res.send("Error: User not found, denied access")
+  try {
+    const user = await User.findOne({ url: uniqueurl });
+    try {
+      const startISO = moment.tz([year, reqMonth, day], clientTz).format();
+      const endISO = moment.tz([year, 0, 31], clientTz).month(reqMonth).format();
 
-  //if access_token expired
-  //getRefreshToken() -> save token and expire time to db
+      const freebusy = await getFreebusy(user.access_token, user.refresh_token, startISO, endISO, uniqueurl);
 
-  const startISO = moment.tz([year, reqMonth, day], clientTz).format();
-  const endISO = moment.tz([year, 0, 31], clientTz).month(reqMonth).format();
+      const availableDays = availDays(reqMonth, freebusy, user.availability, user.timezone, clientTz, reqMeet);
 
-  console.log(reqMonth, startISO, endISO);
-
-  const freebusy = await getFreebusy(process.env.ACCESS_TOKEN, startISO, endISO);
-  console.log(freebusy);
-  const resp = availDays(reqMonth, freebusy, user.availability, user.timezone, clientTz, reqMeet);
-
-  res.status(200).send({ days: resp });
+      res.status(200).send({ days: availableDays });
+    } catch (err) {
+      res.status(500).send('Internal server error.');
+    }
+  } catch (err) {
+    res.status(400).send('Error: User not found, denied access');
+  }
 };
 
 //get available slots for a req day
 const timeslotsAvailable = async (req, res) => {
   //send from /uniqueurl/meeting
-  const reqMonth = 4; //req.query.month; //0-index
+  const reqMonth = parseInt(req.query.month); //0-index
   const reqDay = parseInt(req.query.day); //1-index
-  const reqMeet = 60; //req.query.meetTime; //minutes
-  const clientTz = 'US/Central'; //req.query.clientTz;
+  const reqMeet = parseInt(req.query.meetTime); //minutes
+  const clientTz = req.query.clientTz;
   const uniqueurl = req.query.uniqueurl;
 
   const year = reqMonth < moment().month() ? moment().year() + 1 : moment().year();
   const date = [year, reqMonth, reqDay];
+  try {
+    const user = await User.findOne({ url: uniqueurl });
+    try {
+      const startISO = moment.tz([year, reqMonth, reqDay], clientTz).format();
+      const endISO = moment.tz([year, reqMonth, reqDay + 1], clientTz).format();
 
-  const user = await User.findOne({ url: uniqueurl });
-  //.catch res.send("Error: User not found, denied access")
+      const freebusy = await getFreebusy(user.access_token, user.refresh_token, startISO, endISO, uniqueurl);
 
-  //if access_token expired
-  //getRefreshToken() -> save token and expire time to db
+      const availableSlots = availSlots(date, freebusy, user.availability.hours, user.timezone, clientTz, reqMeet);
 
-  const startISO = moment.tz([year, reqMonth, reqDay], clientTz).format();
-  const endISO = moment.tz([year, reqMonth, reqDay + 1], clientTz).format();
-
-  const freebusy = await getFreebusy(process.env.ACCESS_TOKEN, startISO, endISO);
-
-  const resp = availSlots(date, freebusy, user.availability.hours, user.timeZone, clientTz, reqMeet);
-  res.status(200).send({ slots: resp });
+      res.status(200).send({ slots: availableSlots });
+    } catch (err) {
+      console.log(err);
+      res.status(500).send('Internal Server Error.');
+    }
+  } catch (err) {
+    res.status(400).send('Error: User not found, denied access');
+  }
 };
 
 module.exports = { daysAvailable, timeslotsAvailable };
