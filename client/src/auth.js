@@ -4,10 +4,9 @@ class Auth {
   email = null;
   name = null;
 
-  login(cb, userObj) {
+  login(cb, user) {
     this.authenticated = true;
     //store info
-    const user = userObj.getBasicProfile();
 
     this.sub = user.getId();
     this.email = user.getEmail();

@@ -201,7 +201,7 @@ function availSlots(date, freebusy, userHours, userTz, clientTz, reqMeet) {
       busyEnd = moment(busy.end);
     }
 
-    if (busyEnd.isSameOrBefore(curr)) {
+    if (busy && busyEnd.isSameOrBefore(curr)) {
       curr = busyEnd;
       b++;
     }

@@ -1,25 +1,23 @@
 const User = require('../models/User');
 const _ = require('lodash');
-
+const { google } = require('googleapis');
+const oauth2Client = new google.auth.OAuth2(process.env.CLIENT_ID, process.env.CLIENT_SECRET, `postmessage`);
 //required to parse token
-const { OAuth2Client } = require('google-auth-library');
+// const { OAuth2Client } = require('google-auth-library');
 
 //function to verify token
 async function verifyToken(token) {
-  const client = new OAuth2Client(process.env.CLIENT_ID);
-
   try {
-    const ticket = await client.verifyIdToken({
+    const ticket = await oauth2Client.verifyIdToken({
       idToken: token,
       audience: process.env.CLIENT_ID,
     });
 
     const payload = ticket.getPayload();
-
     //second verification of token
     if (
       payload.aud !== process.env.CLIENT_ID ||
-      payload.iss !== ('accounts.google.com' || 'https://accounts.google.com')
+      (payload.iss !== 'accounts.google.com' && payload.iss !== 'https://accounts.google.com')
     ) {
       throw 'Token is not from client or issued by Google';
     }
@@ -33,7 +31,16 @@ async function verifyToken(token) {
 //Handle User Google Sign-in
 const userLogin = async (req, res) => {
   try {
-    const payload = await verifyToken(req.body);
+    let payload;
+    let oauthResp;
+    //req body is code or id_token
+    if (req.body.code) {
+      oauthResp = await oauth2Client.getToken(req.body.code);
+      payload = await verifyToken(oauthResp.tokens.id_token);
+    } else {
+      console.log('token', req.body.token);
+      payload = await verifyToken(req.body.token);
+    }
 
     //creates an obj composed of another obj properties
     const user = _.pick(payload, ['email', 'sub', 'given_name', 'family_name', 'picture']);
@@ -42,6 +49,12 @@ const userLogin = async (req, res) => {
     const userExists = await User.findOne({ sub: user.sub });
 
     if (userExists) {
+      //update tokens for registered users on signup path
+      if (req.body.code) {
+        userExists.access_token = oauthResp.tokens.access_token;
+        userExists.refresh_token = oauthResp.tokens.refresh_token;
+        await userExists.save();
+      }
       //implement sessions later
       req.session.userID = user.sub;
       return res.status(200).end();
@@ -51,6 +64,9 @@ const userLogin = async (req, res) => {
     const newUser = new User(user);
     //add default 60min meeting
     newUser.meetings = [{ meetingName: '60 minute meeting', duration: 60 }];
+    //add tokens
+    newUser.access_token = oauthResp.tokens.access_token;
+    newUser.refresh_token = oauthResp.tokens.refresh_token;
 
     try {
       const savedUser = await newUser.save();
