@@ -47,12 +47,12 @@ const userLogin = async (req, res) => {
       return res.status(200).end();
     }
 
-    //Implied VALIDATION via Google
-    const newUser = new User(user);
-    //add default 60min meeting
-    newUser.meetings = [{ meetingName: '60 minute meeting', duration: 60 }];
-
     try {
+      const newUser = new User(user);
+      //add default 60min meeting
+      newUser.meetings = [{ meetingName: '60 minute meeting', duration: 60 }];
+      newUser.subscriber = false;
+      //Implied VALIDATION via Google
       const savedUser = await newUser.save();
 
       //implement sessions later
