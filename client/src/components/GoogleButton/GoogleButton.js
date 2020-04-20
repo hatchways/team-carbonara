@@ -3,10 +3,10 @@ import { FaGoogle } from 'react-icons/fa';
 import './GoogleButton.css';
 
 function GoogleButton(props) {
-  const { type } = props;
+  const { type, click } = props;
 
   return (
-    <div id="googleButton" className="buttonContainer">
+    <div id="googleButton" className="buttonContainer" onClick={click}>
       <FaGoogle size={20} />
       <span>{type === 'login' ? 'Sign in with Google' : 'Sign up with Google'}</span>
     </div>
