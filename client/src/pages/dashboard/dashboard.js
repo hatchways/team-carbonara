@@ -52,7 +52,7 @@ function Dashboard() {
         console.error('Error: ' + e);
       });
   }, []);
-
+  console.log(user);
   return (
     <div className={classes.container}>
       <Navbar picture={user.picture} name={user.given_name} />
@@ -92,6 +92,10 @@ function Dashboard() {
           <Button size="large" variant="contained" className={classes.getStartedBtn}>
             Getting Started Guide
           </Button>
+        </DashPanel>
+        <DashPanel value={value} index={1}>
+          <header className={classes.panelHeader}>Displaying x of n Events</header>
+          <section className={classes.events}>{/* <DisplayEvents events={appointments} /> */}</section>
         </DashPanel>
       </main>
     </div>
