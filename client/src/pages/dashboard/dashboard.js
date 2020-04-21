@@ -8,6 +8,7 @@ import Event from '../../components/Event/Event';
 import handleFetchErrors from '../../utils/handleFetchErrors';
 import NewEventDialog from '../../components/NewEventDialog/NewEventDialog';
 import auth from '../../auth';
+import DisplayAppointments from '../../components/DisplayAppointments/DisplayAppointments';
 
 function Dashboard() {
   const classes = useStylesDashboard();
@@ -95,7 +96,9 @@ function Dashboard() {
         </DashPanel>
         <DashPanel value={value} index={1}>
           <header className={classes.panelHeader}>Displaying x of n Events</header>
-          <section className={classes.events}>{/* <DisplayEvents events={appointments} /> */}</section>
+          <section className={classes.events}>
+            <DisplayAppointments user={user._id} timezone={user.timezone} />
+          </section>
         </DashPanel>
       </main>
     </div>
