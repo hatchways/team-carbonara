@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import handleFetchErrors from '../../utils/handleFetchErrors';
 import { withStyles } from '@material-ui/core/styles';
-import { Paper, Tabs, Tab, Button, Typography } from '@material-ui/core';
+import { Paper, Tabs, Tab } from '@material-ui/core';
 import PropTypes from 'prop-types';
-import * as moment from 'moment-timezone';
 import AppointmentsPanel from './AppointmentsPanel';
 import AppointmentList from './AppointmentList';
 
@@ -33,16 +32,16 @@ function DisplayAppointments({ classes, timezone, user }) {
           console.error('Error: ' + e);
         });
     };
-    fetchAppts();
+    if (user) fetchAppts();
   }, [timezone, user]);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
-  const renderAppts = (appts, type) => {
+  const renderAppts = (appts) => {
     if (appts) {
-      return Object.keys(appts).map((key) => <AppointmentList date appointments={appts[key]} type={type} />);
+      return Object.keys(appts).map((key) => <AppointmentList appointments={appts[key]} key={key} />);
     }
   };
   return (
@@ -53,10 +52,10 @@ function DisplayAppointments({ classes, timezone, user }) {
           <Tab label="Past" />
         </Tabs>
         <AppointmentsPanel value={value} index={0}>
-          {renderAppts(appointments.upcoming, 'upcoming')}
+          {renderAppts(appointments.upcoming)}
         </AppointmentsPanel>
         <AppointmentsPanel value={value} index={1}>
-          {renderAppts(appointments.past, 'past')}
+          {renderAppts(appointments.past)}
         </AppointmentsPanel>
       </div>
     </Paper>
