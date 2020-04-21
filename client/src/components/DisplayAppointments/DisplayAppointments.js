@@ -11,6 +11,7 @@ const styles = (theme) => ({
   paper: {
     width: '100%',
     minHeight: '400px',
+    marginTop: '50px',
     marginBottom: '100px',
   },
 });
