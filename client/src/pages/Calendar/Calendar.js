@@ -7,6 +7,7 @@ import Calendar from 'react-calendar';
 import { FaClock } from 'react-icons/fa';
 import TimeSlotsContainer from '../../components/TimeSlotsContainer/TimeSlotsContainer';
 import './CalendarComponent.css';
+import moment from 'moment-timezone';
 
 function getDayOfWeek(index) {
   const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -58,6 +59,11 @@ function parseDayAvailbility(daysAvailableObj) {
   return daysUnavailable;
 }
 
+function parseISOstr(slotsObj) {
+  const parsedSlots = slotsObj.map((timeStr) => moment(timeStr).format('h:mm'));
+  return parsedSlots;
+}
+
 function CalendarPage() {
   const classes = useStylesCalendar();
   const [dateObj, setDateObj] = useState(null);
@@ -65,27 +71,27 @@ function CalendarPage() {
   const [user, setUser] = useState({
     unavailableDays: [],
   });
+  const [isLoading, setLoading] = useState(false);
   const [meeting, setMeeting] = useState('');
   const [showTimeSlots, setShowTimeSlots] = useState(false);
-  //mock data
-  const [timeSlots, setTimeSlots] = useState([
-    { time: '9:00' },
-    { time: '9:30' },
-    { time: '10:00' },
-    { time: '10:30' },
-    { time: '11:00' },
-    { time: '11:30' },
-    { time: '12:00' },
-    { time: '12:00' },
-    { time: '12:00' },
-    { time: '12:00' },
-    { time: '12:00' },
-    { time: '12:00' },
-  ]);
+  const [timeSlots, setTimeSlots] = useState([]);
 
   let { eventDuration, url } = useParams();
 
   useEffect(() => {
+    // problem getting month on mount and clientTz on mount.
+    // can use const month = new Date().getMonth(), but only returns for the current month and not next month because calendar doesn't unmount
+
+    // getting clientTz possibility
+    // wait till user data is fetched? and then pass it?
+
+    // function fetchAvailableDays(){
+    //   //month, meetTime, timezone, uniqueurl
+
+    //   fetch(
+    //     `http://localhost:3001/api/availability/days?month=${}&meetTime=${eventDuration}&clientTz=${}&uniqueurl=${url}`)
+    // }
+
     //fetch user data
     fetch(`http://localhost:3001/api/user/${url}/${eventDuration}`)
       .then(handleFetchErrors)
@@ -116,7 +122,9 @@ function CalendarPage() {
       // .then(handleFetchErrors)
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
+        const timeSlots = parseISOstr(data.slots);
+        setTimeSlots(timeSlots);
+        setLoading(false);
       })
       .catch((err) => console.log(err));
   }
@@ -129,7 +137,7 @@ function CalendarPage() {
     setDateObj(value);
     setDate(`${strDay}, ${strMonth} ${date}`);
     setShowTimeSlots(true);
-
+    setLoading(true);
     fetchAvailableTimeSlots(date, month);
   }
 
@@ -160,6 +168,7 @@ function CalendarPage() {
         <div className={classes.calendar}>
           <Typography variant="h5">Select a Date & Time</Typography>
           <Calendar
+            onViewChange={() => console.log('month')}
             minDate={setMinDate()}
             maxDate={setMaxDate()}
             onClickDay={handleClick}
@@ -174,6 +183,7 @@ function CalendarPage() {
             availableTimes={timeSlots}
             date={strDate}
             dateObj={dateObj}
+            isLoading={isLoading}
           />
         ) : null}
       </div>
