@@ -7,7 +7,6 @@ import {
   ExpansionPanel,
   ExpansionPanelDetails,
   ExpansionPanelSummary,
-  ExpansionPanelActions,
 } from '@material-ui/core';
 import { MdExpandMore } from 'react-icons/md';
 import { FaRegCalendarCheck, FaRegTrashAlt } from 'react-icons/fa';
@@ -53,8 +52,8 @@ function Appointment({ classes, appointment }) {
       <ExpansionPanel>
         <ExpansionPanelSummary
           expandIcon={<MdExpandMore />}
-          aria-controls="panel1c-content"
-          id="panel1c-header"
+          aria-controls="event summary"
+          id={appointment.apptTime}
           className={classes.expansionSummary}
         >
           <div className={classes.column}>
@@ -82,9 +81,9 @@ function Appointment({ classes, appointment }) {
           </div>
           <div>
             <Typography variant="subtitle1">Email</Typography>
-            <Typography gutterBottom="true">{appointment.guestEmail}</Typography>
+            <Typography gutterBottom={true}>{appointment.guestEmail}</Typography>
             <Typography variant="subtitle1">Invitee Timezone</Typography>
-            <Typography gutterBottom="true">{appointment.guestTz.replace('_', ' ')}</Typography>
+            <Typography gutterBottom={true}>{appointment.guestTz.replace('_', ' ')}</Typography>
           </div>
         </ExpansionPanelDetails>
         <Divider />
@@ -95,6 +94,7 @@ function Appointment({ classes, appointment }) {
 
 Appointment.propTypes = {
   classes: PropTypes.object.isRequired,
+  appointment: PropTypes.object.isRequired,
 };
 
 export default withStyles(styles)(Appointment);
