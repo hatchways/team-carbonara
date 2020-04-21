@@ -48,7 +48,7 @@ const timeslotsAvailable = async (req, res) => {
     const user = await User.findOne({ url: uniqueurl });
     try {
       const startISO = moment.tz([year, reqMonth, reqDay], clientTz).format();
-      const endISO = moment.tz([year, reqMonth, reqDay + 1], clientTz).format();
+      const endISO = moment.tz([year, reqMonth, reqDay], clientTz).add(1, 'day').format();
 
       const freebusy = await getFreebusy(user.access_token, user.refresh_token, startISO, endISO, uniqueurl);
 
