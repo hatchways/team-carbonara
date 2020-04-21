@@ -53,7 +53,6 @@ function Dashboard() {
         console.error('Error: ' + e);
       });
   }, []);
-  console.log(user);
   return (
     <div className={classes.container}>
       <Navbar picture={user.picture} name={user.given_name} />
@@ -95,7 +94,6 @@ function Dashboard() {
           </Button>
         </DashPanel>
         <DashPanel value={value} index={1}>
-          <header className={classes.panelHeader}>Displaying x of n Events</header>
           <section className={classes.events}>
             <DisplayAppointments user={user._id} timezone={user.timezone} />
           </section>

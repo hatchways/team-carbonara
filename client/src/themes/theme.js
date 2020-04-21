@@ -12,6 +12,9 @@ export const theme = createMuiTheme({
     //   //modifies some component typography
     //   fontSize: '0.7rem',
     // },
+    subtitle1: {
+      fontWeight: 'bold',
+    },
   },
   palette: {
     primary: { main: orange.A700, light: orange[400] },

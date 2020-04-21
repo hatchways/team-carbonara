@@ -10,6 +10,7 @@ import {
   ExpansionPanelActions,
 } from '@material-ui/core';
 import { MdExpandMore } from 'react-icons/md';
+import { FaRegCalendarCheck, FaRegTrashAlt } from 'react-icons/fa';
 
 import PropTypes from 'prop-types';
 import * as moment from 'moment-timezone';
@@ -18,15 +19,14 @@ const styles = (theme) => ({
   appointment: {
     width: '100%',
   },
-  root: {
-    width: '100%',
+  expansionSummary: {
+    '&:hover': {
+      backgroundColor: '#f7f7f7',
+    },
   },
-  heading: {
-    fontSize: theme.typography.pxToRem(15),
-  },
-  secondaryHeading: {
-    fontSize: theme.typography.pxToRem(15),
-    color: theme.palette.text.secondary,
+  time: {
+    verticalAlign: 'bottom',
+    fontSize: '0.8rem',
   },
   icon: {
     verticalAlign: 'bottom',
@@ -37,56 +37,57 @@ const styles = (theme) => ({
     alignItems: 'center',
   },
   column: {
-    flexBasis: '33.33%',
+    width: '300px',
+    padding: '0 5rem 0 3rem',
   },
-  helper: {
-    borderLeft: `2px solid ${theme.palette.divider}`,
-    padding: theme.spacing(1, 2),
-  },
-  link: {
-    color: theme.palette.primary.main,
-    textDecoration: 'none',
-    '&:hover': {
-      textDecoration: 'underline',
-    },
+  button: {
+    width: '90%',
+    textTransform: 'none',
+    fontSize: '0.8rem',
   },
 });
 
 function Appointment({ classes, appointment }) {
   return (
     <div className={classes.appointment}>
-      <ExpansionPanel defaultExpanded>
-        <ExpansionPanelSummary expandIcon={<MdExpandMore />} aria-controls="panel1c-content" id="panel1c-header">
+      <ExpansionPanel>
+        <ExpansionPanelSummary
+          expandIcon={<MdExpandMore />}
+          aria-controls="panel1c-content"
+          id="panel1c-header"
+          className={classes.expansionSummary}
+        >
           <div className={classes.column}>
-            <Typography className={classes.heading}>{appointment.apptTime}</Typography>
+            <FaRegCalendarCheck size={23} className={classes.icon} />{' '}
+            <span className={classes.time}>
+              {moment(appointment.apptTime).tz(appointment.userTz).format('hh:mma')} -
+              {moment(appointment.apptTime).tz(appointment.userTz).add(appointment.meetTime, 'm').format('hh:mma')}
+            </span>
           </div>
-          <div className={classes.column}>
-            {/* <Typography className={classes.secondaryHeading}>Select trip destination</Typography> */}
-            <Typography>{appointment.guestName}</Typography>
+          <div>
+            <Typography variant="subtitle1">{appointment.guestName}</Typography>
             <Typography>{appointment.meetingName}</Typography>
           </div>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails className={classes.details}>
           <div className={classes.column}>
-            <Button variant="outlined" color="primary">
+            <Button
+              className={classes.button}
+              variant="outlined"
+              color="primary"
+              startIcon={<FaRegTrashAlt size={15} />}
+            >
               Cancel
             </Button>
           </div>
-          <div className={classes.column}>
-            <Typography>Email</Typography>
-            <Typography>{appointment.guestEmail}</Typography>
-            <Typography>Invitee Timezone</Typography>
-            <Typography>{appointment.guestTz}</Typography>
+          <div>
+            <Typography variant="subtitle1">Email</Typography>
+            <Typography gutterBottom="true">{appointment.guestEmail}</Typography>
+            <Typography variant="subtitle1">Invitee Timezone</Typography>
+            <Typography gutterBottom="true">{appointment.guestTz.replace('_', ' ')}</Typography>
           </div>
-          <div className={classes.column}></div>
         </ExpansionPanelDetails>
         <Divider />
-        <ExpansionPanelActions>
-          <Button size="small">Cancel</Button>
-          <Button size="small" color="primary">
-            Save
-          </Button>
-        </ExpansionPanelActions>
       </ExpansionPanel>
     </div>
   );
