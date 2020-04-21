@@ -13,7 +13,7 @@ function addTimeToDate(time, dateObj) {
   return newDate;
 }
 
-function TimeSlot({ timeObj, givenName, familyName, meeting, dateObj }) {
+function TimeSlot({ time, givenName, familyName, meeting, dateObj }) {
   const classes = useStylesTimeSlot();
   const [active, setActive] = useState(false);
 
@@ -30,8 +30,8 @@ function TimeSlot({ timeObj, givenName, familyName, meeting, dateObj }) {
       state: {
         name: `${givenName} ${familyName}`,
         meeting,
-        date: addTimeToDate(timeObj.time, dateObj),
-        time: timeObj.time,
+        date: addTimeToDate(time, dateObj),
+        time,
       },
     });
   }
@@ -39,7 +39,7 @@ function TimeSlot({ timeObj, givenName, familyName, meeting, dateObj }) {
   return (
     <div className={classes.container}>
       <button onClick={handleClick} className={classes.button}>
-        {timeObj.time}
+        {time}
       </button>
       {active ? (
         <button onClick={handleConfirm} className={classes.confirmBtn}>
@@ -54,7 +54,7 @@ TimeSlot.propTypes = {
   givenName: PropTypes.string.isRequired,
   familyName: PropTypes.string.isRequired,
   meeting: PropTypes.object.isRequired,
-  timeObj: PropTypes.object.isRequired,
+  time: PropTypes.string.isRequired,
   dateObj: PropTypes.object.isRequired,
 };
 
