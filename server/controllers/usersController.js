@@ -67,6 +67,7 @@ const userLogin = async (req, res) => {
     //add tokens
     newUser.access_token = oauthResp.tokens.access_token;
     newUser.refresh_token = oauthResp.tokens.refresh_token;
+    newUser.subscriber = false;
 
     try {
       const savedUser = await newUser.save();
