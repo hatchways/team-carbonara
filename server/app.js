@@ -8,6 +8,7 @@ const logger = require('morgan');
 const userRouter = require('./routes/users');
 const appointmentRouter = require('./routes/appointments');
 const availabilityRouter = require('./routes/availability');
+const subscriptionRouter = require('./routes/subscription');
 
 const { json, urlencoded } = express;
 
@@ -36,6 +37,7 @@ app.use(
 app.use('/api/user', userRouter);
 app.use('/api/availability', availabilityRouter);
 app.use('/api/appointments', appointmentRouter);
+app.use('/api/subscription', subscriptionRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
