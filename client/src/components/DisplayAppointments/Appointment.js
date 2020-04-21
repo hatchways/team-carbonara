@@ -12,6 +12,7 @@ import {
 import { MdExpandMore } from 'react-icons/md';
 
 import PropTypes from 'prop-types';
+import * as moment from 'moment-timezone';
 
 const styles = (theme) => ({
   appointment: {

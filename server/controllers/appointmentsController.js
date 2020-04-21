@@ -13,6 +13,7 @@ const create = async (req, res) => {
 
     const newAppointment = new Appointment({
       user: user._id,
+      userTz: user.timezone,
       guestName: guestName,
       guestEmail: guestEmail,
       guestComment: guestComment,
