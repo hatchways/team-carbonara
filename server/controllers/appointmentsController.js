@@ -68,7 +68,7 @@ const userIndex = async (req, res) => {
     //   return a.apptTime - b.apptTime;
     // });
     const parsed = { upcoming: {}, past: {} };
-    const curr = moment().tz(req.params.timezone).format();
+    const curr = moment().tz(req.query.timezone).format();
     for (const appt of resp) {
       const time = moment(appt.apptTime);
       if (time.isAfter(curr)) {
