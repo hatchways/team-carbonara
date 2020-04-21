@@ -15,6 +15,12 @@ const useStylesTimeSlots = makeStyles({
     overflowY: 'scroll',
     maxWidth: '250px',
   },
+  loader: {
+    display: 'flex',
+    justifyContent: 'center',
+    marginTop: '1rem',
+    overflowY: 'hidden !important',
+  },
 });
 
 export default useStylesTimeSlots;
