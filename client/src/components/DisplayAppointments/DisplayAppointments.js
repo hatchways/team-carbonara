@@ -9,8 +9,9 @@ import AppointmentList from './AppointmentList';
 
 const styles = (theme) => ({
   paper: {
-    width: '80%',
-    height: '400px',
+    width: '100%',
+    minHeight: '400px',
+    marginBottom: '100px',
   },
 });
 
@@ -40,15 +41,9 @@ function DisplayAppointments({ classes, timezone, user }) {
 
   const renderAppts = (appts, type) => {
     if (appts) {
-      console.log(appts);
-      return Object.keys(appts).map((key) => {
-        console.log(key, appts[key], appts);
-        return <AppointmentList date appointments={appts[key]} type={type} />;
-      });
+      return Object.keys(appts).map((key) => <AppointmentList date appointments={appts[key]} type={type} />);
     }
   };
-  //display in user timezone
-  console.log(appointments, timezone);
   return (
     <Paper elevation={6} className={classes.paper}>
       <div>
