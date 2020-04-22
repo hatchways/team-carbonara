@@ -13,6 +13,7 @@ const create = async (req, res) => {
 
     const newAppointment = new Appointment({
       user: user._id,
+      userTz: user.timezone,
       guestName: guestName,
       guestEmail: guestEmail,
       guestComment: guestComment,
@@ -52,7 +53,7 @@ const create = async (req, res) => {
       res.status(201).send('New event created');
     } catch (err) {
       console.error(err);
-      res.status(500).send(err);
+      res.status(500).json(err);
     }
   } catch (err) {
     console.error(err);
@@ -60,10 +61,35 @@ const create = async (req, res) => {
   }
 };
 
-const index = (req, res) => {
-  Appointment.find({ user: req.params.user_id })
-    .then((appointments) => res.json(appointments))
-    .catch((err) => res.status(404).json({ noappointmentsfound: 'No appointments found from that user' }));
+const userIndex = async (req, res) => {
+  try {
+    const resp = await Appointment.find({ user: req.params.user_id });
+    //sort resp by apptTime
+    // resp.sort((a, b) => {
+    //   return a.apptTime - b.apptTime;
+    // });
+    const parsed = { upcoming: {}, past: {} };
+    const curr = moment().tz(req.query.timezone).format();
+    for (const appt of resp) {
+      const time = moment(appt.apptTime);
+      if (time.isAfter(curr)) {
+        if (parsed.upcoming[time.format('MMDDYYYY')]) {
+          parsed.upcoming[time.format('MMDDYYYY')].push(appt);
+        } else {
+          parsed.upcoming[time.format('MMDDYYYY')] = [appt];
+        }
+      } else {
+        if (parsed.past[time.format('MMDDYYYY')]) {
+          parsed.past[time.format('MMDDYYYY')].push(appt);
+        } else {
+          parsed.past[time.format('MMDDYYYY')] = [appt];
+        }
+      }
+    }
+    res.status(200).json(parsed);
+  } catch (err) {
+    res.status(400).json({ Error: 'User does not exist' });
+  }
 };
 
-module.exports = { create, index };
+module.exports = { create, userIndex };

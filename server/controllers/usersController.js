@@ -38,7 +38,7 @@ const userLogin = async (req, res) => {
       oauthResp = await oauth2Client.getToken(req.body.code);
       payload = await verifyToken(oauthResp.tokens.id_token);
     } else {
-      console.log('token', req.body.token);
+      // console.log('token', req.body.token);
       payload = await verifyToken(req.body.token);
     }
 
