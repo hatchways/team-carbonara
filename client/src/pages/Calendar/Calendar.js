@@ -171,6 +171,7 @@ function CalendarPage() {
             date={strDate}
             dateObj={dateObj}
             isLoading={isLoading}
+            clientTz={clientTz}
           />
         ) : null}
       </div>
