@@ -47,6 +47,9 @@ const useStylesCalendar = makeStyles({
   meetingName: {
     textTransform: 'capitalize',
   },
+  timezone: {
+    width: '400px',
+  },
   '@media (max-width: 1600px)': {
     eventInfo: {
       textAlign: 'center',

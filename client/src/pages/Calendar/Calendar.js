@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Paper, Typography, Divider } from '@material-ui/core';
+import { Paper, Typography, Divider, TextField } from '@material-ui/core';
+import { Autocomplete } from '@material-ui/lab';
+
 import useStylesCalendar from './stylesCalendar';
 import { useParams } from 'react-router-dom';
 import handleFetchErrors from '../../utils/handleFetchErrors';
@@ -43,12 +45,8 @@ function setMinDate() {
   return minDate;
 }
 
-function parseISOstr(slotsObj) {
-  const parsedSlots = slotsObj.map((timeStr) => moment(timeStr).format('h:mm'));
-  return parsedSlots;
-}
-
 function CalendarPage() {
+  const today = new Date();
   const classes = useStylesCalendar();
   const [clientTz, setClientTz] = useState(moment.tz.guess());
   const [dateObj, setDateObj] = useState(null);
@@ -61,18 +59,21 @@ function CalendarPage() {
   const [showTimeSlots, setShowTimeSlots] = useState(false);
   const [timeSlots, setTimeSlots] = useState([]);
   const [availableDays, setAvailableDays] = useState([]);
+  const [currMonth, setCurrMonth] = useState(today.getMonth());
 
   let { eventDuration, url } = useParams();
 
   useEffect(() => {
-    const today = new Date();
-
     // function fetchAvailableDays
     fetch(
-      `http://localhost:3001/api/availability/days?month=${today.getMonth()}&meetTime=${eventDuration}&clientTz=${clientTz}&uniqueurl=${url}`,
+      `http://localhost:3001/api/availability/days?month=${currMonth}&meetTime=${eventDuration}&clientTz=${clientTz}&uniqueurl=${url}`,
     )
       .then((res) => res.json())
-      .then((data) => setAvailableDays(data.days));
+      .then((data) => {
+        setAvailableDays(data.days);
+        setShowTimeSlots(false);
+        setDateObj(null);
+      });
 
     //fetch user data
     fetch(`http://localhost:3001/api/user/${url}/${eventDuration}`)
@@ -86,7 +87,12 @@ function CalendarPage() {
         setMeeting(meeting[0]);
       })
       .catch((e) => console.log('Error ' + e));
-  }, [url, eventDuration, clientTz]);
+  }, [url, eventDuration, clientTz, currMonth]);
+
+  function parseISOstr(slotsObj) {
+    const parsedSlots = slotsObj.map((timeStr) => moment(timeStr).tz(clientTz).format('h:mma'));
+    return parsedSlots;
+  }
 
   function fetchAvailableTimeSlots(date, month) {
     fetch(
@@ -117,22 +123,14 @@ function CalendarPage() {
   }
 
   function handleMonth(event) {
-    console.log(event.activeStartDate.getMonth());
-    fetch(
-      `http://localhost:3001/api/availability/days?month=${event.activeStartDate.getMonth()}&meetTime=${eventDuration}&clientTz=${clientTz}&uniqueurl=${url}`,
-    )
-      .then((res) => res.json())
-      .then((data) => setAvailableDays(data.days));
+    setCurrMonth(event.activeStartDate.getMonth());
   }
 
   function tileDisabled(activeStartDate) {
     const day = activeStartDate.date.getDate();
-
-    if (availableDays.indexOf(day) < 0) {
-      return true;
-    }
+    if (availableDays.indexOf(day) < 0) return true;
   }
-  // console.log(availableDays, meeting);
+  console.log(clientTz);
   return (
     <Paper elevation={6} className={classes.calendarContainer}>
       <div className={classes.eventInfo}>
@@ -151,11 +149,21 @@ function CalendarPage() {
           <Typography variant="h5">Select a Date & Time</Typography>
           <Calendar
             onActiveStartDateChange={handleMonth}
-            onViewChange={() => console.log('month')}
             minDate={setMinDate()}
             maxDate={setMaxDate()}
             onClickDay={handleClick}
+            value={dateObj}
             tileDisabled={tileDisabled}
+          />
+          <Autocomplete
+            id="timezone-field"
+            disableClearable={true}
+            className={classes.timezone}
+            value={clientTz}
+            options={moment.tz.names()}
+            getOptionLabel={(option) => option.replace('_', ' ') + ' (GMT' + moment.tz(option).format('Z') + ')'}
+            renderInput={(params) => <TextField {...params} label="Type a city or zone" variant="outlined" />}
+            onChange={(e, v) => setClientTz(v)}
           />
         </div>
         {showTimeSlots ? (
