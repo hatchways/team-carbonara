@@ -108,7 +108,7 @@ function availDays(reqMonth, freebusy, userAvail, userTz, clientTz, reqMeet) {
   const currDay = moment.tz([year, reqMonth, startDay], clientTz); //12am client time
   const monthEnd = moment.tz([year, 0, 31], clientTz).month(reqMonth);
 
-  while (currDay.isBefore(monthEnd)) {
+  while (currDay.isSameOrBefore(monthEnd)) {
     block = freebusy[b];
     start = moment.tz(currDay.format(), userTz); //same as currDay, use userTz for available hours comparison
     end = moment(start.format()).add(1, 'day');
