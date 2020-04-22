@@ -51,9 +51,7 @@ function CalendarPage() {
   const [clientTz, setClientTz] = useState(moment.tz.guess());
   const [dateObj, setDateObj] = useState(null);
   const [strDate, setDate] = useState(null);
-  const [user, setUser] = useState({
-    unavailableDays: [],
-  });
+  const [userName, setUserName] = useState('');
   const [isLoading, setLoading] = useState(false);
   const [meeting, setMeeting] = useState('');
   const [showTimeSlots, setShowTimeSlots] = useState(false);
@@ -80,7 +78,7 @@ function CalendarPage() {
       .then(handleFetchErrors)
       .then((res) => res.json())
       .then((data) => {
-        setUser(data);
+        data.family_name ? setUserName(data.given_name + ' ' + data.family_name) : setUserName(data.given_name);
 
         //find specific meeting type
         const meeting = data.meetings.filter((meeting) => meeting.duration === parseInt(eventDuration));
@@ -130,11 +128,10 @@ function CalendarPage() {
     const day = activeStartDate.date.getDate();
     if (availableDays.indexOf(day) < 0) return true;
   }
-  console.log(user);
   return (
     <Paper elevation={6} className={classes.calendarContainer}>
       <div className={classes.eventInfo}>
-        <Typography variant="h6">{`${user.given_name} ${user.family_name}`}</Typography>
+        <Typography variant="h6">{userName}</Typography>
         <Typography className={classes.meetingName} variant="h4">
           {meeting.meetingName}
         </Typography>
@@ -168,8 +165,7 @@ function CalendarPage() {
         </div>
         {showTimeSlots ? (
           <TimeSlotsContainer
-            givenName={user.given_name}
-            familyName={user.family_name}
+            userName={userName}
             meeting={meeting}
             availableTimes={timeSlots}
             date={strDate}

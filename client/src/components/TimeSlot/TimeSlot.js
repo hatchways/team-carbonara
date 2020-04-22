@@ -13,7 +13,7 @@ function addTimeToDate(time, dateObj) {
   return newDate;
 }
 
-function TimeSlot({ time, givenName, familyName, meeting, dateObj }) {
+function TimeSlot({ time, userName, meeting, dateObj }) {
   const classes = useStylesTimeSlot();
   const [active, setActive] = useState(false);
 
@@ -28,7 +28,7 @@ function TimeSlot({ time, givenName, familyName, meeting, dateObj }) {
     history.push({
       pathname: `/${url}/${eventDuration}/confirm`,
       state: {
-        name: `${givenName} ${familyName}`,
+        name: userName,
         meeting,
         date: addTimeToDate(time, dateObj),
         time,
@@ -51,8 +51,7 @@ function TimeSlot({ time, givenName, familyName, meeting, dateObj }) {
 }
 
 TimeSlot.propTypes = {
-  givenName: PropTypes.string.isRequired,
-  familyName: PropTypes.string.isRequired,
+  userName: PropTypes.string.isRequired,
   meeting: PropTypes.object.isRequired,
   time: PropTypes.string.isRequired,
   dateObj: PropTypes.object.isRequired,
