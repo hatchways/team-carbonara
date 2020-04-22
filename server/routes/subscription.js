@@ -4,6 +4,6 @@ const subscriptionControllers = require('../controllers/subscriptionController')
 
 router.post('/:id', subscriptionControllers.subscription);
 
-router.get('/remove/:id', subscriptionControllers.unsubscribe);
+router.delete('/unsubscribe/:id', subscriptionControllers.unsubscribe);
 
 module.exports = router;
