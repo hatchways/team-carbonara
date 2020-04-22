@@ -39,11 +39,20 @@ const unsubscribe = async (req, res) => {
 
   try {
     const user = await User.findOne({ sub });
+
+    const subscriptions = await stripe.subscriptions.list({
+      customer: user.customerId,
+    });
+
+    //cancel subscription
+    await stripe.subscriptions.del(subscriptions.data[0].id);
+
     user.subscriber = false;
-    //implement with card if time allows
     await user.save();
+    res.status(204).end();
   } catch (err) {
     console.error(err);
+    res.status(400).send(err);
   }
 };
 
