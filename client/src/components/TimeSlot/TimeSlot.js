@@ -13,7 +13,7 @@ function addTimeToDate(time, dateObj) {
   return newDate;
 }
 
-function TimeSlot({ time, userName, meeting, dateObj }) {
+function TimeSlot({ time, userName, meeting, dateObj, clientTz }) {
   const classes = useStylesTimeSlot();
   const [active, setActive] = useState(false);
 
@@ -32,6 +32,7 @@ function TimeSlot({ time, userName, meeting, dateObj }) {
         meeting,
         date: addTimeToDate(time, dateObj),
         time,
+        clientTz,
       },
     });
   }
@@ -55,6 +56,7 @@ TimeSlot.propTypes = {
   meeting: PropTypes.object.isRequired,
   time: PropTypes.string.isRequired,
   dateObj: PropTypes.object.isRequired,
+  clientTz: PropTypes.string.isRequired,
 };
 
 export default TimeSlot;
