@@ -4,7 +4,7 @@ import TimeSlot from '../TimeSlot/TimeSlot';
 import PropTypes from 'prop-types';
 import { CircularProgress } from '@material-ui/core';
 
-function TimeSlotsContainer({ isLoading, availableTimes, date, givenName, familyName, meeting, dateObj }) {
+function TimeSlotsContainer({ isLoading, availableTimes, date, userName, meeting, dateObj }) {
   const classes = useStylesTimeSlots();
 
   return (
@@ -17,14 +17,7 @@ function TimeSlotsContainer({ isLoading, availableTimes, date, givenName, family
           </div>
         ) : (
           availableTimes.map((time, index) => (
-            <TimeSlot
-              dateObj={dateObj}
-              givenName={givenName}
-              meeting={meeting}
-              familyName={familyName}
-              key={index}
-              time={time}
-            />
+            <TimeSlot dateObj={dateObj} userName={userName} meeting={meeting} key={index} time={time} />
           ))
         )}
       </div>
@@ -34,8 +27,7 @@ function TimeSlotsContainer({ isLoading, availableTimes, date, givenName, family
 
 TimeSlotsContainer.propTypes = {
   date: PropTypes.string.isRequired,
-  givenName: PropTypes.string.isRequired,
-  familyName: PropTypes.string.isRequired,
+  userName: PropTypes.string.isRequired,
   meeting: PropTypes.object.isRequired,
   availableTimes: PropTypes.array.isRequired,
 };
