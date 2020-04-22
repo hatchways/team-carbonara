@@ -34,29 +34,13 @@ function getMonth(index) {
 
 function setMaxDate() {
   const date = new Date();
-  const maxDate = new Date(date.setMonth(date.getMonth() + 3, 0));
+  const maxDate = new Date(date.setMonth(date.getMonth() + 3, 31));
   return maxDate;
 }
 
 function setMinDate() {
-  const date = new Date();
-  const minDate = new Date(date.setMonth(date.getMonth() - 2, 1));
+  const minDate = new Date(moment().format());
   return minDate;
-}
-
-function parseDayAvailbility(daysAvailableObj) {
-  let daysUnavailable = [];
-  const dayAvailability = Object.entries(daysAvailableObj);
-  dayAvailability.filter((day) => {
-    //day[1] is bool of weekday
-    if (day[1] === false) {
-      daysUnavailable.push(day[0]);
-      return true;
-    }
-    return false;
-  });
-
-  return daysUnavailable;
 }
 
 function parseISOstr(slotsObj) {
@@ -66,6 +50,7 @@ function parseISOstr(slotsObj) {
 
 function CalendarPage() {
   const classes = useStylesCalendar();
+  const [clientTz, setClientTz] = useState(moment.tz.guess());
   const [dateObj, setDateObj] = useState(null);
   const [strDate, setDate] = useState(null);
   const [user, setUser] = useState({
@@ -75,49 +60,39 @@ function CalendarPage() {
   const [meeting, setMeeting] = useState('');
   const [showTimeSlots, setShowTimeSlots] = useState(false);
   const [timeSlots, setTimeSlots] = useState([]);
+  const [availableDays, setAvailableDays] = useState([]);
 
   let { eventDuration, url } = useParams();
 
   useEffect(() => {
-    // problem getting month on mount and clientTz on mount.
-    // can use const month = new Date().getMonth(), but only returns for the current month and not next month because calendar doesn't unmount
+    const today = new Date();
 
-    // getting clientTz possibility
-    // wait till user data is fetched? and then pass it?
-
-    // function fetchAvailableDays(){
-    //   //month, meetTime, timezone, uniqueurl
-
-    //   fetch(
-    //     `http://localhost:3001/api/availability/days?month=${}&meetTime=${eventDuration}&clientTz=${}&uniqueurl=${url}`)
-    // }
+    // function fetchAvailableDays
+    fetch(
+      `http://localhost:3001/api/availability/days?month=${today.getMonth()}&meetTime=${eventDuration}&clientTz=${clientTz}&uniqueurl=${url}`,
+    )
+      .then((res) => res.json())
+      .then((data) => setAvailableDays(data.days));
 
     //fetch user data
     fetch(`http://localhost:3001/api/user/${url}/${eventDuration}`)
       .then(handleFetchErrors)
       .then((res) => res.json())
       .then((data) => {
-        const unavailableDays = parseDayAvailbility(data.availability['days']);
-        data.unavailableDays = unavailableDays;
         setUser(data);
 
         //find specific meeting type
-        const meeting = data.meetings.filter((meeting) => {
-          if (meeting.duration == eventDuration) {
-            return true;
-          }
-          return false;
-        });
+        const meeting = data.meetings.filter((meeting) => meeting.duration === parseInt(eventDuration));
         setMeeting(meeting[0]);
       })
       .catch((e) => console.log('Error ' + e));
-  }, [url, eventDuration]);
+  }, [url, eventDuration, clientTz]);
 
   function fetchAvailableTimeSlots(date, month) {
     fetch(
       `http://localhost:3001/api/availability/timeslots?month=${
         month - 1
-      }&day=${date}&meetTime=${eventDuration}&clientTz=${user.timezone}&uniqueurl=${url}`,
+      }&day=${date}&meetTime=${eventDuration}&clientTz=${clientTz}&uniqueurl=${url}`,
     )
       // .then(handleFetchErrors)
       .then((res) => res.json())
@@ -141,16 +116,23 @@ function CalendarPage() {
     fetchAvailableTimeSlots(date, month);
   }
 
-  function tileDisabled(activeStartDate) {
-    const currentDate = new Date();
-    const day = getDayOfWeek(activeStartDate.date.getDay());
+  function handleMonth(event) {
+    console.log(event.activeStartDate.getMonth());
+    fetch(
+      `http://localhost:3001/api/availability/days?month=${event.activeStartDate.getMonth()}&meetTime=${eventDuration}&clientTz=${clientTz}&uniqueurl=${url}`,
+    )
+      .then((res) => res.json())
+      .then((data) => setAvailableDays(data.days));
+  }
 
-    //blocks users unavailable days & days before current date
-    if (currentDate >= activeStartDate.date || user.unavailableDays.includes(day)) {
+  function tileDisabled(activeStartDate) {
+    const day = activeStartDate.date.getDate();
+
+    if (availableDays.indexOf(day) < 0) {
       return true;
     }
   }
-
+  // console.log(availableDays, meeting);
   return (
     <Paper elevation={6} className={classes.calendarContainer}>
       <div className={classes.eventInfo}>
@@ -168,6 +150,7 @@ function CalendarPage() {
         <div className={classes.calendar}>
           <Typography variant="h5">Select a Date & Time</Typography>
           <Calendar
+            onActiveStartDateChange={handleMonth}
             onViewChange={() => console.log('month')}
             minDate={setMinDate()}
             maxDate={setMaxDate()}
