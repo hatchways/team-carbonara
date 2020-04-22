@@ -61,10 +61,10 @@ function Dashboard() {
       <Navbar picture={user.picture} name={user.given_name} />
       <Switch>
         <Route exact path="/dashboard/user/upgrade">
-          <Upgrade sub={user.sub} subscriber={user.subscriber} />
+          <Upgrade user={user} setUser={setUser} />
         </Route>
         <Route exact path="/dashboard/user/upgrade/checkout">
-          <Checkout email={user.email} sub={user.sub} />
+          <Checkout user={user} setUser={setUser} />
         </Route>
         <Route path="/">
           <main className={classes.dashBody}>
@@ -84,26 +84,38 @@ function Dashboard() {
                     <span>calendapp.com/{user.url}</span>
                   </div>
                 </div>
-                <Button onClick={handleClickOpen} className={classes.addEventBtn} size="large" variant="outlined">
-                  + New Event Type
-                </Button>
-                <NewEventDialog
-                  renderNewMeeting={renderNewMeeting}
-                  sub={user.sub}
-                  open={open}
-                  handleClose={handleClose}
-                />
+                {user.subscriber ? (
+                  <React.Fragment>
+                    <Button onClick={handleClickOpen} className={classes.addEventBtn} size="large" variant="outlined">
+                      + New Event Type
+                    </Button>
+                    <NewEventDialog
+                      renderNewMeeting={renderNewMeeting}
+                      sub={user.sub}
+                      open={open}
+                      handleClose={handleClose}
+                    />
+                  </React.Fragment>
+                ) : null}
               </header>
               <section className={classes.events}>
-                {user.meetings.map((meeting, index) => (
-                  <Event
-                    url={user.url}
-                    user={`${user.given_name} ${user.family_name}`}
-                    key={index}
-                    duration={meeting.duration}
-                    meetingName={meeting.meetingName}
-                  />
-                ))}
+                {user.meetings
+                  .filter((meeting) => {
+                    if (!user.subscriber) {
+                      return meeting.duration === 60;
+                    } else {
+                      return true;
+                    }
+                  })
+                  .map((meeting, index) => (
+                    <Event
+                      url={user.url}
+                      user={`${user.given_name} ${user.family_name}`}
+                      key={index}
+                      duration={meeting.duration}
+                      meetingName={meeting.meetingName}
+                    />
+                  ))}
               </section>
               <Button size="large" variant="contained" className={classes.getStartedBtn}>
                 Getting Started Guide
