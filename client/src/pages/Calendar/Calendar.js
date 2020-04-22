@@ -130,7 +130,7 @@ function CalendarPage() {
     const day = activeStartDate.date.getDate();
     if (availableDays.indexOf(day) < 0) return true;
   }
-  console.log(clientTz);
+  console.log(user);
   return (
     <Paper elevation={6} className={classes.calendarContainer}>
       <div className={classes.eventInfo}>

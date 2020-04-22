@@ -14,6 +14,7 @@ const useStylesTimeSlots = makeStyles({
   btns: {
     overflowY: 'scroll',
     maxWidth: '250px',
+    maxHeight: '650px',
   },
   loader: {
     display: 'flex',

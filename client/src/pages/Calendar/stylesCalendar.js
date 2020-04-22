@@ -3,14 +3,14 @@ import { makeStyles } from '@material-ui/core/styles';
 const useStylesCalendar = makeStyles({
   calendarContainer: {
     display: 'flex',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
     margin: '5rem auto',
     width: '65%',
     height: '700px',
     maxWidth: '1100px',
   },
   calendar: {
-    flex: '1 0 auto',
+    // flex: '1 0 auto',
     fontSize: '1.2rem',
     paddingRight: '2rem',
     '& h5': {
@@ -20,7 +20,8 @@ const useStylesCalendar = makeStyles({
     },
   },
   eventInfo: {
-    flex: '1 0 auto',
+    width: '385px',
+    // flex: '1 0 auto',
     padding: '1.5rem',
     '& h4': {
       color: '#484848',
@@ -49,10 +50,12 @@ const useStylesCalendar = makeStyles({
   },
   timezone: {
     width: '400px',
+    padding: '1rem 0.4rem',
   },
   '@media (max-width: 1600px)': {
     eventInfo: {
       textAlign: 'center',
+      width: '100%',
     },
     calendarContainer: {
       flexDirection: 'column',

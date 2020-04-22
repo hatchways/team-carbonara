@@ -47,7 +47,7 @@ function Confirm({ classes }) {
 
   let history = useHistory();
   const handleBackButton = () => {
-    // history.push('/uniqueurl/meeting'); //back to scheduler
+    history.push(`/${url}/${location.state.meeting.duration}`); //back to scheduler
   };
 
   const submitForm = () => {
@@ -67,7 +67,7 @@ function Confirm({ classes }) {
       apptTime: appt,
       url,
     };
-    console.log(appointmentInfo);
+
     fetch('http://localhost:3001/api/appointments', {
       method: 'POST',
       headers: {
@@ -75,9 +75,8 @@ function Confirm({ classes }) {
       },
       body: JSON.stringify(appointmentInfo),
     }).then((res) => {
-      console.log('fetched');
       if (res.status !== 201) {
-        history.push('/jkam/60/confirm'); //go back to scheduler, error alert?
+        history.push(`/${url}/${location.state.meeting.duration}`); //go back to scheduler, error alert?
       } else {
         history.push('/finish');
       }
