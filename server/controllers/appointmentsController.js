@@ -25,7 +25,7 @@ const create = async (req, res) => {
     const eventTime = `${moment(apptTime).tz(user.timezone).format('h:mma - dddd, MMMM Do YYYY')}
     (${user.timezone.replace('_', ' ')} GMT${moment.tz(user.timezone).format('Z')})`;
     try {
-      await insertEvent(
+      const googleEvent = await insertEvent(
         user.access_token,
         user.refresh_token,
         apptTime,
@@ -37,6 +37,9 @@ const create = async (req, res) => {
         guestComment,
         url,
       );
+      console.log(googleEvent);
+      newAppointment.googleId = googleEvent.id;
+
       await newAppointment.save();
 
       await emailUserNewAppt(
@@ -58,6 +61,17 @@ const create = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(400).json(err);
+  }
+};
+
+const cancel = async (req, res) => {
+  console.log(req.body);
+  //remove from calendar
+  //delete by req.query.id
+  try {
+    await Appointment.deleteOne({ _id: req.query.id });
+  } catch (err) {
+    console.error(err);
   }
 };
 
@@ -92,4 +106,4 @@ const userIndex = async (req, res) => {
   }
 };
 
-module.exports = { create, userIndex };
+module.exports = { create, userIndex, cancel };
