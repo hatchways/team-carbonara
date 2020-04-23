@@ -57,7 +57,6 @@ function Appointment({ classes, appointment }) {
   const handleClose = () => {
     setCancelOpen(false);
   };
-  console.log(appointment);
   return (
     <div className={classes.appointment}>
       <ExpansionPanel>
@@ -90,7 +89,7 @@ function Appointment({ classes, appointment }) {
             >
               Cancel
             </Button>
-            <CancelApptDialog id={appointment} open={cancelOpen} handleClose={handleClose} />
+            <CancelApptDialog appointment={appointment} open={cancelOpen} handleClose={handleClose} />
           </div>
           <div>
             <Typography variant="subtitle1">Email</Typography>
