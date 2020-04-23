@@ -11,15 +11,12 @@ async function getFreebusy(access, refresh, startISO, endISO, url) {
   });
 
   oauth2Client.on('tokens', (tokens) => {
-    console.log(tokens);
     if (tokens.refresh_token) {
       // store the refresh_token in my database!
       const user = User.findOne({ url });
       user.refresh_token = tokens.refresh_token;
       user.save();
-      // console.log(tokens.refresh_token);
     }
-    // console.log(tokens.access_token);
   });
   try {
     const resp = await calendar.freebusy.query({
@@ -55,15 +52,12 @@ async function insertEvent(
   });
 
   oauth2Client.on('tokens', (tokens) => {
-    console.log(tokens);
     if (tokens.refresh_token) {
       // store the refresh_token in my database!
       const user = User.findOne({ url });
       user.refresh_token = tokens.refresh_token;
       user.save();
-      // console.log(tokens.refresh_token);
     }
-    // console.log(tokens.access_token);
   });
 
   const event = {
