@@ -5,11 +5,11 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 
 function addTimeToDate(time, dateObj) {
-  const timeHoursArr = time.split(':');
-  const hours = parseInt(timeHoursArr[0]);
-  const minutes = parseInt(timeHoursArr[1]);
+  const timeMoment = moment(time, 'h:mma');
+  const hour = timeMoment.hour();
+  const minute = timeMoment.minute();
 
-  const newDate = moment(dateObj).add(hours, 'h').add(minutes, 'm').toDate();
+  const newDate = dateObj.hour(hour).minutes(minute).format();
   return newDate;
 }
 
@@ -30,7 +30,7 @@ function TimeSlot({ time, userName, meeting, dateObj, clientTz }) {
       state: {
         name: userName,
         meeting,
-        date: addTimeToDate(time, dateObj),
+        date: addTimeToDate(time, dateObj), //ISOstring
         time,
         clientTz,
       },

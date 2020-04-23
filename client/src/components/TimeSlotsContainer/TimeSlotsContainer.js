@@ -6,7 +6,6 @@ import { CircularProgress } from '@material-ui/core';
 
 function TimeSlotsContainer({ isLoading, availableTimes, date, userName, meeting, dateObj, clientTz }) {
   const classes = useStylesTimeSlots();
-
   return (
     <div className={classes.timeSlotContainer}>
       <p>{date}</p>
