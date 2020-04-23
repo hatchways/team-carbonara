@@ -7,18 +7,18 @@ const { getFreebusy } = require('../utils/gcalHelper.js');
 const daysAvailable = async (req, res) => {
   //send from /uniqueurl/meeting
   const reqMonth = parseInt(req.query.month); //0-index
-  const reqMeet = parseInt(req.query.meetTime); //req.query.meetTime; //minutes
-  const clientTz = req.query.clientTz; //req.query.clientTz;
+  const reqMeet = parseInt(req.query.meetTime); //minutes
+  const clientTz = req.query.clientTz;
   const uniqueurl = req.query.uniqueurl;
 
   const year = reqMonth < moment().month() ? moment().year() + 1 : moment().year();
-  let day = reqMonth === moment().month() ? moment().date() : 1; //1 or current day of month (no past days)
+  let day = reqMonth === moment().month() ? moment().tz(clientTz).date() : 1; //1 or current day of month (no past days)
 
   try {
     const user = await User.findOne({ url: uniqueurl });
     try {
       const startISO = moment.tz([year, reqMonth, day], clientTz).format();
-      const endISO = moment.tz([year, 0, 31], clientTz).month(reqMonth).format();
+      const endISO = moment.tz([year, 0, 31], clientTz).month(reqMonth).add(1, 'day').format();
 
       const freebusy = await getFreebusy(user.access_token, user.refresh_token, startISO, endISO, uniqueurl);
 
@@ -48,7 +48,7 @@ const timeslotsAvailable = async (req, res) => {
     const user = await User.findOne({ url: uniqueurl });
     try {
       const startISO = moment.tz([year, reqMonth, reqDay], clientTz).format();
-      const endISO = moment.tz([year, reqMonth, reqDay + 1], clientTz).format();
+      const endISO = moment.tz([year, reqMonth, reqDay], clientTz).add(1, 'day').format();
 
       const freebusy = await getFreebusy(user.access_token, user.refresh_token, startISO, endISO, uniqueurl);
 

@@ -13,7 +13,7 @@ function addTimeToDate(time, dateObj) {
   return newDate;
 }
 
-function TimeSlot({ timeObj, givenName, familyName, meeting, dateObj }) {
+function TimeSlot({ time, userName, meeting, dateObj, clientTz }) {
   const classes = useStylesTimeSlot();
   const [active, setActive] = useState(false);
 
@@ -28,10 +28,11 @@ function TimeSlot({ timeObj, givenName, familyName, meeting, dateObj }) {
     history.push({
       pathname: `/${url}/${eventDuration}/confirm`,
       state: {
-        name: `${givenName} ${familyName}`,
+        name: userName,
         meeting,
-        date: addTimeToDate(timeObj.time, dateObj),
-        time: timeObj.time,
+        date: addTimeToDate(time, dateObj),
+        time,
+        clientTz,
       },
     });
   }
@@ -39,7 +40,7 @@ function TimeSlot({ timeObj, givenName, familyName, meeting, dateObj }) {
   return (
     <div className={classes.container}>
       <button onClick={handleClick} className={classes.button}>
-        {timeObj.time}
+        {time}
       </button>
       {active ? (
         <button onClick={handleConfirm} className={classes.confirmBtn}>
@@ -51,11 +52,11 @@ function TimeSlot({ timeObj, givenName, familyName, meeting, dateObj }) {
 }
 
 TimeSlot.propTypes = {
-  givenName: PropTypes.string.isRequired,
-  familyName: PropTypes.string.isRequired,
+  userName: PropTypes.string.isRequired,
   meeting: PropTypes.object.isRequired,
-  timeObj: PropTypes.object.isRequired,
+  time: PropTypes.string.isRequired,
   dateObj: PropTypes.object.isRequired,
+  clientTz: PropTypes.string.isRequired,
 };
 
 export default TimeSlot;
