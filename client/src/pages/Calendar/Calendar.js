@@ -32,13 +32,13 @@ function getMonth(index) {
   ];
   return months[index];
 }
-
 function CalendarPage() {
   const classes = useStylesCalendar();
   const [clientTz, setClientTz] = useState(moment.tz.guess());
   const today = moment.tz(clientTz);
-  const [dateObj, setDateObj] = useState(null);
-  const [strDate, setDate] = useState(null);
+  const [calendarVal, setCalendarVal] = useState(null);
+  const [dateObj, setDateObj] = useState(null); //moment passed to timeslots
+  const [strDate, setDate] = useState(null); //timeslot header display
   const [userName, setUserName] = useState('');
   const [isLoading, setLoading] = useState(false);
   const [meeting, setMeeting] = useState('');
@@ -73,9 +73,9 @@ function CalendarPage() {
       .then((data) => {
         setAvailableDays(data.days);
         setShowTimeSlots(false);
-        setDateObj(null);
+        setCalendarVal(null);
       });
-  }, [clientTz, currMonth]);
+  }, [clientTz, currMonth, eventDuration, url]);
 
   function setMaxDate() {
     const date = new Date();
@@ -95,9 +95,7 @@ function CalendarPage() {
 
   function fetchAvailableTimeSlots(date, month) {
     fetch(
-      `http://localhost:3001/api/availability/timeslots?month=${
-        month - 1
-      }&day=${date}&meetTime=${eventDuration}&clientTz=${clientTz}&uniqueurl=${url}`,
+      `http://localhost:3001/api/availability/timeslots?month=${month}&day=${date}&meetTime=${eventDuration}&clientTz=${clientTz}&uniqueurl=${url}`,
     )
       // .then(handleFetchErrors)
       .then((res) => res.json())
@@ -109,12 +107,13 @@ function CalendarPage() {
       .catch((err) => console.log(err));
   }
 
-  function handleClick(value) {
+  async function handleClick(value) {
     const date = value.getDate();
-    const month = value.getMonth() + 1;
+    const month = value.getMonth();
     const strDay = getDayOfWeek(value.getDay());
     const strMonth = getMonth(value.getMonth());
-    setDateObj(value);
+    setDateObj(moment.tz(clientTz).month(month).date(date));
+    setCalendarVal(value);
     setDate(`${strDay}, ${strMonth} ${date}`);
     setShowTimeSlots(true);
     setLoading(true);
@@ -157,7 +156,7 @@ function CalendarPage() {
             minDate={setMinDate()}
             maxDate={setMaxDate()}
             onClickDay={handleClick}
-            value={dateObj}
+            value={calendarVal}
             tileDisabled={tileDisabled}
           />
           <Autocomplete
