@@ -37,7 +37,6 @@ function CalendarPage() {
   const [clientTz, setClientTz] = useState(moment.tz.guess());
   const today = moment.tz(clientTz);
   const [calendarVal, setCalendarVal] = useState(null);
-  const [dateObj, setDateObj] = useState(null); //moment passed to timeslots
   const [strDate, setDate] = useState(null); //timeslot header display
   const [userName, setUserName] = useState('');
   const [isLoading, setLoading] = useState(false);
@@ -88,11 +87,6 @@ function CalendarPage() {
     return minDate;
   }
 
-  function parseISOstr(slotsObj) {
-    const parsedSlots = slotsObj.map((timeStr) => moment(timeStr).tz(clientTz).format('h:mma'));
-    return parsedSlots;
-  }
-
   function fetchAvailableTimeSlots(date, month) {
     fetch(
       `http://localhost:3001/api/availability/timeslots?month=${month}&day=${date}&meetTime=${eventDuration}&clientTz=${clientTz}&uniqueurl=${url}`,
@@ -100,19 +94,17 @@ function CalendarPage() {
       // .then(handleFetchErrors)
       .then((res) => res.json())
       .then((data) => {
-        const timeSlots = parseISOstr(data.slots);
-        setTimeSlots(timeSlots);
+        setTimeSlots(data.slots);
         setLoading(false);
       })
       .catch((err) => console.log(err));
   }
 
-  async function handleClick(value) {
+  function handleClick(value) {
     const date = value.getDate();
     const month = value.getMonth();
     const strDay = getDayOfWeek(value.getDay());
     const strMonth = getMonth(value.getMonth());
-    setDateObj(moment.tz(clientTz).month(month).date(date));
     setCalendarVal(value);
     setDate(`${strDay}, ${strMonth} ${date}`);
     setShowTimeSlots(true);
@@ -176,7 +168,6 @@ function CalendarPage() {
             meeting={meeting}
             availableTimes={timeSlots}
             date={strDate}
-            dateObj={dateObj}
             isLoading={isLoading}
             clientTz={clientTz}
           />
