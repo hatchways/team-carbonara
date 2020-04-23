@@ -34,21 +34,10 @@ function getMonth(index) {
   return months[index];
 }
 
-function setMaxDate() {
-  const date = new Date();
-  const maxDate = new Date(date.setMonth(date.getMonth() + 3, 31));
-  return maxDate;
-}
-
-function setMinDate() {
-  const minDate = new Date(moment().format());
-  return minDate;
-}
-
 function CalendarPage() {
-  const today = new Date();
   const classes = useStylesCalendar();
   const [clientTz, setClientTz] = useState(moment.tz.guess());
+  const today = moment.tz(clientTz);
   const [dateObj, setDateObj] = useState(null);
   const [strDate, setDate] = useState(null);
   const [userName, setUserName] = useState('');
@@ -57,7 +46,7 @@ function CalendarPage() {
   const [showTimeSlots, setShowTimeSlots] = useState(false);
   const [timeSlots, setTimeSlots] = useState([]);
   const [availableDays, setAvailableDays] = useState([]);
-  const [currMonth, setCurrMonth] = useState(today.getMonth());
+  const [currMonth, setCurrMonth] = useState(today.month());
 
   let { eventDuration, url } = useParams();
 
@@ -86,6 +75,17 @@ function CalendarPage() {
       })
       .catch((e) => console.log('Error ' + e));
   }, [url, eventDuration, clientTz, currMonth]);
+
+  function setMaxDate() {
+    const date = new Date();
+    const maxDate = new Date(date.setMonth(date.getMonth() + 3, 31));
+    return maxDate;
+  }
+
+  function setMinDate() {
+    const minDate = new Date(moment().tz(clientTz).format());
+    return minDate;
+  }
 
   function parseISOstr(slotsObj) {
     const parsedSlots = slotsObj.map((timeStr) => moment(timeStr).tz(clientTz).format('h:mma'));
@@ -128,6 +128,12 @@ function CalendarPage() {
     const day = activeStartDate.date.getDate();
     if (availableDays.indexOf(day) < 0) return true;
   }
+
+  function tileContent(date) {
+    if (date.date.getMonth() === today.month() && date.date.getDate() === today.date()) {
+      return <div id="today">*</div>;
+    } else return null;
+  }
   return (
     <Paper elevation={6} className={classes.calendarContainer}>
       <div className={classes.eventInfo}>
@@ -146,6 +152,7 @@ function CalendarPage() {
           <Typography variant="h5">Select a Date & Time</Typography>
           <Calendar
             onActiveStartDateChange={handleMonth}
+            tileContent={tileContent}
             minDate={setMinDate()}
             maxDate={setMaxDate()}
             onClickDay={handleClick}
