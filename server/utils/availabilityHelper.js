@@ -98,7 +98,7 @@ function availDays(reqMonth, freebusy, userAvail, userTz, clientTz, reqMeet) {
     6: 'Saturday',
   };
   const year = reqMonth < moment().month() ? moment().year() + 1 : moment().year();
-  const startDay = reqMonth === moment().month() ? moment().date() : 1; //1 or current day of month (no past days)
+  const startDay = reqMonth === moment().month() ? moment().tz(clientTz).date() : 1; //1 or current day of month (no past days)
 
   let b = 0;
   let block, start, end, busyStart, busyEnd, userStart, userEnd, x;
@@ -108,7 +108,7 @@ function availDays(reqMonth, freebusy, userAvail, userTz, clientTz, reqMeet) {
   const currDay = moment.tz([year, reqMonth, startDay], clientTz); //12am client time
   const monthEnd = moment.tz([year, 0, 31], clientTz).month(reqMonth);
 
-  while (currDay.isBefore(monthEnd)) {
+  while (currDay.isSameOrBefore(monthEnd)) {
     block = freebusy[b];
     start = moment.tz(currDay.format(), userTz); //same as currDay, use userTz for available hours comparison
     end = moment(start.format()).add(1, 'day');

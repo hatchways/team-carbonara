@@ -9,6 +9,7 @@ import Event from '../../components/Event/Event';
 import handleFetchErrors from '../../utils/handleFetchErrors';
 import NewEventDialog from '../../components/NewEventDialog/NewEventDialog';
 import auth from '../../auth';
+import DisplayAppointments from '../../components/DisplayAppointments/DisplayAppointments';
 import Upgrade from '../Upgrade/Upgrade';
 import Checkout from '../Checkout/Checkout';
 
@@ -120,6 +121,11 @@ function Dashboard() {
               <Button size="large" variant="contained" className={classes.getStartedBtn}>
                 Getting Started Guide
               </Button>
+            </DashPanel>
+            <DashPanel value={value} index={1}>
+              <section className={classes.events}>
+                <DisplayAppointments user={user._id} timezone={user.timezone} />
+              </section>
             </DashPanel>
           </main>
         </Route>
