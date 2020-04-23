@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Paper, Typography, Divider, TextField } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
-
 import useStylesCalendar from './stylesCalendar';
 import { useParams } from 'react-router-dom';
 import handleFetchErrors from '../../utils/handleFetchErrors';
@@ -51,17 +50,6 @@ function CalendarPage() {
   let { eventDuration, url } = useParams();
 
   useEffect(() => {
-    // function fetchAvailableDays
-    fetch(
-      `http://localhost:3001/api/availability/days?month=${currMonth}&meetTime=${eventDuration}&clientTz=${clientTz}&uniqueurl=${url}`,
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        setAvailableDays(data.days);
-        setShowTimeSlots(false);
-        setDateObj(null);
-      });
-
     //fetch user data
     fetch(`http://localhost:3001/api/user/${url}/${eventDuration}`)
       .then(handleFetchErrors)
@@ -74,7 +62,20 @@ function CalendarPage() {
         setMeeting(meeting[0]);
       })
       .catch((e) => console.log('Error ' + e));
-  }, [url, eventDuration, clientTz, currMonth]);
+  }, [url, eventDuration]);
+
+  useEffect(() => {
+    // function fetchAvailableDays
+    fetch(
+      `http://localhost:3001/api/availability/days?month=${currMonth}&meetTime=${eventDuration}&clientTz=${clientTz}&uniqueurl=${url}`,
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        setAvailableDays(data.days);
+        setShowTimeSlots(false);
+        setDateObj(null);
+      });
+  }, [clientTz, currMonth]);
 
   function setMaxDate() {
     const date = new Date();
@@ -108,7 +109,7 @@ function CalendarPage() {
       .catch((err) => console.log(err));
   }
 
-  function handleClick(value, event) {
+  function handleClick(value) {
     const date = value.getDate();
     const month = value.getMonth() + 1;
     const strDay = getDayOfWeek(value.getDay());

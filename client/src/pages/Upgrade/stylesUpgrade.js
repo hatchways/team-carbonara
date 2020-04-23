@@ -86,6 +86,10 @@ const useStylesUpgrade = makeStyles((theme) => ({
       background: theme.palette.primary.main,
     },
   },
+  loaderContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+  },
 }));
 
 export default useStylesUpgrade;

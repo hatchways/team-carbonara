@@ -4,7 +4,7 @@ import { Paper, Typography, Button, CircularProgress } from '@material-ui/core';
 import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
 import './Checkout.css';
 
-function Checkout({ sub, email }) {
+function Checkout({ user, setUser }) {
   const classes = useStylesCheckout();
   const stripe = useStripe();
   const elements = useElements();
@@ -16,11 +16,11 @@ function Checkout({ sub, email }) {
   function stripePaymentMethodHandler(paymentMethod) {
     setLoading(true);
 
-    fetch(`http://localhost:3001/api/subscription/${sub}`, {
+    fetch(`http://localhost:3001/api/subscription/${user.sub}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        email,
+        email: user.email,
         payment_method: paymentMethod.id,
       }),
     })
@@ -45,6 +45,11 @@ function Checkout({ sub, email }) {
               }
             });
           } else {
+            //render subscription status on client side
+            const updatedUser = user;
+            updatedUser.subscriber = true;
+            setUser(updatedUser);
+
             // No additional information was needed
             // Show a success message to your customer
             setSuccess(true);
@@ -72,7 +77,7 @@ function Checkout({ sub, email }) {
         type: 'card',
         card: cardElement,
         billing_details: {
-          email,
+          email: user.email,
         },
       })
       .then((result) => {

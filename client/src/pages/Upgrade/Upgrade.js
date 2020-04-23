@@ -1,18 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { withTheme } from '@material-ui/core/styles';
-import { Typography, Paper, Button, Divider } from '@material-ui/core';
+import { Typography, Paper, Button, Divider, CircularProgress } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import useStylesUpgrade from './stylesUpgrade';
 import handleFetchErrors from '../../utils/handleFetchErrors';
 
-function Upgrade({ subscriber, sub }) {
+function Upgrade({ user, setUser }) {
   const classes = useStylesUpgrade();
+  const [isLoading, setLoading] = useState(false);
 
-  function removeSubscription() {
-    fetch(`http://localhost:3001/api/subscription/remove/${sub}`)
+  function unsubscribe() {
+    setLoading(true);
+    fetch(`http://localhost:3001/api/subscription/unsubscribe/${user.sub}`, {
+      method: 'DELETE',
+    })
       .then(handleFetchErrors)
       .then((res) => {
-        console.log('unsubscribed');
+        setLoading(false);
+        const updatedUser = { ...user };
+        updatedUser.subscriber = false;
+        setUser(updatedUser);
       })
       .catch((err) => {
         console.log(err);
@@ -40,10 +47,16 @@ function Upgrade({ subscriber, sub }) {
                 $0/month
               </Typography>
             </div>
-            {subscriber ? (
-              <Button onClick={removeSubscription} size="large" className={classes.basicBtn} variant="outlined">
-                Unsubscribe
-              </Button>
+            {user.subscriber ? (
+              isLoading ? (
+                <div className={classes.loaderContainer}>
+                  <CircularProgress />
+                </div>
+              ) : (
+                <Button onClick={unsubscribe} size="large" className={classes.basicBtn} variant="outlined">
+                  Unsubscribe
+                </Button>
+              )
             ) : (
               <Button size="large" className={classes.basicBtn} variant="outlined">
                 Your Plan
@@ -67,7 +80,7 @@ function Upgrade({ subscriber, sub }) {
                 $5/month
               </Typography>
             </div>
-            {subscriber ? (
+            {user.subscriber ? (
               <Button size="large" className={classes.premBtn} variant="outlined">
                 Your Plan
               </Button>
