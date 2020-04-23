@@ -12,13 +12,13 @@ const daysAvailable = async (req, res) => {
   const uniqueurl = req.query.uniqueurl;
 
   const year = reqMonth < moment().month() ? moment().year() + 1 : moment().year();
-  let day = reqMonth === moment().month() ? moment().date() : 1; //1 or current day of month (no past days)
+  let day = reqMonth === moment().month() ? moment().tz(clientTz).date() : 1; //1 or current day of month (no past days)
 
   try {
     const user = await User.findOne({ url: uniqueurl });
     try {
       const startISO = moment.tz([year, reqMonth, day], clientTz).format();
-      const endISO = moment.tz([year, 0, 31], clientTz).month(reqMonth).format();
+      const endISO = moment.tz([year, 0, 31], clientTz).month(reqMonth).add(1, 'day').format();
 
       const freebusy = await getFreebusy(user.access_token, user.refresh_token, startISO, endISO, uniqueurl);
 

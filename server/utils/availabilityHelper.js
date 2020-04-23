@@ -98,7 +98,7 @@ function availDays(reqMonth, freebusy, userAvail, userTz, clientTz, reqMeet) {
     6: 'Saturday',
   };
   const year = reqMonth < moment().month() ? moment().year() + 1 : moment().year();
-  const startDay = reqMonth === moment().month() ? moment().date() : 1; //1 or current day of month (no past days)
+  const startDay = reqMonth === moment().month() ? moment().tz(clientTz).date() : 1; //1 or current day of month (no past days)
 
   let b = 0;
   let block, start, end, busyStart, busyEnd, userStart, userEnd, x;
