@@ -2,24 +2,31 @@ import React from 'react';
 import useStylesTimeSlots from './stylesTimeSlots';
 import TimeSlot from '../TimeSlot/TimeSlot';
 import PropTypes from 'prop-types';
+import { CircularProgress } from '@material-ui/core';
 
-function TimeSlotsContainer({ availableTimes, date, givenName, familyName, meeting, dateObj }) {
+function TimeSlotsContainer({ isLoading, availableTimes, date, userName, meeting, dateObj, clientTz }) {
   const classes = useStylesTimeSlots();
 
   return (
     <div className={classes.timeSlotContainer}>
       <p>{date}</p>
       <div className={classes.btns}>
-        {availableTimes.map((time, index) => (
-          <TimeSlot
-            dateObj={dateObj}
-            givenName={givenName}
-            meeting={meeting}
-            familyName={familyName}
-            key={index}
-            timeObj={time}
-          />
-        ))}
+        {isLoading ? (
+          <div className={classes.loader}>
+            <CircularProgress />
+          </div>
+        ) : (
+          availableTimes.map((time, index) => (
+            <TimeSlot
+              dateObj={dateObj}
+              userName={userName}
+              meeting={meeting}
+              key={index}
+              time={time}
+              clientTz={clientTz}
+            />
+          ))
+        )}
       </div>
     </div>
   );
@@ -27,10 +34,10 @@ function TimeSlotsContainer({ availableTimes, date, givenName, familyName, meeti
 
 TimeSlotsContainer.propTypes = {
   date: PropTypes.string.isRequired,
-  givenName: PropTypes.string.isRequired,
-  familyName: PropTypes.string.isRequired,
+  userName: PropTypes.string.isRequired,
   meeting: PropTypes.object.isRequired,
   availableTimes: PropTypes.array.isRequired,
+  clientTz: PropTypes.string.isRequired,
 };
 
 export default TimeSlotsContainer;

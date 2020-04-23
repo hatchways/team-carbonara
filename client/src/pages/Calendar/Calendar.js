@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Paper, Typography, Divider } from '@material-ui/core';
+import { Paper, Typography, Divider, TextField } from '@material-ui/core';
+import { Autocomplete } from '@material-ui/lab';
+
 import useStylesCalendar from './stylesCalendar';
 import { useParams } from 'react-router-dom';
 import handleFetchErrors from '../../utils/handleFetchErrors';
@@ -7,6 +9,7 @@ import Calendar from 'react-calendar';
 import { FaClock } from 'react-icons/fa';
 import TimeSlotsContainer from '../../components/TimeSlotsContainer/TimeSlotsContainer';
 import './CalendarComponent.css';
+import moment from 'moment-timezone';
 
 function getDayOfWeek(index) {
   const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -31,92 +34,76 @@ function getMonth(index) {
   return months[index];
 }
 
-function setMaxDate() {
-  const date = new Date();
-  const maxDate = new Date(date.setMonth(date.getMonth() + 3, 0));
-  return maxDate;
-}
-
-function setMinDate() {
-  const date = new Date();
-  const minDate = new Date(date.setMonth(date.getMonth() - 2, 1));
-  return minDate;
-}
-
-function parseDayAvailbility(daysAvailableObj) {
-  let daysUnavailable = [];
-  const dayAvailability = Object.entries(daysAvailableObj);
-  dayAvailability.filter((day) => {
-    //day[1] is bool of weekday
-    if (day[1] === false) {
-      daysUnavailable.push(day[0]);
-      return true;
-    }
-    return false;
-  });
-
-  return daysUnavailable;
-}
-
 function CalendarPage() {
   const classes = useStylesCalendar();
+  const [clientTz, setClientTz] = useState(moment.tz.guess());
+  const today = moment.tz(clientTz);
   const [dateObj, setDateObj] = useState(null);
   const [strDate, setDate] = useState(null);
-  const [user, setUser] = useState({
-    unavailableDays: [],
-  });
+  const [userName, setUserName] = useState('');
+  const [isLoading, setLoading] = useState(false);
   const [meeting, setMeeting] = useState('');
   const [showTimeSlots, setShowTimeSlots] = useState(false);
-  //mock data
-  const [timeSlots, setTimeSlots] = useState([
-    { time: '9:00' },
-    { time: '9:30' },
-    { time: '10:00' },
-    { time: '10:30' },
-    { time: '11:00' },
-    { time: '11:30' },
-    { time: '12:00' },
-    { time: '12:00' },
-    { time: '12:00' },
-    { time: '12:00' },
-    { time: '12:00' },
-    { time: '12:00' },
-  ]);
+  const [timeSlots, setTimeSlots] = useState([]);
+  const [availableDays, setAvailableDays] = useState([]);
+  const [currMonth, setCurrMonth] = useState(today.month());
 
   let { eventDuration, url } = useParams();
 
   useEffect(() => {
+    // function fetchAvailableDays
+    fetch(
+      `http://localhost:3001/api/availability/days?month=${currMonth}&meetTime=${eventDuration}&clientTz=${clientTz}&uniqueurl=${url}`,
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        setAvailableDays(data.days);
+        setShowTimeSlots(false);
+        setDateObj(null);
+      });
+
     //fetch user data
     fetch(`http://localhost:3001/api/user/${url}/${eventDuration}`)
       .then(handleFetchErrors)
       .then((res) => res.json())
       .then((data) => {
-        const unavailableDays = parseDayAvailbility(data.availability['days']);
-        data.unavailableDays = unavailableDays;
-        setUser(data);
+        data.family_name ? setUserName(data.given_name + ' ' + data.family_name) : setUserName(data.given_name);
 
         //find specific meeting type
-        const meeting = data.meetings.filter((meeting) => {
-          if (meeting.duration == eventDuration) {
-            return true;
-          }
-          return false;
-        });
+        const meeting = data.meetings.filter((meeting) => meeting.duration === parseInt(eventDuration));
         setMeeting(meeting[0]);
       })
       .catch((e) => console.log('Error ' + e));
-  }, [url, eventDuration]);
+  }, [url, eventDuration, clientTz, currMonth]);
+
+  function setMaxDate() {
+    const date = new Date();
+    const maxDate = new Date(date.setMonth(date.getMonth() + 3, 31));
+    return maxDate;
+  }
+
+  function setMinDate() {
+    const minDate = new Date(moment().tz(clientTz).format());
+    return minDate;
+  }
+
+  function parseISOstr(slotsObj) {
+    const parsedSlots = slotsObj.map((timeStr) => moment(timeStr).tz(clientTz).format('h:mma'));
+    return parsedSlots;
+  }
 
   function fetchAvailableTimeSlots(date, month) {
     fetch(
       `http://localhost:3001/api/availability/timeslots?month=${
         month - 1
-      }&day=${date}&meetTime=${eventDuration}&clientTz=${user.timezone}&uniqueurl=${url}`,
+      }&day=${date}&meetTime=${eventDuration}&clientTz=${clientTz}&uniqueurl=${url}`,
     )
       // .then(handleFetchErrors)
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
+        const timeSlots = parseISOstr(data.slots);
+        setTimeSlots(timeSlots);
+        setLoading(false);
       })
       .catch((err) => console.log(err));
   }
@@ -129,24 +116,28 @@ function CalendarPage() {
     setDateObj(value);
     setDate(`${strDay}, ${strMonth} ${date}`);
     setShowTimeSlots(true);
-
+    setLoading(true);
     fetchAvailableTimeSlots(date, month);
   }
 
-  function tileDisabled(activeStartDate) {
-    const currentDate = new Date();
-    const day = getDayOfWeek(activeStartDate.date.getDay());
-
-    //blocks users unavailable days & days before current date
-    if (currentDate >= activeStartDate.date || user.unavailableDays.includes(day)) {
-      return true;
-    }
+  function handleMonth(event) {
+    setCurrMonth(event.activeStartDate.getMonth());
   }
 
+  function tileDisabled(activeStartDate) {
+    const day = activeStartDate.date.getDate();
+    if (availableDays.indexOf(day) < 0) return true;
+  }
+
+  function tileContent(date) {
+    if (date.date.getMonth() === today.month() && date.date.getDate() === today.date()) {
+      return <div id="today">*</div>;
+    } else return null;
+  }
   return (
     <Paper elevation={6} className={classes.calendarContainer}>
       <div className={classes.eventInfo}>
-        <Typography variant="h6">{`${user.given_name} ${user.family_name}`}</Typography>
+        <Typography variant="h6">{userName}</Typography>
         <Typography className={classes.meetingName} variant="h4">
           {meeting.meetingName}
         </Typography>
@@ -160,20 +151,34 @@ function CalendarPage() {
         <div className={classes.calendar}>
           <Typography variant="h5">Select a Date & Time</Typography>
           <Calendar
+            onActiveStartDateChange={handleMonth}
+            tileContent={tileContent}
             minDate={setMinDate()}
             maxDate={setMaxDate()}
             onClickDay={handleClick}
+            value={dateObj}
             tileDisabled={tileDisabled}
+          />
+          <Autocomplete
+            id="timezone-field"
+            disableClearable={true}
+            className={classes.timezone}
+            value={clientTz}
+            options={moment.tz.names()}
+            getOptionLabel={(option) => option.replace('_', ' ') + ' (GMT' + moment.tz(option).format('Z') + ')'}
+            renderInput={(params) => <TextField {...params} label="Type a city or zone" variant="outlined" />}
+            onChange={(e, v) => setClientTz(v)}
           />
         </div>
         {showTimeSlots ? (
           <TimeSlotsContainer
-            givenName={user.given_name}
-            familyName={user.family_name}
+            userName={userName}
             meeting={meeting}
             availableTimes={timeSlots}
             date={strDate}
             dateObj={dateObj}
+            isLoading={isLoading}
+            clientTz={clientTz}
           />
         ) : null}
       </div>
