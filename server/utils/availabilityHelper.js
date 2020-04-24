@@ -181,7 +181,15 @@ function availSlots(date, freebusy, userHours, userTz, clientTz, reqMeet) {
 
   //12am client time -> userTz (same moment)
   let curr = moment.tz(date, clientTz).tz(userTz);
-  const end = moment(curr.format()).add(1, 'day');
+  const dayStartISO = curr.format();
+  const end = moment(dayStartISO).add(1, 'day'); //12am next day
+
+  //if day is today
+  if (curr.date() === moment().date()) {
+    curr = moment.tz(userTz);
+    curr.add(1, 'hour');
+    curr.minute(0);
+  }
 
   const userStart = moment(curr.format()).hour(userHours.start.split(':')[0]).minute(userHours.start.split(':')[1]);
   const userEnd = moment(curr.format()).hour(userHours.end.split(':')[0]).minute(userHours.end.split(':')[1]);
@@ -202,12 +210,11 @@ function availSlots(date, freebusy, userHours, userTz, clientTz, reqMeet) {
     }
 
     if (busy && busyEnd.isSameOrBefore(curr)) {
-      curr = busyEnd;
       b++;
     }
     if (endFirst && curr.isBefore(userEnd)) {
       //dayStart->curr->userEnd...userStart->dayEnd
-      if (busy && busyStart.isBefore(userEnd)) {
+      if (busy && busyStart.isBefore(userEnd) && busyEnd.isAfter(curr)) {
         addToSlots(curr, busyStart, reqMeet, slotTime, slots);
         curr = busyEnd;
         b++;
@@ -217,7 +224,7 @@ function availSlots(date, freebusy, userHours, userTz, clientTz, reqMeet) {
       }
     } else if (endFirst && curr.isSameOrAfter(userStart)) {
       //dayStart->userEnd...userStart->curr->dayEnd
-      if (busy && busyStart.isBefore(end)) {
+      if (busy && busyStart.isBefore(end) && busyEnd.isAfter(curr)) {
         addToSlots(curr, busyStart, reqMeet, slotTime, slots);
         curr = busyEnd;
         b++;
@@ -228,7 +235,7 @@ function availSlots(date, freebusy, userHours, userTz, clientTz, reqMeet) {
     } else if (!endFirst && curr.isBetween(userStart, userEnd, null, '[)')) {
       //dayStart...userStart->curr->userEnd...dayEnd
       //meeting can start at userStart time, inclusive
-      if (busy && busyStart.isBefore(userEnd)) {
+      if (busy && busyStart.isBefore(userEnd) && busyEnd.isAfter(curr)) {
         addToSlots(curr, busyStart, reqMeet, slotTime, slots);
         curr = busyEnd;
         b++;
