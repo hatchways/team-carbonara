@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import {
   Divider,
@@ -10,6 +10,7 @@ import {
 } from '@material-ui/core';
 import { MdExpandMore } from 'react-icons/md';
 import { FaRegCalendarCheck, FaRegTrashAlt } from 'react-icons/fa';
+import CancelApptDialog from '../CancelApptDialog/CancelApptDialog';
 
 import PropTypes from 'prop-types';
 import * as moment from 'moment-timezone';
@@ -46,7 +47,16 @@ const styles = (theme) => ({
   },
 });
 
-function Appointment({ classes, appointment }) {
+function Appointment({ classes, appointment, setUpdate }) {
+  const [cancelOpen, setCancelOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setCancelOpen(true);
+  };
+
+  const handleClose = () => {
+    setCancelOpen(false);
+  };
   return (
     <div className={classes.appointment}>
       <ExpansionPanel>
@@ -71,6 +81,7 @@ function Appointment({ classes, appointment }) {
         <ExpansionPanelDetails className={classes.details}>
           <div className={classes.column}>
             <Button
+              onClick={handleClickOpen}
               className={classes.button}
               variant="outlined"
               color="primary"
@@ -78,6 +89,12 @@ function Appointment({ classes, appointment }) {
             >
               Cancel
             </Button>
+            <CancelApptDialog
+              appointment={appointment}
+              open={cancelOpen}
+              handleClose={handleClose}
+              setUpdate={setUpdate}
+            />
           </div>
           <div>
             <Typography variant="subtitle1">Email</Typography>

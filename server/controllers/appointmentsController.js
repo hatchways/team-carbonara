@@ -1,7 +1,7 @@
 const Appointment = require('../models/Appointment');
 const User = require('../models/User');
 const { emailUserNewAppt } = require('../utils/emailHelper.js');
-const { insertEvent } = require('../utils/gcalHelper.js');
+const { insertEvent, deleteEvent } = require('../utils/gcalHelper.js');
 const moment = require('moment-timezone');
 
 const create = async (req, res) => {
@@ -25,7 +25,7 @@ const create = async (req, res) => {
     const eventTime = `${moment(apptTime).tz(user.timezone).format('h:mma - dddd, MMMM Do YYYY')}
     (${user.timezone.replace('_', ' ')} GMT${moment.tz(user.timezone).format('Z')})`;
     try {
-      await insertEvent(
+      const googleEventData = await insertEvent(
         user.access_token,
         user.refresh_token,
         apptTime,
@@ -37,6 +37,9 @@ const create = async (req, res) => {
         guestComment,
         url,
       );
+
+      newAppointment.googleId = googleEventData.id;
+
       await newAppointment.save();
 
       await emailUserNewAppt(
@@ -61,13 +64,27 @@ const create = async (req, res) => {
   }
 };
 
+const cancel = async (req, res) => {
+  try {
+    const apt = await Appointment.findOne({ _id: req.params.id });
+    const user = await User.findOne({ _id: apt.user });
+
+    deleteEvent(user.access_token, user.refresh_token, apt.googleId);
+    //remove from google calendar
+    apt.delete();
+    res.status(200).send('deleted');
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 const userIndex = async (req, res) => {
   try {
     const resp = await Appointment.find({ user: req.params.user_id });
     //sort resp by apptTime
-    // resp.sort((a, b) => {
-    //   return a.apptTime - b.apptTime;
-    // });
+    resp.sort((a, b) => {
+      return a.apptTime - b.apptTime;
+    });
     const parsed = { upcoming: {}, past: {} };
     const curr = moment().tz(req.query.timezone).format();
     for (const appt of resp) {
@@ -92,4 +109,4 @@ const userIndex = async (req, res) => {
   }
 };
 
-module.exports = { create, userIndex };
+module.exports = { create, userIndex, cancel };
