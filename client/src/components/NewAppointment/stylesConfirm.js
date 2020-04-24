@@ -82,6 +82,8 @@ const stylesConfirm = (theme) => ({
     width: '100%',
   },
   textArea: {
+    padding: '0.5rem',
+    fontSize: '0.8rem',
     borderRadius: '5px',
     border: '1px solid #bbb',
     width: '100%',
