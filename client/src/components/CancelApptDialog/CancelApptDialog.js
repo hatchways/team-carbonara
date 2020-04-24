@@ -11,7 +11,7 @@ import {
 import useStylesDialog from '../NewEventDialog/stylesDialog';
 import handleFetchErrors from '../../utils/handleFetchErrors';
 
-function NewEventDialog({ open, handleClose, appointment, renderNewMeeting }) {
+function NewEventDialog({ open, handleClose, appointment, renderNewMeeting, setUpdate }) {
   const classes = useStylesDialog();
 
   const [reason, setReason] = useState('');
@@ -19,14 +19,10 @@ function NewEventDialog({ open, handleClose, appointment, renderNewMeeting }) {
   const handleSubmit = () => {
     fetch(`http://localhost:3001/api/appointments/${appointment._id}`, {
       method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      mode: 'cors',
-      body: JSON.stringify({ appointment: appointment, reason: reason }),
     })
       .then(handleFetchErrors)
       .then((res) => {
+        setUpdate(true);
         handleClose();
       })
       .catch((e) => console.log(e));
