@@ -47,7 +47,7 @@ const styles = (theme) => ({
   },
 });
 
-function Appointment({ classes, appointment }) {
+function Appointment({ classes, appointment, setUpdate }) {
   const [cancelOpen, setCancelOpen] = useState(false);
 
   const handleClickOpen = () => {
@@ -89,7 +89,12 @@ function Appointment({ classes, appointment }) {
             >
               Cancel
             </Button>
-            <CancelApptDialog appointment={appointment} open={cancelOpen} handleClose={handleClose} />
+            <CancelApptDialog
+              appointment={appointment}
+              open={cancelOpen}
+              handleClose={handleClose}
+              setUpdate={setUpdate}
+            />
           </div>
           <div>
             <Typography variant="subtitle1">Email</Typography>

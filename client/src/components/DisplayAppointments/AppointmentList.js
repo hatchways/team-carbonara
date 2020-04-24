@@ -14,14 +14,14 @@ const styles = {
   },
 };
 
-function AppointmentList({ classes, appointments }) {
+function AppointmentList({ classes, appointments, setUpdate }) {
   return (
     <div className={classes.root}>
       <Typography variant="h6" className={classes.date}>
         {moment(appointments[0].apptTime).tz(appointments[0].userTz).format('dddd, MMMM Do YYYY')}
       </Typography>
       {appointments.map((appointment) => (
-        <Appointment appointment={appointment} key={appointment._id} />
+        <Appointment appointment={appointment} key={appointment._id} setUpdate={setUpdate} />
       ))}
     </div>
   );

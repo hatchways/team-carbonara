@@ -25,7 +25,7 @@ const create = async (req, res) => {
     const eventTime = `${moment(apptTime).tz(user.timezone).format('h:mma - dddd, MMMM Do YYYY')}
     (${user.timezone.replace('_', ' ')} GMT${moment.tz(user.timezone).format('Z')})`;
     try {
-      const googleEvent = await insertEvent(
+      const googleEventData = await insertEvent(
         user.access_token,
         user.refresh_token,
         apptTime,
@@ -37,8 +37,8 @@ const create = async (req, res) => {
         guestComment,
         url,
       );
-      console.log(googleEvent);
-      newAppointment.googleId = googleEvent.id;
+
+      newAppointment.googleId = googleEventData.id;
 
       await newAppointment.save();
 
@@ -66,10 +66,13 @@ const create = async (req, res) => {
 
 const cancel = async (req, res) => {
   console.log(req.body);
-  //remove from calendar
-  //delete by req.query.id
+  console.log(req.params);
+
   try {
-    await Appointment.deleteOne({ _id: req.query.id });
+    const apt = await Appointment.deleteOne({ _id: req.params.id });
+    console.log('aptinfo', apt);
+    //remove from google calendar
+    res.status(200).send('deleted');
   } catch (err) {
     console.error(err);
   }

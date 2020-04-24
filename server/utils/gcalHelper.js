@@ -76,12 +76,13 @@ async function insertEvent(
     },
   };
   try {
-    await calendar.events.insert({
+    const googleEvent = await calendar.events.insert({
       auth: oauth2Client,
       calendarId: 'primary',
       sendUpdates: 'all',
       resource: event,
     });
+    return googleEvent.data;
   } catch (err) {
     throw ('Error at gcal insert', err);
   }
