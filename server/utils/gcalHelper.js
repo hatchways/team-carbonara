@@ -88,4 +88,30 @@ async function insertEvent(
   }
 }
 
-module.exports = { getFreebusy, insertEvent };
+async function deleteEvent(access, refresh, eventId) {
+  oauth2Client.setCredentials({
+    access_token: access,
+    refresh_token: refresh,
+  });
+
+  oauth2Client.on('tokens', (tokens) => {
+    if (tokens.refresh_token) {
+      // store the refresh_token in my database!
+      const user = User.findOne({ refresh_token: refresh });
+      user.refresh_token = tokens.refresh_token;
+      user.save();
+    }
+  });
+
+  try {
+    await calendar.events.delete({
+      auth: oauth2Client,
+      calendarId: 'primary',
+      eventId: eventId,
+    });
+    console.log('success');
+  } catch (err) {
+    throw ('Error at gcal insert', err);
+  }
+}
+module.exports = { getFreebusy, insertEvent, deleteEvent };

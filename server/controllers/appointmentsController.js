@@ -1,7 +1,7 @@
 const Appointment = require('../models/Appointment');
 const User = require('../models/User');
 const { emailUserNewAppt } = require('../utils/emailHelper.js');
-const { insertEvent } = require('../utils/gcalHelper.js');
+const { insertEvent, deleteEvent } = require('../utils/gcalHelper.js');
 const moment = require('moment-timezone');
 
 const create = async (req, res) => {
@@ -65,13 +65,13 @@ const create = async (req, res) => {
 };
 
 const cancel = async (req, res) => {
-  console.log(req.body);
-  console.log(req.params);
-
   try {
-    const apt = await Appointment.deleteOne({ _id: req.params.id });
-    console.log('aptinfo', apt);
+    const apt = await Appointment.findOne({ _id: req.params.id });
+    const user = await User.findOne({ _id: apt.user });
+
+    deleteEvent(user.access_token, user.refresh_token, apt.googleId);
     //remove from google calendar
+    apt.delete();
     res.status(200).send('deleted');
   } catch (err) {
     console.error(err);

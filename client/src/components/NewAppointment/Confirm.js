@@ -28,6 +28,7 @@ function Confirm({ classes }) {
   const { url } = useParams();
   const clientTz = location.state.clientTz;
   const appt = moment.tz(location.state.time, clientTz);
+  const apptStr = appt.format();
 
   const [nameField, setName] = useState({ name: '', error: false, errorText: '' });
   const [emailField, setEmail] = useState({ email: '', error: false, errorText: '' });
@@ -64,7 +65,7 @@ function Confirm({ classes }) {
       guestTz: clientTz,
       meetingName: location.state.meeting.meetingName,
       meetTime: location.state.meeting.duration,
-      apptTime: appt,
+      apptTime: apptStr,
       url,
     };
 
