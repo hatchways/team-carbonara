@@ -82,9 +82,9 @@ const userIndex = async (req, res) => {
   try {
     const resp = await Appointment.find({ user: req.params.user_id });
     //sort resp by apptTime
-    // resp.sort((a, b) => {
-    //   return a.apptTime - b.apptTime;
-    // });
+    resp.sort((a, b) => {
+      return a.apptTime - b.apptTime;
+    });
     const parsed = { upcoming: {}, past: {} };
     const curr = moment().tz(req.query.timezone).format();
     for (const appt of resp) {
