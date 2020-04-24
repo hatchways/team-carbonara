@@ -6,4 +6,6 @@ router.post('/', appointmentsController.create);
 
 router.get('/:user_id', appointmentsController.userIndex);
 
+router.delete('/:id', appointmentsController.cancel);
+
 module.exports = router;

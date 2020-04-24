@@ -35,6 +35,10 @@ const appointmentSchema = new Schema({
     type: Date,
     required: true,
   },
+  googleId: {
+    type: String,
+    required: true,
+  },
 });
 
 const Appointment = mongoose.model('Appointment', appointmentSchema);
