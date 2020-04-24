@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useHistory, useLocation, useParams } from 'react-router-dom';
+import { useHistory, useLocation, useParams, Redirect } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import stylesConfirm from './stylesConfirm';
 import { Paper, TextField, TextareaAutosize, Button, IconButton, Typography } from '@material-ui/core';
@@ -28,6 +28,8 @@ function Confirm({ classes }) {
   const { url } = useParams();
   const clientTz = location.state.clientTz;
   const appt = moment.tz(location.state.time, clientTz);
+  const appointmentStr = `${appt.format('h:mma')} - ${appt.add(location.state.meeting.duration, 'm').format('h:mma')}
+  ${weekdays[appt.day()]}, ${months[appt.month()]} ${appt.date()}, ${appt.year()}`;
   const apptStr = appt.format();
 
   const [nameField, setName] = useState({ name: '', error: false, errorText: '' });
@@ -79,7 +81,12 @@ function Confirm({ classes }) {
       if (res.status !== 201) {
         history.push(`/${url}/${location.state.meeting.duration}`); //go back to scheduler, error alert?
       } else {
-        history.push('/finish');
+        history.push('/finish', {
+          name: location.state.name,
+          meetingName: location.state.meeting.meetingName,
+          apptTime: appointmentStr,
+          timezone: location.state.clientTz,
+        });
       }
     });
   };
@@ -102,11 +109,7 @@ function Confirm({ classes }) {
             <span>{location.state.meeting.duration} min</span>
           </div>
           <div className={classes.eventTime}>
-            <FaRegCalendarCheck size={23} />{' '}
-            <span>
-              {appt.format('hh:mma')} - {appt.add(location.state.meeting.duration, 'm').format('hh:mma')},{' '}
-              {weekdays[appt.day()]}, {months[appt.month()]} {appt.date()}, {appt.year()}
-            </span>
+            <FaRegCalendarCheck size={23} /> <span>{appointmentStr}</span>
           </div>
           <div className={classes.timeZone}>
             <FaGlobeAmericas size={23} />
