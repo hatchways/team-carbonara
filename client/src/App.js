@@ -11,6 +11,7 @@ import Calendar from './pages/Calendar/Calendar';
 import Confirm from './components/NewAppointment/Confirm';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
+import ConfirmedAppointment from '../src/pages/ConfirmedAppointment/ConfirmedAppointment';
 
 const stylesApp = (theme) => ({
   appName: {
@@ -33,6 +34,9 @@ function App({ classes }) {
           <ThemeProvider theme={theme}>
             <CssBaseline />
             <Switch>
+              <Route path="/finish">
+                <ConfirmedAppointment />
+              </Route>
               <Route exact path="/:url/:eventDuration/confirm" component={Confirm} />
               <Route exact path="/:url/:eventDuration" component={Calendar} />
               <PrivateRoute path="/dashboard" component={Dashboard} />
