@@ -18,6 +18,7 @@ const styles = (theme) => ({
 function DisplayAppointments({ classes, timezone, user }) {
   const [value, setValue] = useState(0);
   const [appointments, setAppointments] = useState([]);
+  const [update, setUpdate] = useState(false);
 
   useEffect(() => {
     // fetch user's appointment info
@@ -27,13 +28,14 @@ function DisplayAppointments({ classes, timezone, user }) {
         .then((res) => res.json())
         .then((data) => {
           setAppointments(data);
+          setUpdate(false);
         })
         .catch((e) => {
           console.error('Error: ' + e);
         });
     };
     if (user) fetchAppts();
-  }, [timezone, user]);
+  }, [timezone, user, update]);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -41,7 +43,9 @@ function DisplayAppointments({ classes, timezone, user }) {
 
   const renderAppts = (appts) => {
     if (appts) {
-      return Object.keys(appts).map((key) => <AppointmentList appointments={appts[key]} key={key} />);
+      return Object.keys(appts).map((key) => (
+        <AppointmentList appointments={appts[key]} key={key} setUpdate={setUpdate} />
+      ));
     }
   };
   return (
