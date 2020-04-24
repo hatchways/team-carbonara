@@ -75,7 +75,7 @@ function CalendarPage() {
         setShowTimeSlots(false);
         setDateObj(null);
       });
-  }, [clientTz, currMonth]);
+  }, [clientTz, currMonth, url, eventDuration]);
 
   function setMaxDate() {
     const date = new Date();
