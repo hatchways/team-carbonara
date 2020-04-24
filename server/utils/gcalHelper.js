@@ -108,6 +108,7 @@ async function deleteEvent(access, refresh, eventId) {
       auth: oauth2Client,
       calendarId: 'primary',
       eventId: eventId,
+      sendUpdates: 'all',
     });
     console.log('success');
   } catch (err) {
