@@ -26,8 +26,8 @@ function Confirm({ classes }) {
   ];
   const location = useLocation();
   const { url } = useParams();
-  const appt = moment(location.state.date.toISOString());
   const clientTz = location.state.clientTz;
+  const appt = moment.tz(location.state.time, clientTz);
 
   const [nameField, setName] = useState({ name: '', error: false, errorText: '' });
   const [emailField, setEmail] = useState({ email: '', error: false, errorText: '' });
