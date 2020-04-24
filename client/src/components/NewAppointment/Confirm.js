@@ -30,6 +30,7 @@ function Confirm({ classes }) {
   const appt = moment.tz(location.state.time, clientTz);
   const appointmentStr = `${appt.format('h:mma')} - ${appt.add(location.state.meeting.duration, 'm').format('h:mma')}
   ${weekdays[appt.day()]}, ${months[appt.month()]} ${appt.date()}, ${appt.year()}`;
+  const apptStr = appt.format();
 
   const [nameField, setName] = useState({ name: '', error: false, errorText: '' });
   const [emailField, setEmail] = useState({ email: '', error: false, errorText: '' });
@@ -66,7 +67,7 @@ function Confirm({ classes }) {
       guestTz: clientTz,
       meetingName: location.state.meeting.meetingName,
       meetTime: location.state.meeting.duration,
-      apptTime: appt,
+      apptTime: apptStr,
       url,
     };
 
