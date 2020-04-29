@@ -96,7 +96,6 @@ function Upgrade({ user, setUser }) {
           <div className={classes.planDetails}>
             <ul>
               <li className={classes.listEle}>Unlimited Event Type</li>
-              <li className={classes.listEle}>Group Meetings</li>
             </ul>
           </div>
         </Paper>
