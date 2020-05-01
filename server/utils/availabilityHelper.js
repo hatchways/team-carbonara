@@ -1,4 +1,13 @@
 const moment = require('moment-timezone');
+const weekdays = {
+  0: 'Sunday',
+  1: 'Monday',
+  2: 'Tuesday',
+  3: 'Wednesday',
+  4: 'Thursday',
+  5: 'Friday',
+  6: 'Saturday',
+};
 
 //day is valid weekday, but has some busy blocks btwn dayStart, dayEnd
 //check for at least one valid meeting time
@@ -89,15 +98,6 @@ function recursIsDayAvail(freebusy, busyIndex, start, end, reqMeet, userStart, u
 
 //return available days in client timezone, checks for booked/unavailable days -> return arr of ints of valid days
 function availDays(reqMonth, freebusy, userAvail, userTz, clientTz, reqMeet) {
-  const weekdays = {
-    0: 'Sunday',
-    1: 'Monday',
-    2: 'Tuesday',
-    3: 'Wednesday',
-    4: 'Thursday',
-    5: 'Friday',
-    6: 'Saturday',
-  };
   const year = reqMonth < moment().month() ? moment().year() + 1 : moment().year();
   const startDay = reqMonth === moment().month() ? moment().tz(clientTz).date() : 1; //1 or current day of month (no past days)
 
@@ -173,7 +173,7 @@ function addToSlots(currStart, availEnd, reqMeet, slotTime, slots) {
 }
 
 //takes in freebusy for client 12am-12am, finds and returns available time slots
-function availSlots(date, freebusy, userHours, userTz, clientTz, reqMeet) {
+function availSlots(date, freebusy, userHours, userDays, userTz, clientTz, reqMeet) {
   const slots = [];
 
   //check for a meeting every 30min for any length meeting. (15min for 15min meeting)
@@ -183,9 +183,10 @@ function availSlots(date, freebusy, userHours, userTz, clientTz, reqMeet) {
   let busyStart, busyEnd, busy;
 
   //12am client time -> userTz (same moment)
+  //all comparisons in userTz
   let curr = moment.tz(date, clientTz).tz(userTz);
 
-  const dayStartISO = curr.format(); //end time must not depend on current time
+  const dayStartISO = curr.format(); //end time must not depend on curr moment
   const end = moment(dayStartISO).add(1, 'day'); //12am next day
 
   const userStart = moment(dayStartISO).hour(userHours.start.split(':')[0]).minute(userHours.start.split(':')[1]);
@@ -194,6 +195,9 @@ function availSlots(date, freebusy, userHours, userTz, clientTz, reqMeet) {
   //if dayStart is between userHours, userStart will end up before dayStart when setting hour
   const endFirst = userStart.isBefore(curr); //bool
   if (endFirst) userStart.add(1, 'day');
+
+  //if userStart becomes an invalid user weekday, add 1 more day (userStart now after day end)
+  if (!userDays[weekdays[userStart.day()]]) userStart.add(1, 'day');
 
   //if day is today
   if (curr.date() === moment().date()) {
