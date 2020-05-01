@@ -158,7 +158,6 @@ function availDays(reqMonth, freebusy, userAvail, userTz, clientTz, reqMeet) {
   return clientAvail;
 }
 
-//checks for meeting every 30min for any length meeting. (15min for 15min meeting)
 //in a block of available time, add valid timeslots
 //checks for meeting every {slotTime} minutes
 function addToSlots(currStart, availEnd, reqMeet, slotTime, slots) {
@@ -185,14 +184,24 @@ function availSlots(date, freebusy, userHours, userTz, clientTz, reqMeet) {
 
   //12am client time -> userTz (same moment)
   let curr = moment.tz(date, clientTz).tz(userTz);
-  const end = moment(curr.format()).add(1, 'day');
 
-  const userStart = moment(curr.format()).hour(userHours.start.split(':')[0]).minute(userHours.start.split(':')[1]);
-  const userEnd = moment(curr.format()).hour(userHours.end.split(':')[0]).minute(userHours.end.split(':')[1]);
+  const dayStartISO = curr.format(); //end time must not depend on current time
+  const end = moment(dayStartISO).add(1, 'day'); //12am next day
 
-  //if dayStart is between userHours, userStart will end up before dayStart
+  const userStart = moment(dayStartISO).hour(userHours.start.split(':')[0]).minute(userHours.start.split(':')[1]);
+  const userEnd = moment(dayStartISO).hour(userHours.end.split(':')[0]).minute(userHours.end.split(':')[1]);
+
+  //if dayStart is between userHours, userStart will end up before dayStart when setting hour
   const endFirst = userStart.isBefore(curr); //bool
   if (endFirst) userStart.add(1, 'day');
+
+  //if day is today
+  if (curr.date() === moment().date()) {
+    curr = moment.tz(userTz);
+    //only allow appointment at least 1 hour from current time
+    curr.add(2, 'hour');
+    curr.minute(0).second(0).millisecond(0);
+  }
 
   while (curr.isBefore(end)) {
     if (Math.abs(curr.diff(end, 'minutes')) < reqMeet) {
@@ -206,9 +215,10 @@ function availSlots(date, freebusy, userHours, userTz, clientTz, reqMeet) {
     }
 
     if (busy && busyEnd.isSameOrBefore(curr)) {
-      curr = busyEnd;
+      //busyStart must always be same or after curr
       b++;
     }
+    //valid times for significant difference timezone (12am between user hours)
     if (endFirst && curr.isBefore(userEnd)) {
       //dayStart->curr->userEnd...userStart->dayEnd
       if (busy && busyStart.isBefore(userEnd)) {
@@ -229,6 +239,8 @@ function availSlots(date, freebusy, userHours, userTz, clientTz, reqMeet) {
         addToSlots(curr, end, reqMeet, slotTime, slots);
         curr = end;
       }
+
+      //valid times for other timezones (12am outside user hours)
     } else if (!endFirst && curr.isBetween(userStart, userEnd, null, '[)')) {
       //dayStart...userStart->curr->userEnd...dayEnd
       //meeting can start at userStart time, inclusive
@@ -240,8 +252,9 @@ function availSlots(date, freebusy, userHours, userTz, clientTz, reqMeet) {
         addToSlots(curr, userEnd, reqMeet, slotTime, slots);
         curr = end;
       }
-    } else {
+
       //current time not during user available hours (invalid)
+    } else {
       if (curr.isBefore(userStart)) {
         curr = userStart;
       } else break; //break loop if current time passes user hours (userStart-> userEnd) and doesn't reach dayEnd
