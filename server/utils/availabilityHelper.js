@@ -13,7 +13,7 @@ function recursIsDayAvail(freebusy, busyIndex, start, end, reqMeet, userStart, u
   }
   if (busy && curr.isBetween(busy.start, busy.end, null, '[)')) {
     //currTime is in busy block, move currTime forward.
-    //includes busyStart, excludes busyEnd since meetings can start then.
+    //'[)' -> includes busyStart, excludes busyEnd since meetings can start when busy period ends.
     curr = moment(busy.end);
     return recursIsDayAvail(freebusy, busyIndex + 1, curr, dayEnd, reqMeet, userStart, userEnd);
   }
@@ -62,6 +62,7 @@ function recursIsDayAvail(freebusy, busyIndex, start, end, reqMeet, userStart, u
     }
   } else if (userStart.isBefore(userEnd) && curr.isBetween(userStart, userEnd, null, '[)')) {
     //valid time for dayStart...userStart->userEnd...dayEnd
+    //meeting can start at userStart, cannot start at userEnd
     if (busy && moment(busy.start).isBefore(userEnd)) {
       //userStart->curr->busy->userEnd, check for meet before busy
       if (Math.abs(curr.diff(busy.start, 'minutes')) >= reqMeet) {
@@ -157,8 +158,9 @@ function availDays(reqMonth, freebusy, userAvail, userTz, clientTz, reqMeet) {
   return clientAvail;
 }
 
-//in block of available time, add valid timeslots
 //checks for meeting every 30min for any length meeting. (15min for 15min meeting)
+//in a block of available time, add valid timeslots
+//checks for meeting every {slotTime} minutes
 function addToSlots(currStart, availEnd, reqMeet, slotTime, slots) {
   while (currStart.isBefore(availEnd)) {
     if (Math.abs(currStart.diff(availEnd, 'minutes')) >= reqMeet) {
@@ -174,7 +176,9 @@ function addToSlots(currStart, availEnd, reqMeet, slotTime, slots) {
 //takes in freebusy for client 12am-12am, finds and returns available time slots
 function availSlots(date, freebusy, userHours, userTz, clientTz, reqMeet) {
   const slots = [];
-  const slotTime = reqMeet > 15 ? 30 : 15; //check for a meeting every {slotTime} minutes
+
+  //check for a meeting every 30min for any length meeting. (15min for 15min meeting)
+  const slotTime = reqMeet > 15 ? 30 : 15;
 
   let b = 0;
   let busyStart, busyEnd, busy;
@@ -237,10 +241,10 @@ function availSlots(date, freebusy, userHours, userTz, clientTz, reqMeet) {
         curr = end;
       }
     } else {
-      //curr not during user available hours (invalid)
+      //current time not during user available hours (invalid)
       if (curr.isBefore(userStart)) {
         curr = userStart;
-      } else break; //break loop if currTime passes user hours (userStart-> userEnd) and doesn't reach dayEnd
+      } else break; //break loop if current time passes user hours (userStart-> userEnd) and doesn't reach dayEnd
     }
   }
 
