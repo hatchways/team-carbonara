@@ -52,7 +52,15 @@ const timeslotsAvailable = async (req, res) => {
 
       const freebusy = await getFreebusy(user.access_token, user.refresh_token, startISO, endISO, uniqueurl);
 
-      const availableSlots = availSlots(date, freebusy, user.availability.hours, user.timezone, clientTz, reqMeet);
+      const availableSlots = availSlots(
+        date,
+        freebusy,
+        user.availability.hours,
+        user.availability.days,
+        user.timezone,
+        clientTz,
+        reqMeet,
+      );
 
       res.status(200).send({ slots: availableSlots });
     } catch (err) {
