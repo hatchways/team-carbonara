@@ -22,8 +22,15 @@ const daysAvailable = async (req, res) => {
 
       const freebusy = await getFreebusy(user.access_token, user.refresh_token, startISO, endISO, uniqueurl);
 
-      const availableDays = availDays(reqMonth, freebusy, user.availability, user.timezone, clientTz, reqMeet);
-
+      const availableDays = availDays(
+        [year, reqMonth, day],
+        freebusy,
+        user.availability,
+        user.timezone,
+        clientTz,
+        reqMeet,
+      );
+      console.log(availableDays, [year, reqMonth, day]);
       res.status(200).send({ days: availableDays });
     } catch (err) {
       res.status(500).send('Internal server error.');
