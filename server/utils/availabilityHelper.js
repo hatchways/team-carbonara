@@ -223,6 +223,9 @@ function availSlots(date, freebusy, userHours, userDays, userTz, clientTz, reqMe
   //if userStart becomes an invalid user weekday, add 1 more day (userStart now after day end)
   if (!userDays[weekdays[userStart.day()]]) userStart.add(1, 'day');
 
+  //if userEnd is an invalid weekday (endFirst)
+  if (!userDays[weekdays[userEnd.day()]]) curr = userStart;
+
   //if day is today
   if (curr.date() === moment().date()) {
     curr = moment.tz(userTz);
@@ -245,7 +248,9 @@ function availSlots(date, freebusy, userHours, userDays, userTz, clientTz, reqMe
     if (busy && busyEnd.isSameOrBefore(curr)) {
       //busyStart must always be same or after curr
       b++;
+      continue;
     }
+
     //valid times for significant difference timezone (12am between user hours)
     if (endFirst && curr.isBefore(userEnd)) {
       //dayStart->curr->userEnd...userStart->dayEnd
