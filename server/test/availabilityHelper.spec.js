@@ -35,7 +35,7 @@ describe('test days', () => {
 
     const days = availDays([2020, 4, 1], mayBusy, userAvail, userAvail.timeZone, 'Asia/Seoul', 60);
 
-    assert.deepEqual(days, [3, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23, 24, 26, 27, 28, 29, 30]);
+    assert.deepEqual(days, [4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21, 22, 23, 25, 26, 27, 28, 29, 30]);
   });
 });
 
