@@ -98,15 +98,11 @@ function recursIsDayAvail(freebusy, busyIndex, start, end, reqMeet, userStart, u
 
 //return available days in client timezone, checks for booked/unavailable days -> return arr of ints of valid days
 function availDays(startDate, freebusy, userAvail, userTz, clientTz, reqMeet) {
-  // const year = reqMonth < moment().month() ? moment().year() + 1 : moment().year();
-  // const startDay = reqMonth === moment().month() ? moment().tz(clientTz).date() : 1; //1 or current day of month (no past days)
-
   let b = 0;
   let block, start, end, busyStart, busyEnd, userStart, userEnd, x;
   const avail = [];
 
   //used clientTz month to fetch freebusy
-  // const currDay = moment.tz([year, reqMonth, startDay], clientTz); //12am client time
   const currDay = moment.tz(startDate, clientTz); //12am client time
 
   const monthEnd = moment.tz([startDate[0], 0, 31], clientTz).month(startDate[1]);
