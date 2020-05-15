@@ -30,7 +30,6 @@ const daysAvailable = async (req, res) => {
         clientTz,
         reqMeet,
       );
-      console.log(availableDays, [year, reqMonth, day]);
       res.status(200).send({ days: availableDays });
     } catch (err) {
       res.status(500).send('Internal server error.');

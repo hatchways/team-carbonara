@@ -119,7 +119,6 @@ function availDays(startDate, freebusy, userAvail, userTz, clientTz, reqMeet) {
     .tz(currDay.format(), userTz)
     .hour(userAvail.hours.end.split(':')[0])
     .minute(userAvail.hours.end.split(':')[1]);
-  console.log('a', userStart.format(), userEnd.format());
 
   const endFirst = userStart.isBefore(currDay); //bool, client 12am occurs between userAvailable userHours
   //userStart for user's following day falls within this client day (if endFirst use userStart for next day)
@@ -136,10 +135,10 @@ function availDays(startDate, freebusy, userAvail, userTz, clientTz, reqMeet) {
         !userAvail.days[weekdays[start.day()]] &&
         !userAvail.days[weekdays[userStart.date(start.date()).add(1, 'day').day()]])
     ) {
-      //invalid weekday, if endFirst both days are invalid
+      //console.log('invalid weekday, if endFirst both days are invalid')
       currDay.add(1, 'day');
     } else if (!block) {
-      //valid weekday, no more busy blocks
+      // console.log('valid weekday, no more busy blocks');
       avail.push(start.format());
       currDay.add(1, 'day');
     } else {
@@ -150,7 +149,7 @@ function availDays(startDate, freebusy, userAvail, userTz, clientTz, reqMeet) {
         // console.log('start after current busyEnd, go to next busy ');
         b++;
       } else if (busyStart.isSameOrAfter(end)) {
-        // console.log('busystart after dayend, add day');
+        // console.log(currDay.format(), 'busystart after dayend, add day');
         avail.push(start.format());
         currDay.add(1, 'day');
       } else if (busyStart.isSameOrBefore(start) && busyEnd.isSameOrAfter(end)) {

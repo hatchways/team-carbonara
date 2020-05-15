@@ -6,22 +6,22 @@ const moment = require('moment-timezone');
 chai.should();
 chai.use(chaiHttp);
 const assert = chai.assert;
-//
-// describe('test days', () => {
-//   it('returns expected days, omits busy days and unavailable days', () => {
-//     const mayBusy = [
-//       { start: '2020-04-01T04:00:00Z', end: '2020-05-03T04:00:00Z' },
-//       { start: '2020-05-13T00:00:00Z', end: '2020-05-13T01:00:00Z' },
-//       { start: '2020-05-20T13:00:00Z', end: '2020-05-20T13:30:00Z' },
-//       { start: '2020-05-20T14:00:00Z', end: '2020-05-20T18:00:00Z' },
-//       { start: '2020-05-20T18:30:00Z', end: '2020-05-20T22:00:00Z' },
-//     ];
-//
-//     const days = availDays([2020, 4, 1], mayBusy, userAvail, userAvail.timeZone, clientTz, 60);
-//
-//     assert.deepEqual(days, [4, 5, 6, 7, 8, 11, 12, 13, 14, 15, 18, 19, 21, 22, 25, 26, 27, 28, 29]);
-//   });
-// });
+
+describe('test days', () => {
+  it('returns expected days, omits busy days and unavailable days', () => {
+    const mayBusy = [
+      { start: '2020-04-01T04:00:00Z', end: '2020-05-03T04:00:00Z' },
+      { start: '2020-05-13T00:00:00Z', end: '2020-05-13T01:00:00Z' },
+      { start: '2020-05-20T13:00:00Z', end: '2020-05-20T13:30:00Z' },
+      { start: '2020-05-20T14:00:00Z', end: '2020-05-20T18:00:00Z' },
+      { start: '2020-05-20T18:30:00Z', end: '2020-05-20T22:00:00Z' },
+    ];
+
+    const days = availDays([2020, 4, 1], mayBusy, userAvail, userAvail.timeZone, clientTz, 60);
+
+    assert.deepEqual(days, [4, 5, 6, 7, 8, 11, 12, 13, 14, 15, 18, 19, 21, 22, 25, 26, 27, 28, 29]);
+  });
+});
 
 describe('test days', () => {
   it('returns expected days for significant difference client timezone', () => {
