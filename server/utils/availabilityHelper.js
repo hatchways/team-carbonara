@@ -230,7 +230,7 @@ function availSlots(date, freebusy, userHours, userDays, userTz, clientTz, reqMe
   if (!userDays[weekdays[userEnd.day()]]) curr = userStart;
 
   //if day is today
-  if (curr.date() === moment().date()) {
+  if (curr.date() === moment().date() && curr.month() === moment().month()) {
     curr = moment.tz(userTz);
     //only allow appointment at least 1 hour from current time
     curr.add(2, 'hour');
