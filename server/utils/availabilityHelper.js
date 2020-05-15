@@ -129,6 +129,11 @@ function availDays(startDate, freebusy, userAvail, userTz, clientTz, reqMeet) {
     start = moment.tz(currDay.format(), userTz); //same as currDay, use userTz for available hours comparison
     end = moment(start.format()).add(1, 'day');
 
+    if (userEnd.month() !== start.month()) {
+      userStart.year(start.year()).month(start.month());
+      userEnd.year(start.year()).month(start.month());
+    }
+
     if (
       (!endFirst && !userAvail.days[weekdays[start.day()]]) ||
       (endFirst &&
