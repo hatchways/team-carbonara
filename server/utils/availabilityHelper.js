@@ -125,9 +125,16 @@ function availDays(startDate, freebusy, userAvail, userTz, clientTz, reqMeet) {
     start = moment.tz(currDay.format(), userTz); //same as currDay, use userTz for available hours comparison
     end = moment(start.format()).add(1, 'day');
 
+    //if day is today
+    if (start.date() === moment().date() && start.month() === moment().month()) {
+      start = moment.tz(userTz);
+      start.second(0).millisecond(0);
+    }
+
+    //set correct date for weekday comparison if initial date in previous month
     if (userEnd.month() !== start.month()) {
-      userStart.year(start.year()).month(start.month());
-      userEnd.year(start.year()).month(start.month());
+      userStart.year(start.year()).month(start.month()).date(start.date());
+      userEnd.year(start.year()).month(start.month()).date(start.date());
     }
 
     if (
@@ -149,16 +156,13 @@ function availDays(startDate, freebusy, userAvail, userTz, clientTz, reqMeet) {
       if (start.isSameOrAfter(busyEnd)) {
         // console.log('start after current busyEnd, go to next busy ');
         b++;
-      } else if (busyStart.isSameOrAfter(end)) {
-        // console.log(currDay.format(), 'busystart after dayend, add day');
-        avail.push(start.format());
-        currDay.add(1, 'day');
       } else if (busyStart.isSameOrBefore(start) && busyEnd.isSameOrAfter(end)) {
         // console.log('day fully busy, go to next day');
         currDay.add(1, 'day');
       } else {
-        userStart.date(start.date());
-        userEnd.date(start.date());
+        //set month too in case userStart changed in weekday check
+        userStart.month(start.month()).date(start.date());
+        userEnd.month(start.month()).date(start.date());
 
         if (endFirst) userStart.add(1, 'day');
 
