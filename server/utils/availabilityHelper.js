@@ -97,27 +97,56 @@ function recursIsDayAvail(freebusy, busyIndex, start, end, reqMeet, userStart, u
 }
 
 //return available days in client timezone, checks for booked/unavailable days -> return arr of ints of valid days
-function availDays(reqMonth, freebusy, userAvail, userTz, clientTz, reqMeet) {
-  const year = reqMonth < moment().month() ? moment().year() + 1 : moment().year();
-  const startDay = reqMonth === moment().month() ? moment().tz(clientTz).date() : 1; //1 or current day of month (no past days)
-
+function availDays(startDate, freebusy, userAvail, userTz, clientTz, reqMeet) {
   let b = 0;
   let block, start, end, busyStart, busyEnd, userStart, userEnd, x;
   const avail = [];
 
   //used clientTz month to fetch freebusy
-  const currDay = moment.tz([year, reqMonth, startDay], clientTz); //12am client time
-  const monthEnd = moment.tz([year, 0, 31], clientTz).month(reqMonth);
+  const currDay = moment.tz(startDate, clientTz); //12am client time
+
+  const monthEnd = moment.tz([startDate[0], 0, 31], clientTz).month(startDate[1]);
+
+  userStart = moment
+    .tz(currDay.format(), userTz)
+    .hour(userAvail.hours.start.split(':')[0])
+    .minute(userAvail.hours.start.split(':')[1]);
+  userEnd = moment
+    .tz(currDay.format(), userTz)
+    .hour(userAvail.hours.end.split(':')[0])
+    .minute(userAvail.hours.end.split(':')[1]);
+
+  const endFirst = userStart.isBefore(currDay); //bool, client 12am occurs between userAvailable userHours
+  //userStart for user's following day falls within this client day (if endFirst use userStart for next day)
+  //client 12am -> userEnd...user 12am...userStart -> client 12am
 
   while (currDay.isSameOrBefore(monthEnd)) {
     block = freebusy[b];
     start = moment.tz(currDay.format(), userTz); //same as currDay, use userTz for available hours comparison
     end = moment(start.format()).add(1, 'day');
-    if (!userAvail.days[weekdays[start.day()]]) {
-      //invalid weekday
+
+    //if day is today
+    if (start.date() === moment().date() && start.month() === moment().month()) {
+      start = moment.tz(userTz);
+      start.second(0).millisecond(0);
+    }
+
+    //set correct date for weekday comparison if initial date in previous month
+    if (userEnd.month() !== start.month()) {
+      userStart.year(start.year()).month(start.month()).date(start.date());
+      userEnd.year(start.year()).month(start.month()).date(start.date());
+    }
+
+    if (
+      (!endFirst && !userAvail.days[weekdays[start.day()]]) ||
+      (endFirst &&
+        !userAvail.days[weekdays[start.day()]] &&
+        !userAvail.days[weekdays[userStart.date(start.date()).add(1, 'day').day()]])
+    ) {
+      //console.log('invalid weekday, if endFirst both days are invalid')
       currDay.add(1, 'day');
     } else if (!block) {
-      //valid weekday, no more busy blocks
+      // console.log('valid weekday, no more busy blocks');
       avail.push(start.format());
       currDay.add(1, 'day');
     } else {
@@ -127,24 +156,26 @@ function availDays(reqMonth, freebusy, userAvail, userTz, clientTz, reqMeet) {
       if (start.isSameOrAfter(busyEnd)) {
         // console.log('start after current busyEnd, go to next busy ');
         b++;
-      } else if (busyStart.isSameOrAfter(end)) {
-        // console.log('busystart after dayend, add day');
-        avail.push(start.format());
-        currDay.add(1, 'day');
       } else if (busyStart.isSameOrBefore(start) && busyEnd.isSameOrAfter(end)) {
         // console.log('day fully busy, go to next day');
         currDay.add(1, 'day');
       } else {
-        userStart = moment(start.format())
-          .hour(userAvail.hours.start.split(':')[0])
-          .minute(userAvail.hours.start.split(':')[1]);
-        userEnd = moment(start.format())
-          .hour(userAvail.hours.end.split(':')[0])
-          .minute(userAvail.hours.end.split(':')[1]);
-        if (userStart.isBefore(start)) userStart.add(1, 'day');
-        //if client 12am is btwn userStart and userEnd, use userStart for next day
+        //set month too in case userStart changed in weekday check
+        userStart.month(start.month()).date(start.date());
+        userEnd.month(start.month()).date(start.date());
 
-        x = recursIsDayAvail(freebusy, b, start.format(), end.format(), reqMeet, userStart, userEnd, userTz);
+        if (endFirst) userStart.add(1, 'day');
+
+        //if endfirst, check if either day is unavailable for user
+        if (endFirst && !userAvail.days[weekdays[userEnd.day()]]) {
+          //check only userStart->dayEnd
+          x = recursIsDayAvail(freebusy, b, userStart.format(), end.format(), reqMeet, userStart, userEnd, userTz);
+        } else if (endFirst && !userAvail.days[weekdays[userStart.day()]]) {
+          //check only dayStart->userEnd
+          x = recursIsDayAvail(freebusy, b, start.format(), userEnd.format(), reqMeet, userStart, userEnd, userTz);
+        } else {
+          x = recursIsDayAvail(freebusy, b, start.format(), end.format(), reqMeet, userStart, userEnd, userTz);
+        }
         if (x[0]) avail.push(x[2]);
         b = x[1];
         currDay.add(1, 'day');
@@ -199,8 +230,11 @@ function availSlots(date, freebusy, userHours, userDays, userTz, clientTz, reqMe
   //if userStart becomes an invalid user weekday, add 1 more day (userStart now after day end)
   if (!userDays[weekdays[userStart.day()]]) userStart.add(1, 'day');
 
+  //if userEnd is an invalid weekday (endFirst)
+  if (!userDays[weekdays[userEnd.day()]]) curr = userStart;
+
   //if day is today
-  if (curr.date() === moment().date()) {
+  if (curr.date() === moment().date() && curr.month() === moment().month()) {
     curr = moment.tz(userTz);
     //only allow appointment at least 1 hour from current time
     curr.add(2, 'hour');
@@ -221,7 +255,9 @@ function availSlots(date, freebusy, userHours, userDays, userTz, clientTz, reqMe
     if (busy && busyEnd.isSameOrBefore(curr)) {
       //busyStart must always be same or after curr
       b++;
+      continue;
     }
+
     //valid times for significant difference timezone (12am between user hours)
     if (endFirst && curr.isBefore(userEnd)) {
       //dayStart->curr->userEnd...userStart->dayEnd

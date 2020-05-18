@@ -17,7 +17,7 @@ describe('test days', () => {
       { start: '2020-05-20T18:30:00Z', end: '2020-05-20T22:00:00Z' },
     ];
 
-    const days = availDays(4, mayBusy, userAvail, userAvail.timeZone, clientTz, 60);
+    const days = availDays([2020, 4, 1], mayBusy, userAvail, userAvail.timeZone, clientTz, 60);
 
     assert.deepEqual(days, [4, 5, 6, 7, 8, 11, 12, 13, 14, 15, 18, 19, 21, 22, 25, 26, 27, 28, 29]);
   });
@@ -33,9 +33,9 @@ describe('test days', () => {
       { start: '2020-05-20T18:30:00Z', end: '2020-05-20T22:00:00Z' },
     ];
 
-    const days = availDays(4, mayBusy, userAvail, userAvail.timeZone, 'Asia/Seoul', 60);
+    const days = availDays([2020, 4, 1], mayBusy, userAvail, userAvail.timeZone, 'Asia/Seoul', 60);
 
-    assert.deepEqual(days, [5, 6, 7, 8, 9, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 26, 27, 28, 29, 30]);
+    assert.deepEqual(days, [4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21, 22, 23, 25, 26, 27, 28, 29, 30]);
   });
 });
 
