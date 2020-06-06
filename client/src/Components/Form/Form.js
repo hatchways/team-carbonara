@@ -4,7 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import stylesForm from './stylesForm';
-import GoogleButton from '../../components/GoogleButton/GoogleButton';
+import GoogleButton from '../../Components/GoogleButton/GoogleButton';
 import handleFetchErrors from '../../utils/handleFetchErrors';
 import auth from '../../auth';
 
