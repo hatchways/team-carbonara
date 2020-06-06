@@ -1,3 +1,4 @@
+const path = require('path');
 const createError = require('http-errors');
 const cors = require('cors');
 const express = require('express');
@@ -18,6 +19,7 @@ app.use(cors());
 app.use(logger('dev'));
 app.use(json());
 app.use(urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname, 'client', 'build')));
 
 app.use(
   session({
@@ -53,6 +55,10 @@ app.use(function (err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.json({ error: err });
+});
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
 });
 
 module.exports = app;
