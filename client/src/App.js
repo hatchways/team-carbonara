@@ -5,7 +5,7 @@ import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { theme } from './themes/theme';
 import Form from './components/Form/Form';
 import OnBoarding from './pages/OnBoarding';
-import Dashboard from './pages/Dashboard/dashboard';
+import Dashboard from './pages/Dashboard/Dashboard';
 import PrivateRoute from './components/PrivateRoute/PrivateRoute';
 import Calendar from './pages/Calendar/Calendar';
 import Confirm from './components/NewAppointment/Confirm';
