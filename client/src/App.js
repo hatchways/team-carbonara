@@ -11,7 +11,7 @@ import Calendar from './Pages/Calendar/Calendar';
 import Confirm from './Components/NewAppointment/Confirm';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
-import ConfirmedAppointment from '../src/pages/ConfirmedAppointment/ConfirmedAppointment';
+import ConfirmedAppointment from '../src/Pages/ConfirmedAppointment/ConfirmedAppointment';
 
 const stylesApp = (theme) => ({
   appName: {
