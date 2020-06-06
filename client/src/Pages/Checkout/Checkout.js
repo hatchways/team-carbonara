@@ -16,7 +16,7 @@ function Checkout({ user, setUser }) {
   function stripePaymentMethodHandler(paymentMethod) {
     setLoading(true);
 
-    fetch(`http://localhost:3001/api/subscription/${user.sub}`, {
+    fetch(`/api/subscription/${user.sub}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

@@ -50,7 +50,7 @@ function CalendarPage() {
 
   useEffect(() => {
     //fetch user data
-    fetch(`http://localhost:3001/api/user/${url}/${eventDuration}`)
+    fetch(`/api/user/${url}/${eventDuration}`)
       .then(handleFetchErrors)
       .then((res) => res.json())
       .then((data) => {
@@ -65,9 +65,7 @@ function CalendarPage() {
 
   useEffect(() => {
     // function fetchAvailableDays
-    fetch(
-      `http://localhost:3001/api/availability/days?month=${currMonth}&meetTime=${eventDuration}&clientTz=${clientTz}&uniqueurl=${url}`,
-    )
+    fetch(`/api/availability/days?month=${currMonth}&meetTime=${eventDuration}&clientTz=${clientTz}&uniqueurl=${url}`)
       .then((res) => res.json())
       .then((data) => {
         setAvailableDays(data.days);
@@ -89,7 +87,7 @@ function CalendarPage() {
 
   function fetchAvailableTimeSlots(date, month) {
     fetch(
-      `http://localhost:3001/api/availability/timeslots?month=${month}&day=${date}&meetTime=${eventDuration}&clientTz=${clientTz}&uniqueurl=${url}`,
+      `/api/availability/timeslots?month=${month}&day=${date}&meetTime=${eventDuration}&clientTz=${clientTz}&uniqueurl=${url}`,
     )
       // .then(handleFetchErrors)
       .then((res) => res.json())

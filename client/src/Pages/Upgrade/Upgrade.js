@@ -11,7 +11,7 @@ function Upgrade({ user, setUser }) {
 
   function unsubscribe() {
     setLoading(true);
-    fetch(`http://localhost:3001/api/subscription/unsubscribe/${user.sub}`, {
+    fetch(`/api/subscription/unsubscribe/${user.sub}`, {
       method: 'DELETE',
     })
       .then(handleFetchErrors)

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -6,18 +6,18 @@ import {
   DialogContentText,
   DialogActions,
   Button,
-  TextField,
+  // TextField,
 } from '@material-ui/core';
-import useStylesDialog from '../NewEventDialog/stylesDialog';
+// import useStylesDialog from '../NewEventDialog/stylesDialog';
 import handleFetchErrors from '../../utils/handleFetchErrors';
 
 function NewEventDialog({ open, handleClose, appointment, renderNewMeeting, setUpdate }) {
-  const classes = useStylesDialog();
+  // const classes = useStylesDialog();
 
-  const [reason, setReason] = useState('');
+  // const [reason, setReason] = useState('');
 
   const handleSubmit = () => {
-    fetch(`http://localhost:3001/api/appointments/${appointment._id}`, {
+    fetch(`/api/appointments/${appointment._id}`, {
       method: 'DELETE',
     })
       .then(handleFetchErrors)

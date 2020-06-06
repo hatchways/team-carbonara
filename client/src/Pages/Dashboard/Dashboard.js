@@ -46,7 +46,7 @@ function Dashboard() {
     const subId = auth.getSub();
 
     //fetch user info
-    fetch(`http://localhost:3001/api/user/${subId}`)
+    fetch(`/api/user/${subId}`)
       .then(handleFetchErrors)
       .then((res) => res.json())
       .then((data) => {

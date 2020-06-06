@@ -84,7 +84,7 @@ function OnBoarding({ classes, type, activeStep }) {
       return;
     }
 
-    fetch(`http://localhost:3001/api/user/uniqueUrl?url=${url}`)
+    fetch(`/api/user/uniqueUrl?url=${url}`)
       .then(handleFetchErrors)
       .then((res) => res.json())
       .then((data) => {
@@ -107,7 +107,7 @@ function OnBoarding({ classes, type, activeStep }) {
     };
     const sub = auth.getSub();
 
-    fetch(`http://localhost:3001/api/user/profile/${sub}`, {
+    fetch(`/api/user/profile/${sub}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

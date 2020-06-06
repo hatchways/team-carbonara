@@ -36,7 +36,7 @@ function NewEventDialog({ open, handleClose, sub, renderNewMeeting }) {
   };
 
   const handleSubmit = () => {
-    fetch(`http://localhost:3001/api/user/meetings/${sub}`, {
+    fetch(`/api/user/meetings/${sub}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

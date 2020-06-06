@@ -23,7 +23,7 @@ function DisplayAppointments({ classes, timezone, user }) {
   useEffect(() => {
     // fetch user's appointment info
     const fetchAppts = async () => {
-      await fetch(`http://localhost:3001/api/appointments/${user}?timezone=${timezone}`)
+      await fetch(`/api/appointments/${user}?timezone=${timezone}`)
         .then(handleFetchErrors)
         .then((res) => res.json())
         .then((data) => {
