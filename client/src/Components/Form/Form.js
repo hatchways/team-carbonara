@@ -27,7 +27,7 @@ function Form({ classes, type }) {
       })
       .then((res) => {
         //res is auth code, post to backend to trade for tokens
-        fetch('http://localhost:3001/api/user/login', {
+        fetch('/api/user/login', {
           method: 'POST',
           mode: 'cors',
           headers: {
@@ -52,7 +52,7 @@ function Form({ classes, type }) {
                 default:
                   return;
               }
-            }, auth2.currentUser.je.Pt);
+            }, auth2.currentUser.get().getBasicProfile());
           })
           .catch((error) => console.log(error));
       });
@@ -70,7 +70,7 @@ function Form({ classes, type }) {
       //send token to backend, verifiy and create session & or account
       const idToken = user.getAuthResponse().id_token;
 
-      fetch('http://localhost:3001/api/user/login', {
+      fetch('/api/user/login', {
         method: 'POST',
         mode: 'cors',
         headers: {
