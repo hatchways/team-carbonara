@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar/Navbar';
-import useStylesDashboard from './stylesDashboard';
+import useStylesDashboard from './stylesDashboard.js';
 import { withTheme } from '@material-ui/core/styles';
 import { Tabs, Tab, Button, Avatar } from '@material-ui/core';
 import { Route, Switch } from 'react-router-dom';
