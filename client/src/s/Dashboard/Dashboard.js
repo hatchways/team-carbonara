@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import Navbar from '../../components/Navbar/Navbar';
+import Navbar from '../../Components/Navbar/Navbar';
 import useStylesDashboard from './stylesDashboard.js';
 import { withTheme } from '@material-ui/core/styles';
 import { Tabs, Tab, Button, Avatar } from '@material-ui/core';
 import { Route, Switch } from 'react-router-dom';
-import DashPanel from '../../components/DashPanel/DashPanel';
-import Event from '../../components/Event/Event';
+import DashPanel from '../../Components/DashPanel/DashPanel';
+import Event from '../../Components/Event/Event';
 import handleFetchErrors from '../../utils/handleFetchErrors';
-import NewEventDialog from '../../components/NewEventDialog/NewEventDialog';
+import NewEventDialog from '../../Components/NewEventDialog/NewEventDialog';
 import auth from '../../auth';
-import DisplayAppointments from '../../components/DisplayAppointments/DisplayAppointments';
+import DisplayAppointments from '../../Components/DisplayAppointments/DisplayAppointments';
 import Upgrade from '../Upgrade/Upgrade';
 import Checkout from '../Checkout/Checkout';
 

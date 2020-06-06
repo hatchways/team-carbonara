@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom';
 import handleFetchErrors from '../../utils/handleFetchErrors';
 import Calendar from 'react-calendar';
 import { FaClock } from 'react-icons/fa';
-import TimeSlotsContainer from '../../components/TimeSlotsContainer/TimeSlotsContainer';
+import TimeSlotsContainer from '../../Components/TimeSlotsContainer/TimeSlotsContainer';
 import './CalendarComponent.css';
 import moment from 'moment-timezone';
 
