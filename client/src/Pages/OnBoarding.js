@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
-import stylesOnBoarding from '../components/OnBoarding/stylesOnBoarding';
+import stylesOnBoarding from '../Components/OnBoarding/stylesOnBoarding';
 import { Paper, Divider } from '@material-ui/core';
-import ProgressBar from '../components/OnBoarding/ProgressBar';
-import ProfileSetup from '../components/OnBoarding/ProfileSetup';
-import ConnectedPage from '../components/OnBoarding/ConnectedPage';
-import AvailabilitySetup from '../components/OnBoarding/AvailabilitySetup';
+import ProgressBar from '../Components/OnBoarding/ProgressBar';
+import ProfileSetup from '../Components/OnBoarding/ProfileSetup';
+import ConnectedPage from '../Components/OnBoarding/ConnectedPage';
+import AvailabilitySetup from '../Components/OnBoarding/AvailabilitySetup';
 import handleFetchErrors from '../utils/handleFetchErrors';
 import PropTypes from 'prop-types';
 import auth from '../auth';
@@ -84,7 +84,7 @@ function OnBoarding({ classes, type, activeStep }) {
       return;
     }
 
-    fetch(`http://localhost:3001/api/user/uniqueUrl?url=${url}`)
+    fetch(`/api/user/uniqueUrl?url=${url}`)
       .then(handleFetchErrors)
       .then((res) => res.json())
       .then((data) => {
@@ -107,7 +107,7 @@ function OnBoarding({ classes, type, activeStep }) {
     };
     const sub = auth.getSub();
 
-    fetch(`http://localhost:3001/api/user/profile/${sub}`, {
+    fetch(`/api/user/profile/${sub}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

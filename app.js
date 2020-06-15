@@ -1,3 +1,4 @@
+const path = require('path');
 const createError = require('http-errors');
 const cors = require('cors');
 const express = require('express');
@@ -18,6 +19,7 @@ app.use(cors());
 app.use(logger('dev'));
 app.use(json());
 app.use(urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname, 'client', 'build')));
 
 app.use(
   session({
@@ -38,6 +40,10 @@ app.use('/api/user', userRouter);
 app.use('/api/availability', availabilityRouter);
 app.use('/api/appointments', appointmentRouter);
 app.use('/api/subscription', subscriptionRouter);
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
+});
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

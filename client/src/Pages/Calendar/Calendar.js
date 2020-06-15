@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom';
 import handleFetchErrors from '../../utils/handleFetchErrors';
 import Calendar from 'react-calendar';
 import { FaClock } from 'react-icons/fa';
-import TimeSlotsContainer from '../../components/TimeSlotsContainer/TimeSlotsContainer';
+import TimeSlotsContainer from '../../Components/TimeSlotsContainer/TimeSlotsContainer';
 import './CalendarComponent.css';
 import moment from 'moment-timezone';
 
@@ -50,7 +50,7 @@ function CalendarPage() {
 
   useEffect(() => {
     //fetch user data
-    fetch(`http://localhost:3001/api/user/${url}/${eventDuration}`)
+    fetch(`/api/user/${url}/${eventDuration}`)
       .then(handleFetchErrors)
       .then((res) => res.json())
       .then((data) => {
@@ -65,9 +65,7 @@ function CalendarPage() {
 
   useEffect(() => {
     // function fetchAvailableDays
-    fetch(
-      `http://localhost:3001/api/availability/days?month=${currMonth}&meetTime=${eventDuration}&clientTz=${clientTz}&uniqueurl=${url}`,
-    )
+    fetch(`/api/availability/days?month=${currMonth}&meetTime=${eventDuration}&clientTz=${clientTz}&uniqueurl=${url}`)
       .then((res) => res.json())
       .then((data) => {
         setAvailableDays(data.days);
@@ -89,7 +87,7 @@ function CalendarPage() {
 
   function fetchAvailableTimeSlots(date, month) {
     fetch(
-      `http://localhost:3001/api/availability/timeslots?month=${month}&day=${date}&meetTime=${eventDuration}&clientTz=${clientTz}&uniqueurl=${url}`,
+      `/api/availability/timeslots?month=${month}&day=${date}&meetTime=${eventDuration}&clientTz=${clientTz}&uniqueurl=${url}`,
     )
       // .then(handleFetchErrors)
       .then((res) => res.json())

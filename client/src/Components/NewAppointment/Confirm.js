@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useHistory, useLocation, useParams, Redirect } from 'react-router-dom';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import stylesConfirm from './stylesConfirm';
 import { Paper, TextField, TextareaAutosize, Button, IconButton, Typography } from '@material-ui/core';
@@ -72,7 +72,7 @@ function Confirm({ classes }) {
       url,
     };
 
-    fetch('http://localhost:3001/api/appointments', {
+    fetch('/api/appointments', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -2,6 +2,8 @@
 
 Calendapp is a web application inspired by Calendly to allow users to schedule meetings more easily. We also utilize Google Calendar API to ensure there are no conflicts in your schedule.
 
+Now deployed on heroku at [calendappy.herokuapp.com](https://calendappy.herokuapp.com)
+
 **Tech Stack:** MongoDB, Express.js, React.js, Node.js
 
 **Contributors**: [Raymond Lo](https://github.com/rayy-lo), [Jenny Kam](https://github.com/jk-me)

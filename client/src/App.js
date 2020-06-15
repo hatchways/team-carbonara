@@ -3,15 +3,15 @@ import { ThemeProvider, CssBaseline } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { theme } from './themes/theme';
-import Form from './components/Form/Form';
-import OnBoarding from './pages/OnBoarding';
-import Dashboard from './pages/Dashboard/dashboard';
-import PrivateRoute from './components/PrivateRoute/PrivateRoute';
-import Calendar from './pages/Calendar/Calendar';
-import Confirm from './components/NewAppointment/Confirm';
+import Form from './Components/Form/Form';
+import OnBoarding from './Pages/OnBoarding';
+import Dashboard from './Pages/Dashboard/Dashboard';
+import PrivateRoute from './Components/PrivateRoute/PrivateRoute';
+import Calendar from './Pages/Calendar/Calendar';
+import Confirm from './Components/NewAppointment/Confirm';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
-import ConfirmedAppointment from '../src/pages/ConfirmedAppointment/ConfirmedAppointment';
+import ConfirmedAppointment from '../src/Pages/ConfirmedAppointment/ConfirmedAppointment';
 
 const stylesApp = (theme) => ({
   appName: {
