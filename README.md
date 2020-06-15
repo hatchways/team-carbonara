@@ -16,7 +16,7 @@ Now deployed on heroku at [calendappy.herokuapp.com](https://calendappy.herokuap
 
 2. Run `npm i` in both `client` and `server` directories to install packages
 
-3. Create your API Keys and .env files - **See [client](https://github.com/hatchways/team-carbonara/blob/dev/client/sample.env) and [server](https://github.com/hatchways/team-carbonara/blob/dev/server/sample.env) `sample.env` for more instructions**
+3. Create your API Keys and .env files - **See [client](https://github.com/hatchways/team-carbonara/blob/dev/client/sample.env) and [server](https://github.com/hatchways/team-carbonara/blob/dev/sample.env) `sample.env` for more instructions**
    - client/.env file
    - server/.env file
 4. To start the two processes, run `npm start` in the client directory, and `npm run dev` in the server directory
