@@ -121,6 +121,19 @@ function Form({ classes, type }) {
     });
   }, [type, history]);
 
+  const handleDemo = () => {
+    auth.login(
+      () => {
+        history.push('/dashboard');
+      },
+      {
+        getId: () => 'demo',
+        getEmail: () => 'email@email.com',
+        getName: () => 'John Doe',
+      },
+    );
+  };
+
   const loginText = {
     header: 'Log into your account',
     helpText: "Don't have an account? ",
@@ -140,6 +153,7 @@ function Form({ classes, type }) {
     <Paper elevation={6} className={classes.paper}>
       <h2 className={classes.loginHeader}>{isLoginForm ? loginText.header : signupText.header}</h2>
       <GoogleButton type={type} click={isLoginForm ? loginText.handleClick : signupText.handleClick} />
+      <button onClick={handleDemo}>Login with a Demo Account</button>
       <div>
         <Divider />
         <div className={classes.helpText}>
