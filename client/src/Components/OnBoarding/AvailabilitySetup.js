@@ -2,7 +2,7 @@ import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { TextField, FormGroup, FormControlLabel, Checkbox } from '@material-ui/core';
 import PropTypes from 'prop-types';
-import stylesOnBoarding from './stylesOnBoarding';
+import stylesOnBoarding from '../../Pages/OnBoarding/stylesOnBoarding';
 import OnBoardButton from './OnBoardButton';
 
 const OrangeCheckbox = withStyles((theme) => ({

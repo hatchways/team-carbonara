@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
-import stylesOnBoarding from '../Components/OnBoarding/stylesOnBoarding';
+import stylesOnBoarding from './stylesOnBoarding';
 import { Paper, Divider } from '@material-ui/core';
-import ProgressBar from '../Components/OnBoarding/ProgressBar';
-import ProfileSetup from '../Components/OnBoarding/ProfileSetup';
-import ConnectedPage from '../Components/OnBoarding/ConnectedPage';
-import AvailabilitySetup from '../Components/OnBoarding/AvailabilitySetup';
-import handleFetchErrors from '../utils/handleFetchErrors';
+import ProgressBar from '../../Components/OnBoarding/ProgressBar';
+import ProfileSetup from '../../Components/OnBoarding/ProfileSetup';
+import ConnectedPage from '../../Components/OnBoarding/ConnectedPage';
+import AvailabilitySetup from '../../Components/OnBoarding/AvailabilitySetup';
+import handleFetchErrors from '../../utils/handleFetchErrors';
 import PropTypes from 'prop-types';
-import auth from '../auth';
+import auth from '../../auth';
 
 const text = {
   profile: {

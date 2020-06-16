@@ -4,14 +4,14 @@ import { withStyles } from '@material-ui/core/styles';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { theme } from './themes/theme';
 import Form from './Components/Form/Form';
-import OnBoarding from './Pages/OnBoarding';
+import OnBoarding from './Pages/OnBoarding/OnBoarding';
 import Dashboard from './Pages/Dashboard/Dashboard';
 import PrivateRoute from './Components/PrivateRoute/PrivateRoute';
 import Calendar from './Pages/Calendar/Calendar';
-import Confirm from './Components/NewAppointment/Confirm';
+import EventCreateConfirm from './Pages/EventCreateConfirm/EventCreateConfirm';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
-import ConfirmedAppointment from '../src/Pages/ConfirmedAppointment/ConfirmedAppointment';
+import EventCreateFinish from '../src/Pages/EventCreateFinish/EventCreateFinish';
 
 const stylesApp = (theme) => ({
   appName: {
@@ -35,9 +35,9 @@ function App({ classes }) {
             <CssBaseline />
             <Switch>
               <Route path="/finish">
-                <ConfirmedAppointment />
+                <EventCreateFinish />
               </Route>
-              <Route exact path="/:url/:eventDuration/confirm" component={Confirm} />
+              <Route exact path="/:url/:eventDuration/confirm" component={EventCreateConfirm} />
               <Route exact path="/:url/:eventDuration" component={Calendar} />
               <PrivateRoute path="/dashboard" component={Dashboard} />
               <React.Fragment>

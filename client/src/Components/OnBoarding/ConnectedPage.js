@@ -2,7 +2,7 @@ import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { Divider } from '@material-ui/core';
 import PropTypes from 'prop-types';
-import stylesOnBoarding from './stylesOnBoarding';
+import stylesOnBoarding from '../../Pages/OnBoarding/stylesOnBoarding';
 import OnBoardButton from './OnBoardButton';
 
 function ConnectedPage({ btnText, handleConfirmSubmit, classes, email }) {

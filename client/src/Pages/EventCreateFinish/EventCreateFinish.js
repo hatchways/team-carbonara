@@ -2,10 +2,10 @@ import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { FaRegCalendarCheck, FaGlobeAmericas } from 'react-icons/fa';
 import { Paper, Typography, Divider } from '@material-ui/core';
-import useStylesConfirmed from './stylesConfirmed';
+import useStylesFinished from './stylesFinished';
 
 function ConfirmedAppointment() {
-  const classes = useStylesConfirmed();
+  const classes = useStylesFinished();
   const location = useLocation();
 
   useEffect(() => {

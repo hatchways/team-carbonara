@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles';
 
-const useStylesConfirmed = makeStyles({
+const useStylesFinished = makeStyles({
   paper: {
     padding: '1.5rem',
     display: 'flex',
@@ -57,4 +57,4 @@ const useStylesConfirmed = makeStyles({
   },
 });
 
-export default useStylesConfirmed;
+export default useStylesFinished;

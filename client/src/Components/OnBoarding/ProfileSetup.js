@@ -4,7 +4,7 @@ import { TextField, InputAdornment } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 import Grid from '@material-ui/core/Grid';
 import PropTypes from 'prop-types';
-import stylesOnBoarding from './stylesOnBoarding';
+import stylesOnBoarding from '../../Pages/OnBoarding/stylesOnBoarding';
 import moment from 'moment-timezone';
 import OnBoardButton from './OnBoardButton';
 
