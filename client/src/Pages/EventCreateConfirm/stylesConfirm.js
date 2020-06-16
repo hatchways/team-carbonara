@@ -76,8 +76,11 @@ const stylesConfirm = (theme) => ({
       fontSize: '0.8rem',
       padding: '0.2rem 0',
     },
+    '& button':{
+      fontSize: '1rem',
+      width: 'auto',
+    },
   },
-
   textField: {
     width: '100%',
   },
@@ -95,14 +98,7 @@ const stylesConfirm = (theme) => ({
       border: `2px solid ${theme.palette.primary.main}`,
     },
   },
-  button: {
-    background: `linear-gradient(to right, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
-    color: '#eee',
-    fontSize: '1rem',
-    textTransform: 'none',
-    padding: '0.5rem 1rem',
-    margin: '1rem 0 0.5rem 0',
-  },
+
   '@media (max-width: 1080px)': {
     paper: {
       flexDirection: 'column',
@@ -141,6 +137,7 @@ const stylesConfirm = (theme) => ({
       alignItems: 'center',
     },
   },
+  
   '@media (max-width: 600px)': {
     eventDetails: {
       flexDirection: 'column',

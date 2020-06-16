@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import stylesConfirm from './stylesConfirm';
-import { Paper, TextField, TextareaAutosize, Button, IconButton, Typography } from '@material-ui/core';
+import { Paper, TextField, TextareaAutosize, IconButton, Typography } from '@material-ui/core';
+import StyledButton from '../../Components/StyledButton/StyledButton'
 import { FiArrowLeftCircle } from 'react-icons/fi';
 import { FaRegCalendarCheck, FaGlobeAmericas, FaClock } from 'react-icons/fa';
 import PropTypes from 'prop-types';
@@ -169,10 +170,8 @@ function Confirm({ classes }) {
             rowsMin={7}
             onChange={(e) => setComment(e.target.value)}
           />
-          <Button className={classes.button} variant="contained" color="primary" onClick={submitForm}>
-            Schedule Event
-          </Button>
-        </form>
+          <StyledButton onClick={submitForm} text="Schedule Event"/>
+          </form>
       </div>
     </Paper>
   );
