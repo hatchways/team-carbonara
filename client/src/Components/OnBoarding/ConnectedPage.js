@@ -3,7 +3,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { Divider } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import stylesOnBoarding from '../../Pages/OnBoarding/stylesOnBoarding';
-import OnBoardButton from './OnBoardButton';
+import StyledButton from '../StyledButton/StyledButton';
 
 function ConnectedPage({ btnText, handleConfirmSubmit, classes, email }) {
   return (
@@ -20,7 +20,7 @@ function ConnectedPage({ btnText, handleConfirmSubmit, classes, email }) {
         2. We will add event to "<span>{email}</span>"
       </div>
       <Divider />
-      <OnBoardButton text={btnText} submitForm={handleConfirmSubmit} />
+      <StyledButton text={btnText} submitForm={handleConfirmSubmit} />
     </div>
   );
 }

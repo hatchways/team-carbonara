@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import stylesOnBoarding from './stylesOnBoarding';
 import { Paper, Divider } from '@material-ui/core';
-import ProgressBar from '../../Components/OnBoarding/ProgressBar';
+import ProgressBar from '../../Components/ProgressBar/ProgressBar';
 import ProfileSetup from '../../Components/OnBoarding/ProfileSetup';
 import ConnectedPage from '../../Components/OnBoarding/ConnectedPage';
 import AvailabilitySetup from '../../Components/OnBoarding/AvailabilitySetup';

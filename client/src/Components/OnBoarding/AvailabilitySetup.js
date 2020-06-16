@@ -3,7 +3,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { TextField, FormGroup, FormControlLabel, Checkbox } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import stylesOnBoarding from '../../Pages/OnBoarding/stylesOnBoarding';
-import OnBoardButton from './OnBoardButton';
+import StyledButton from '../StyledButton/StyledButton';
 
 const OrangeCheckbox = withStyles((theme) => ({
   root: {
@@ -70,7 +70,7 @@ function AvailabilitySetup({ classes, setHours, hours, setDays, days, btnText, s
           {renderCheckBoxes(days)}
         </FormGroup>
       </div>
-      <OnBoardButton text={btnText} submitForm={submitForm} />
+      <StyledButton text={btnText} submitForm={submitForm} />
     </React.Fragment>
   );
 }

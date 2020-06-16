@@ -14,7 +14,7 @@ const styles = (theme) => ({
   },
 });
 
-function OnBoardButton({ classes, submitForm, text }) {
+function StyledButton({ classes, submitForm, text }) {
   return (
     <Button className={classes.root} onClick={submitForm}>
       {text}
@@ -22,4 +22,4 @@ function OnBoardButton({ classes, submitForm, text }) {
   );
 }
 
-export default withStyles(styles)(OnBoardButton);
+export default withStyles(styles)(StyledButton);

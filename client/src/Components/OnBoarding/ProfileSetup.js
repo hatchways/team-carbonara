@@ -6,7 +6,7 @@ import Grid from '@material-ui/core/Grid';
 import PropTypes from 'prop-types';
 import stylesOnBoarding from '../../Pages/OnBoarding/stylesOnBoarding';
 import moment from 'moment-timezone';
-import OnBoardButton from './OnBoardButton';
+import StyledButton from '../StyledButton/StyledButton';
 
 function ProfileSetup({ classes, url, setUrl, setTimeZone, btnText, handleProfileSubmit }) {
   return (
@@ -46,7 +46,7 @@ function ProfileSetup({ classes, url, setUrl, setTimeZone, btnText, handleProfil
         />
       </Grid>
       <div className={classes.btnContainer}>
-        <OnBoardButton text={btnText} submitForm={handleProfileSubmit} />
+        <StyledButton text={btnText} submitForm={handleProfileSubmit} />
       </div>
     </Grid>
   );
