@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { FaRegCalendarCheck, FaGlobeAmericas } from 'react-icons/fa';
 import { Paper, Typography, Divider } from '@material-ui/core';
@@ -7,6 +7,12 @@ import useStylesConfirmed from './stylesConfirmed';
 function ConfirmedAppointment() {
   const classes = useStylesConfirmed();
   const location = useLocation();
+
+  useEffect(() => {
+    if (location.state.url === 'demo') {
+      alert('Meeting was not scheduled. Thank you for visiting!');
+    }
+  }, [location.state.url]);
 
   return (
     <Paper elevation={4} className={classes.paper}>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import stylesConfirm from './stylesConfirm';
@@ -37,6 +37,12 @@ function Confirm({ classes }) {
   const [emailField, setEmail] = useState({ email: '', error: false, errorText: '' });
   const [comment, setComment] = useState('');
 
+  useEffect(() => {
+    if (url === 'demo') {
+      alert('This is a demo account. Scheduling an event will not add it to any google accounts.');
+    }
+  }, [url]);
+
   const handleName = (e) => {
     !e || !e.target.value
       ? setName({ name: '', error: true, errorText: 'Name is required.' })
@@ -58,6 +64,16 @@ function Confirm({ classes }) {
     if (!nameField.name || !emailField.email) {
       handleName();
       handleEmail();
+      return;
+    }
+    if (url === 'demo') {
+      history.push('/finish', {
+        url: url,
+        name: location.state.name,
+        meetingName: location.state.meeting.meetingName,
+        apptTime: appointmentStr,
+        timezone: location.state.clientTz,
+      });
       return;
     }
 
@@ -83,6 +99,7 @@ function Confirm({ classes }) {
         history.push(`/${url}/${location.state.meeting.duration}`); //go back to scheduler, error alert?
       } else {
         history.push('/finish', {
+          url: url,
           name: location.state.name,
           meetingName: location.state.meeting.meetingName,
           apptTime: appointmentStr,
