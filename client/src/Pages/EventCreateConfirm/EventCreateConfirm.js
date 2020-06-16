@@ -171,7 +171,7 @@ function Confirm({ classes }) {
             onChange={(e) => setComment(e.target.value)}
           />
           <StyledButton onClick={submitForm} text="Schedule Event"/>
-          </form>
+        </form>
       </div>
     </Paper>
   );

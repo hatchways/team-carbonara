@@ -66,7 +66,14 @@ const stylesConfirm = (theme) => ({
     },
   },
   form: {
+    display: 'flex',
+    flexDirection: 'column',
     width: '66%',
+    '& button':{
+      alignSelf: 'flex-start',
+      fontSize: '1rem',
+      width: 'auto',
+    },
   },
   confirmForm: {
     flex: '0 0 65%',
@@ -75,10 +82,6 @@ const stylesConfirm = (theme) => ({
     '& div': {
       fontSize: '0.8rem',
       padding: '0.2rem 0',
-    },
-    '& button':{
-      fontSize: '1rem',
-      width: 'auto',
     },
   },
   textField: {
@@ -130,6 +133,11 @@ const stylesConfirm = (theme) => ({
         padding: '0 1rem',
       },
     },
+    form: {
+        '& button':{
+          alignSelf: 'center',
+        },
+      },
     confirmForm: {
       flex: 'auto',
       display: 'flex',
@@ -137,8 +145,12 @@ const stylesConfirm = (theme) => ({
       alignItems: 'center',
     },
   },
-  
-  '@media (max-width: 600px)': {
+
+  '@media (max-width: 700px)': {
+    paper:{
+      width: '100%',
+      margin: 'auto',
+    },
     eventDetails: {
       flexDirection: 'column',
       alignItems: 'left',
