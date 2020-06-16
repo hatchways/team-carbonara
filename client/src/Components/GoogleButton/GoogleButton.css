@@ -10,7 +10,7 @@
 #googleButton {
   text-align: center;
   height: 50px;
-  width: 50%;
+  width: 60%;
   background: orange;
   color: white;
   padding: 0.7rem;
@@ -18,7 +18,7 @@
   font-weight: bold;
   cursor: pointer;
   box-shadow: 0 0 5px -1px rgba(0, 0, 0, 0.2);
-  font-size: 1rem;
+  font-size: 0.7rem;
   letter-spacing: 1px;
 }
 
@@ -29,6 +29,7 @@
 @media only screen and (min-width: 360px) {
   #googleButton {
     width: 90%;
+    font-size: 1rem;
   }
 }
 
