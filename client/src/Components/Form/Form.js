@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Paper, Divider } from '@material-ui/core';
+import { Paper, Divider, Link } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
@@ -121,6 +121,19 @@ function Form({ classes, type }) {
     });
   }, [type, history]);
 
+  const handleDemo = () => {
+    auth.login(
+      () => {
+        history.push('/dashboard');
+      },
+      {
+        getId: () => 'demo',
+        getEmail: () => 'email@email.com',
+        getName: () => 'John Doe',
+      },
+    );
+  };
+
   const loginText = {
     header: 'Log into your account',
     helpText: "Don't have an account? ",
@@ -140,6 +153,9 @@ function Form({ classes, type }) {
     <Paper elevation={6} className={classes.paper}>
       <h2 className={classes.loginHeader}>{isLoginForm ? loginText.header : signupText.header}</h2>
       <GoogleButton type={type} click={isLoginForm ? loginText.handleClick : signupText.handleClick} />
+      <Link component="button" onClick={handleDemo}>
+        Try a Demo Account
+      </Link>
       <div>
         <Divider />
         <div className={classes.helpText}>
