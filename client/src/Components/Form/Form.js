@@ -99,7 +99,10 @@ function Form({ classes, type }) {
             }
           }, user.getBasicProfile());
         })
-        .catch((error) => console.log(error));
+        .catch((error) => {
+          alert(error + "\nHave you signed up for an account?")
+          console.log(error)
+        });
     }
 
     window.gapi.load('auth2', () => {
