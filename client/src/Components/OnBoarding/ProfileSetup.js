@@ -8,7 +8,7 @@ import stylesOnBoarding from '../../Pages/OnBoarding/stylesOnBoarding';
 import moment from 'moment-timezone';
 import StyledButton from '../StyledButton/StyledButton';
 
-function ProfileSetup({ classes, url, setUrl, setTimeZone, btnText, handleProfileSubmit }) {
+function ProfileSetup({ classes, url, urlErrorText, urlError, handleUrl, setTimeZone, btnText, handleProfileSubmit }) {
   return (
     <Grid container spacing={4} alignItems="center">
       <Grid item xs={4}>
@@ -18,10 +18,12 @@ function ProfileSetup({ classes, url, setUrl, setTimeZone, btnText, handleProfil
       <Grid item xs={8}>
         <TextField
           className={classes.urlField}
+          error={urlError}
+          helperText={urlErrorText}
           id="url-field"
           variant="outlined"
           value={url}
-          onChange={(e) => setUrl(e.target.value)}
+          onChange={handleUrl}
           InputProps={{
             startAdornment: (
               <InputAdornment className={classes.adornment} position="start" component="div">
@@ -39,7 +41,9 @@ function ProfileSetup({ classes, url, setUrl, setTimeZone, btnText, handleProfil
       <Grid item xs={8}>
         <Autocomplete
           id="timezone-field"
+          disableClearable={true}
           options={moment.tz.names()}
+          value={moment.tz.guess()}
           getOptionLabel={(option) => option + ' (GMT' + moment.tz(option).format('Z') + ')'}
           renderInput={(params) => <TextField {...params} label="Type a city or zone" variant="outlined" />}
           onChange={(e, v) => setTimeZone(v)}

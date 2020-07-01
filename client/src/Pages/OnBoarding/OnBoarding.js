@@ -27,7 +27,7 @@ const text = {
 };
 
 function OnBoarding({ classes, type, activeStep }) {
-  const [url, setUrl] = useState('');
+  const [urlField, setUrl] = useState({ url: '', error: false, errorText: '' });
   const [timeZone, setTimeZone] = useState('');
   const [hours, setHours] = useState({ start: '09:00', end: '17:00' });
   const [days, setDays] = useState({
@@ -48,7 +48,10 @@ function OnBoarding({ classes, type, activeStep }) {
         <ProfileSetup
           handleProfileSubmit={handleProfileSubmit}
           btnText={text[type].btnText}
-          url={url}
+          url={urlField.url}
+          urlError={urlField.error}
+          urlErrorText={urlField.errorText}
+          handleUrl={handleUrl}
           timeZone={timeZone}
           setUrl={setUrl}
           setTimeZone={setTimeZone}
@@ -73,6 +76,27 @@ function OnBoarding({ classes, type, activeStep }) {
     }
   }
 
+  const handleUrl = (e) => {
+    if (!e || !e.target.value) {
+      setUrl({ url: '', error: true, errorText: 'Url is required' });
+      return;
+    } else {
+      setUrl({ url: e.target.value, error: false, errorText: '' });
+    }
+    const url = e.target.value;
+    fetch(`/api/user/uniqueUrl?url=${url}`)
+      .then(handleFetchErrors)
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data.isUnique) {
+          setUrl({ url: url, error: true, errorText: 'Url is not unique' });
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
   const handleConfirmSubmit = () => {
     history.push('/availability');
   };
@@ -80,27 +104,27 @@ function OnBoarding({ classes, type, activeStep }) {
   const handleProfileSubmit = () => {
     //prevents going to next form until url is unique & timezone + url is not empty
     //TODO: needs error handling. No message displayed for errors
-    if (url === '' || timeZone === '') {
-      return;
-    }
-
-    fetch(`/api/user/uniqueUrl?url=${url}`)
-      .then(handleFetchErrors)
-      .then((res) => res.json())
-      .then((data) => {
-        if (!data.isUnique) {
-          return;
-        }
-        history.push('/confirm');
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+    // if (url === '' || timeZone === '') {
+    //   return;
+    // }
+    //
+    // fetch(`/api/user/uniqueUrl?url=${url}`)
+    //   .then(handleFetchErrors)
+    //   .then((res) => res.json())
+    //   .then((data) => {
+    //     if (!data.isUnique) {
+    //       return;
+    //     }
+    //     history.push('/confirm');
+    //   })
+    //   .catch((err) => {
+    //     console.error(err);
+    //   });
   };
 
   const submitForm = () => {
     const profileInfo = {
-      url,
+      // url,
       timeZone,
       hours,
       days,

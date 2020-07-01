@@ -17,7 +17,7 @@ function ConnectedPage({ btnText, handleConfirmSubmit, classes, email }) {
       </div>
       <Divider />
       <div>
-        2. We will add event to "<span>{email}</span>"
+        2. We will add events to "<span>{email}</span>"
       </div>
       <Divider />
       <StyledButton text={btnText} submitForm={handleConfirmSubmit} />
