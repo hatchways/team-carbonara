@@ -79,6 +79,16 @@ const stylesOnBoarding = {
   checkBoxLabelLabel: {
     fontSize: '0.7rem',
   },
+  '@media (max-width: 1080px)': {
+    paper: {
+      width: '70%',
+    },
+  },
+  '@media (max-width: 740px)': {
+    paper: {
+      width: '95%',
+    },
+  },
 };
 
 export default stylesOnBoarding;
