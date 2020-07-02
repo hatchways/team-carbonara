@@ -9,6 +9,7 @@ import ConnectedPage from '../../Components/OnBoarding/ConnectedPage';
 import AvailabilitySetup from '../../Components/OnBoarding/AvailabilitySetup';
 import handleFetchErrors from '../../utils/handleFetchErrors';
 import PropTypes from 'prop-types';
+import moment from 'moment-timezone';
 import auth from '../../auth';
 
 const text = {
@@ -28,8 +29,8 @@ const text = {
 
 function OnBoarding({ classes, type, activeStep }) {
   const [urlField, setUrl] = useState({ url: '', error: false, errorText: '' });
-  const [timeZone, setTimeZone] = useState('');
-  const [hours, setHours] = useState({ start: '09:00', end: '17:00' });
+  const [timeZone, setTimeZone] = useState(moment.tz.guess());
+  const [hoursField, setHours] = useState({ start: '09:00', end: '17:00', error: false, errorText: '' });
   const [days, setDays] = useState({
     Sunday: false,
     Monday: true,
@@ -67,7 +68,7 @@ function OnBoarding({ classes, type, activeStep }) {
         <AvailabilitySetup
           btnText={text[type].btnText}
           submitForm={submitForm}
-          hours={hours}
+          hoursField={hoursField}
           setHours={setHours}
           setDays={setDays}
           days={days}
@@ -124,9 +125,9 @@ function OnBoarding({ classes, type, activeStep }) {
 
   const submitForm = () => {
     const profileInfo = {
-      // url,
+      urlField,
       timeZone,
-      hours,
+      hoursField,
       days,
     };
     const sub = auth.getSub();

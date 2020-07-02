@@ -15,13 +15,19 @@ const OrangeCheckbox = withStyles((theme) => ({
   checked: {},
 }))((props) => <Checkbox color="default" {...props} />);
 
-function AvailabilitySetup({ classes, setHours, hours, setDays, days, btnText, submitForm }) {
+function AvailabilitySetup({ classes, setHours, hoursField, setDays, days, btnText, submitForm }) {
   const handleDays = (e) => {
     setDays({ ...days, [e.target.name]: e.target.checked });
   };
 
   const handleHours = (e) => {
-    setHours({ ...hours, [e.target.name]: e.target.value });
+    if (!e || !e.target.value) {
+      setHours({ ...hoursField, [e.target.name]: e.target.value, error: true, errorText: 'Hours are required' });
+
+      return;
+    } else {
+      setHours({ ...hoursField, [e.target.name]: e.target.value, error: false, errorText: '' });
+    }
   };
 
   function renderCheckBoxes(days) {
@@ -46,20 +52,26 @@ function AvailabilitySetup({ classes, setHours, hours, setDays, days, btnText, s
         <div className={classes.hoursRow}>
           <TextField
             id="start-hours-field"
-            value={hours.start}
+            value={hoursField.start}
+            error={hoursField.error}
+            helperText={hoursField.errorText}
             variant="outlined"
             type="time"
             name="start"
             onChange={handleHours}
+            required={true}
           />
           <span>-</span>
           <TextField
             id="end-hours-field"
-            value={hours.end}
+            value={hoursField.end}
+            error={hoursField.error}
+            helperText={hoursField.errorText}
             variant="outlined"
             type="time"
             name="end"
             onChange={handleHours}
+            required={true}
           />
         </div>
       </div>
