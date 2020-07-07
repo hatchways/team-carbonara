@@ -49,9 +49,7 @@ function OnBoarding({ classes, type, activeStep }) {
         <ProfileSetup
           handleProfileSubmit={handleProfileSubmit}
           btnText={text[type].btnText}
-          url={urlField.url}
-          urlError={urlField.error}
-          urlErrorText={urlField.errorText}
+          urlField={urlField}
           handleUrl={handleUrl}
           timeZone={timeZone}
           setUrl={setUrl}

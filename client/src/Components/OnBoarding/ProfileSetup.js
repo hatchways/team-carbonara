@@ -8,7 +8,7 @@ import stylesOnBoarding from '../../Pages/OnBoarding/stylesOnBoarding';
 import moment from 'moment-timezone';
 import StyledButton from '../StyledButton/StyledButton';
 
-function ProfileSetup({ classes, url, urlErrorText, urlError, handleUrl, setTimeZone, btnText, handleProfileSubmit }) {
+function ProfileSetup({ classes, urlField, handleUrl, setTimeZone, btnText, handleProfileSubmit }) {
   return (
     <Grid container spacing={4} alignItems="center">
       <Grid item xs={4}>
@@ -18,11 +18,11 @@ function ProfileSetup({ classes, url, urlErrorText, urlError, handleUrl, setTime
       <Grid item xs={8}>
         <TextField
           className={classes.urlField}
-          error={urlError}
-          helperText={urlErrorText}
+          error={urlField.error}
+          helperText={urlField.errorText}
           id="url-field"
           variant="outlined"
-          value={url}
+          value={urlField.url}
           onChange={handleUrl}
           InputProps={{
             startAdornment: (
