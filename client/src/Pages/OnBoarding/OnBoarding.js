@@ -89,9 +89,9 @@ function OnBoarding({ classes, type, activeStep }) {
 
   const submitForm = () => {
     const profileInfo = {
-      urlField,
+      url: urlField.url,
       timeZone,
-      hoursField,
+      hours: { start: hoursField.start, end: hoursField.end },
       days,
     };
     const sub = auth.getSub();
