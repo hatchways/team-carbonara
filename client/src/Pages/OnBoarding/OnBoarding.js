@@ -50,9 +50,8 @@ function OnBoarding({ classes, type, activeStep }) {
           handleProfileSubmit={handleProfileSubmit}
           btnText={text[type].btnText}
           urlField={urlField}
-          handleUrl={handleUrl}
-          timeZone={timeZone}
           setUrl={setUrl}
+          timeZone={timeZone}
           setTimeZone={setTimeZone}
         />
       );
@@ -74,27 +73,6 @@ function OnBoarding({ classes, type, activeStep }) {
       );
     }
   }
-
-  const handleUrl = (e) => {
-    if (!e || !e.target.value) {
-      setUrl({ url: '', error: true, errorText: 'Url is required' });
-      return;
-    } else {
-      setUrl({ url: e.target.value, error: false, errorText: '' });
-    }
-    const url = e.target.value;
-    fetch(`/api/user/uniqueUrl?url=${url}`)
-      .then(handleFetchErrors)
-      .then((res) => res.json())
-      .then((data) => {
-        if (!data.isUnique) {
-          setUrl({ url: url, error: true, errorText: 'Url is not unique' });
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  };
 
   const handleConfirmSubmit = () => {
     history.push('/availability');

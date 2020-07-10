@@ -1,14 +1,36 @@
 import React from 'react';
+import moment from 'moment-timezone';
 import { withStyles } from '@material-ui/core/styles';
 import { TextField, InputAdornment } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 import Grid from '@material-ui/core/Grid';
 import PropTypes from 'prop-types';
 import stylesOnBoarding from '../../Pages/OnBoarding/stylesOnBoarding';
-import moment from 'moment-timezone';
 import StyledButton from '../StyledButton/StyledButton';
+import handleFetchErrors from '../../utils/handleFetchErrors';
 
-function ProfileSetup({ classes, urlField, handleUrl, setTimeZone, btnText, handleProfileSubmit }) {
+function ProfileSetup({ classes, urlField, setUrl, setTimeZone, btnText, handleProfileSubmit }) {
+  const handleUrl = (e) => {
+    if (!e || !e.target.value) {
+      setUrl({ url: '', error: true, errorText: 'Url is required' });
+      return;
+    } else {
+      setUrl({ url: e.target.value, error: false, errorText: '' });
+    }
+    const url = e.target.value;
+    fetch(`/api/user/uniqueUrl?url=${url}`)
+      .then(handleFetchErrors)
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data.isUnique) {
+          setUrl({ url: url, error: true, errorText: 'Url is not unique' });
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
   return (
     <Grid container spacing={4} alignItems="center">
       <Grid item xs={4}>
