@@ -101,24 +101,12 @@ function OnBoarding({ classes, type, activeStep }) {
   };
 
   const handleProfileSubmit = () => {
-    //prevents going to next form until url is unique & timezone + url is not empty
-    //TODO: needs error handling. No message displayed for errors
-    // if (url === '' || timeZone === '') {
-    //   return;
-    // }
-    //
-    // fetch(`/api/user/uniqueUrl?url=${url}`)
-    //   .then(handleFetchErrors)
-    //   .then((res) => res.json())
-    //   .then((data) => {
-    //     if (!data.isUnique) {
-    //       return;
-    //     }
-    //     history.push('/confirm');
-    //   })
-    //   .catch((err) => {
-    //     console.error(err);
-    //   });
+    if (urlField.url === '' || urlField.error === true) {
+      if (urlField.url === '') setUrl({ ...urlField, error: true, errorText: 'Url is required' });
+      return;
+    } else {
+      history.push('/confirm');
+    }
   };
 
   const submitForm = () => {
