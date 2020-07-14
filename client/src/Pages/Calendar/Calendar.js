@@ -138,9 +138,10 @@ function CalendarPage() {
       </div>
       <Divider orientation="vertical" />
       <div className={classes.selectDay}>
-        <div className={classes.calendar}>
+        <div className={classes.calendarBox}>
           <Typography variant="h5">Select a Date & Time</Typography>
           <Calendar
+            className={classes.calendar}
             onActiveStartDateChange={handleMonth}
             tileContent={tileContent}
             minDate={setMinDate()}

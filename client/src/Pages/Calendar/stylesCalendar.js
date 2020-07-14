@@ -9,7 +9,7 @@ const useStylesCalendar = makeStyles({
     height: '700px',
     maxWidth: '1100px',
   },
-  calendar: {
+  calendarBox: {
     // flex: '1 0 auto',
     fontSize: '1.2rem',
     paddingRight: '2rem',
@@ -60,7 +60,7 @@ const useStylesCalendar = makeStyles({
     calendarContainer: {
       flexDirection: 'column',
       height: '100%',
-      width: '50%',
+      width: '60%',
     },
     duration: {
       justifyContent: 'center',
@@ -71,7 +71,7 @@ const useStylesCalendar = makeStyles({
   },
   '@media (max-width: 1400px)': {
     calendarContainer: {
-      width: '55%',
+      width: '65%',
     },
   },
   '@media (max-width: 1260px)': {
@@ -79,9 +79,37 @@ const useStylesCalendar = makeStyles({
       width: '70%',
     },
   },
-  '@media (max-width: 1000px)': {
+  '@media (max-width: 1050px)': {
     calendarContainer: {
-      width: '85%',
+      width: '95%',
+    },
+  },
+  '@media (max-width: 740px)': {
+    selectDay: {
+      flexDirection: 'column',
+      padding: '0 .05rem 0 0.5rem',
+      alignItems: 'center',
+    },
+    timezone: {
+      width: '100%',
+    },
+  },
+  '@media (max-width: 440px)': {
+    calendarContainer: {
+      width: '100%',
+    },
+    selectDay: {
+      flexDirection: 'column',
+      padding: '0',
+    },
+    timezone: {
+      width: '100%',
+    },
+    calendarBox: {
+      padding: '0',
+    },
+    calendar: {
+      width: '95%',
     },
   },
 });
