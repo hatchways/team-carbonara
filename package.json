@@ -20,7 +20,7 @@
     "google-auth-library": "^6.0.0",
     "googleapis": "^48.0.0",
     "http-errors": "~1.6.3",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "moment-timezone": "^0.5.28",
     "mongodb": "^3.5.5",
     "mongoose": "^5.9.6",
