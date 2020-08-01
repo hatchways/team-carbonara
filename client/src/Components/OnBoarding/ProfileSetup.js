@@ -72,7 +72,7 @@ function ProfileSetup({ classes, urlField, setUrl, setTimeZone, btnText, handleP
         />
       </Grid>
       <div className={classes.btnContainer}>
-        <StyledButton text={btnText} submitForm={handleProfileSubmit} />
+        <StyledButton text={btnText} clickFn={handleProfileSubmit} />
       </div>
     </Grid>
   );

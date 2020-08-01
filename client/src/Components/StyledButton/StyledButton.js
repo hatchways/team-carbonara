@@ -14,9 +14,9 @@ const styles = (theme) => ({
   },
 });
 
-function StyledButton({ classes, submitForm, text }) {
+function StyledButton({ classes, clickFn, text }) {
   return (
-    <Button className={classes.root} onClick={submitForm}>
+    <Button className={classes.root} onClick={clickFn}>
       {text}
     </Button>
   );

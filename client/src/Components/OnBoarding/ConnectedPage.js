@@ -20,7 +20,7 @@ function ConnectedPage({ btnText, handleConfirmSubmit, classes, email }) {
         2. We will add events to "<span>{email}</span>"
       </div>
       <Divider />
-      <StyledButton text={btnText} submitForm={handleConfirmSubmit} />
+      <StyledButton text={btnText} clickFn={handleConfirmSubmit} />
     </div>
   );
 }

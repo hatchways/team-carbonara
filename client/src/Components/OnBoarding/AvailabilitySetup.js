@@ -82,7 +82,7 @@ function AvailabilitySetup({ classes, setHours, hoursField, setDays, days, btnTe
           {renderCheckBoxes(days)}
         </FormGroup>
       </div>
-      <StyledButton text={btnText} submitForm={submitForm} />
+      <StyledButton text={btnText} clickFn={submitForm} />
     </React.Fragment>
   );
 }

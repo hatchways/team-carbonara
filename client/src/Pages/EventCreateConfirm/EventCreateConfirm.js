@@ -3,7 +3,7 @@ import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import stylesConfirm from './stylesConfirm';
 import { Paper, TextField, TextareaAutosize, IconButton, Typography } from '@material-ui/core';
-import StyledButton from '../../Components/StyledButton/StyledButton'
+import StyledButton from '../../Components/StyledButton/StyledButton';
 import { FiArrowLeftCircle } from 'react-icons/fi';
 import { FaRegCalendarCheck, FaGlobeAmericas, FaClock } from 'react-icons/fa';
 import PropTypes from 'prop-types';
@@ -170,7 +170,7 @@ function Confirm({ classes }) {
             rowsMin={7}
             onChange={(e) => setComment(e.target.value)}
           />
-          <StyledButton onClick={submitForm} text="Schedule Event"/>
+          <StyledButton clickFn={submitForm} text="Schedule Event" />
         </form>
       </div>
     </Paper>
