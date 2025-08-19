@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Paper, Divider, Link } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import stylesForm from './stylesForm';
-import GoogleButton from '../../Components/GoogleButton/GoogleButton';
 import handleFetchErrors from '../../utils/handleFetchErrors';
 import auth from '../../auth';
 
@@ -12,114 +11,67 @@ import auth from '../../auth';
 
 function Form({ classes, type }) {
   const [formType, setformType] = useState(null);
-
-  //store bool of ternary operator
-  const isLoginForm = formType === 'login' ? true : false;
-
-  let history = useHistory();
-
-  const handleSignUp = () => {
-    const auth2 = window.gapi.auth2.getAuthInstance();
-    auth2
-      .grantOfflineAccess({
-        access_type: 'offline',
-        scope: 'https://www.googleapis.com/auth/calendar',
-      })
-      .then((res) => {
-        //res is auth code, post to backend to trade for tokens
-        fetch('/api/user/login', {
-          method: 'POST',
-          mode: 'cors',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ code: res.code }),
-        })
-          .then(handleFetchErrors)
-          .then((response) => {
-            auth.login(() => {
-              //redirect to profile setup if user was created
-              switch (response.status) {
-                case 201:
-                  history.push('/profile_settings');
-                  break;
-
-                case 200:
-                  history.push('/dashboard');
-                  break;
-
-                //any other status codes will return back to signup
-                default:
-                  return;
-              }
-            }, auth2.currentUser.get().getBasicProfile());
-          })
-          .catch((error) => console.log(error));
-      });
-  };
+  const googleButtonRef = useRef(null);
+  const history = useHistory();
 
   useEffect(() => {
     if (type === 'login') setformType('login');
 
-    function handleFailureLogin() {
-      console.log('Login failed');
-    }
+    // Load Google Identity Services script
+    const script = document.createElement('script');
+    script.src = 'https://accounts.google.com/gsi/client';
+    script.async = true;
+    script.onload = () => {
+      window.google.accounts.id.initialize({
+        client_id: process.env.REACT_APP_CLIENT_ID,
+        callback: handleCredentialResponse,
+        auto_select: false,
+        ux_mode: 'popup',
+      });
+      window.google.accounts.id.renderButton(googleButtonRef.current, {
+        theme: 'filled_blue',
+        size: 'large',
+        width: '275',
+        text: type === 'login' ? 'continue_with' : 'signup_with',
+      });
+    };
+    document.body.appendChild(script);
 
-    //user arg returned from onSuccess
-    function handleSuccessLogin(user) {
-      //send token to backend, verifiy and create session & or account
-      const idToken = user.getAuthResponse().id_token;
-
-      fetch('/api/user/login', {
-        method: 'POST',
-        mode: 'cors',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ token: idToken }),
-      })
-        .then(handleFetchErrors)
-        .then((response) => {
-          auth.login(() => {
-            //redirect to profile setup if user was created
-            switch (response.status) {
-              case 201:
-                history.push('/profile_settings');
-                break;
-
-              case 200:
-                history.push('/dashboard');
-                break;
-
-              //any other status codes will return back to login
-              //go to signup in case of token errors
-              default:
-                history.push('/signup');
-                return;
-            }
-          }, user.getBasicProfile());
-        })
-        .catch((error) => console.log(error));
-    }
-
-    window.gapi.load('auth2', () => {
-      //init GoogleAuth object
-      window.gapi.auth2
-        .init({
-          authParameters: { response_type: 'code', access_type: 'offline', prompt: 'consent' },
-          client_id: process.env.REACT_APP_CLIENT_ID,
-        })
-        .then((authObj) => {
-          //attach signin flow to button
-          authObj.attachClickHandler(
-            'googleButton',
-            { scope: 'https://www.googleapis.com/auth/calendar' },
-            handleSuccessLogin,
-            handleFailureLogin,
-          );
-        });
-    });
+    // Cleanup script
+    return () => {
+      document.body.removeChild(script);
+    };
+    // eslint-disable-next-line
   }, [type, history]);
+
+  function handleCredentialResponse(response) {
+    // response.credential is the ID token
+    fetch('/api/user/login', {
+      method: 'POST',
+      mode: 'cors',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ token: response.credential }),
+    })
+      .then(handleFetchErrors)
+      .then((res) => {
+        auth.login(() => {
+          switch (res.status) {
+            case 201:
+              history.push('/profile_settings');
+              break;
+            case 200:
+              history.push('/dashboard');
+              break;
+            default:
+              history.push('/signup');
+              break;
+          }
+        });
+      })
+      .catch((error) => console.log(error));
+  }
 
   const handleDemo = () => {
     auth.login(
@@ -146,22 +98,21 @@ function Form({ classes, type }) {
     helpText: 'Already have an account? ',
     redirectText: 'Login',
     redirectPath: '/login',
-    handleClick: handleSignUp,
   };
 
   return (
     <Paper elevation={6} className={classes.paper}>
-      <h2 className={classes.loginHeader}>{isLoginForm ? loginText.header : signupText.header}</h2>
-      <GoogleButton type={type} click={isLoginForm ? loginText.handleClick : signupText.handleClick} />
+      <h2 className={classes.loginHeader}>{formType === 'login' ? loginText.header : signupText.header}</h2>
+      <div align="center" ref={googleButtonRef}></div>
       <Link component="button" onClick={handleDemo}>
         Try a Demo Account
       </Link>
       <div>
         <Divider />
         <div className={classes.helpText}>
-          {isLoginForm ? loginText.helpText : signupText.helpText}
-          <a href={isLoginForm ? loginText.redirectPath : signupText.redirectPath}>
-            {isLoginForm ? loginText.redirectText : signupText.redirectText}
+          {formType === 'login' ? loginText.helpText : signupText.helpText}
+          <a href={formType === 'login' ? loginText.redirectPath : signupText.redirectPath}>
+            {formType === 'login' ? loginText.redirectText : signupText.redirectText}
           </a>
         </div>
       </div>
