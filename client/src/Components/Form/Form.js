@@ -6,71 +6,57 @@ import PropTypes from 'prop-types';
 import stylesForm from './stylesForm';
 import handleFetchErrors from '../../utils/handleFetchErrors';
 import auth from '../../auth';
-
-//obj to store values for signup/login
+import GoogleButton from '../GoogleButton/GoogleButton';
 
 function Form({ classes, type }) {
   const [formType, setformType] = useState(null);
-  const googleButtonRef = useRef(null);
   const history = useHistory();
 
   useEffect(() => {
     if (type === 'login') setformType('login');
 
-    // Load Google Identity Services script
-    const script = document.createElement('script');
-    script.src = 'https://accounts.google.com/gsi/client';
-    script.async = true;
-    script.onload = () => {
-      window.google.accounts.id.initialize({
-        client_id: process.env.REACT_APP_CLIENT_ID,
-        callback: handleCredentialResponse,
-        auto_select: false,
-        ux_mode: 'popup',
-      });
-      window.google.accounts.id.renderButton(googleButtonRef.current, {
-        theme: 'filled_blue',
-        size: 'large',
-        width: '275',
-        text: type === 'login' ? 'continue_with' : 'signup_with',
-      });
-    };
-    document.body.appendChild(script);
-
-    // Cleanup script
-    return () => {
-      document.body.removeChild(script);
-    };
+    // Check for OAuth2 code in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+    if (code) {
+      // Send code to backend
+      fetch('/api/user/login', {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ code }),
+      })
+        .then(handleFetchErrors)
+        .then((res) => {
+          console.log('res', res);
+          auth.login(() => {
+            switch (res.status) {
+              case 201:
+                history.push('/profile_settings');
+                break;
+              case 200:
+                history.push('/dashboard');
+                break;
+              default:
+                history.push('/signup');
+                break;
+            }
+          });
+        })
+        .catch((error) => console.log(error));
+    }
     // eslint-disable-next-line
   }, [type, history]);
 
-  function handleCredentialResponse(response) {
-    // response.credential is the ID token
-    fetch('/api/user/login', {
-      method: 'POST',
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ token: response.credential }),
-    })
-      .then(handleFetchErrors)
-      .then((res) => {
-        auth.login(() => {
-          switch (res.status) {
-            case 201:
-              history.push('/profile_settings');
-              break;
-            case 200:
-              history.push('/dashboard');
-              break;
-            default:
-              history.push('/signup');
-              break;
-          }
-        });
-      })
-      .catch((error) => console.log(error));
+  // Redirect to Google OAuth2 endpoint
+  function handleGoogleLogin() {
+    const redirectUri = encodeURIComponent(window.location.origin + '/login');
+    const clientId = process.env.REACT_APP_CLIENT_ID;
+    const scope = encodeURIComponent('openid email profile');
+    const oauthUrl = `https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&access_type=offline&prompt=consent`;
+    window.location.href = oauthUrl;
   }
 
   const handleDemo = () => {
@@ -103,7 +89,9 @@ function Form({ classes, type }) {
   return (
     <Paper elevation={6} className={classes.paper}>
       <h2 className={classes.loginHeader}>{formType === 'login' ? loginText.header : signupText.header}</h2>
-      <div align="center" ref={googleButtonRef}></div>
+      <div align="center">
+        <GoogleButton type={type} click={handleGoogleLogin} />
+      </div>
       <Link component="button" onClick={handleDemo}>
         Try a Demo Account
       </Link>

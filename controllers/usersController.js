@@ -1,10 +1,15 @@
 const User = require('../models/User');
 const _ = require('lodash');
 const { google } = require('googleapis');
-const oauth2Client = new google.auth.OAuth2(process.env.CLIENT_ID, process.env.CLIENT_SECRET, `postmessage`);
+const oauth2Client = new google.auth.OAuth2(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  `http://localhost:3000/login`, // Must match the frontend redirect URI
+);
+
 //required to parse token
 // const { OAuth2Client } = require('google-auth-library');
-
+console.log(oauth2Client);
 //function to verify token
 async function verifyToken(token) {
   try {
@@ -57,16 +62,18 @@ const userLogin = async (req, res) => {
       }
       //implement sessions later
       req.session.userID = user.sub;
-      return res.status(200).end();
+      return res.status(200).send(user);
     }
 
     //Implied VALIDATION via Google
     const newUser = new User(user);
     //add default 60min meeting
     newUser.meetings = [{ meetingName: '60 minute meeting', duration: 60 }];
-    //add tokens
-    newUser.access_token = oauthResp.tokens.access_token;
-    newUser.refresh_token = oauthResp.tokens.refresh_token;
+    //add tokens if available
+    if (oauthResp && oauthResp.tokens) {
+      newUser.access_token = oauthResp.tokens.access_token;
+      newUser.refresh_token = oauthResp.tokens.refresh_token;
+    }
     newUser.subscriber = false;
 
     try {
@@ -154,4 +161,4 @@ const updateMeetings = async (req, res) => {
   }
 };
 
-module.exports = { userLogin, getUser, getUserByUrl, isUnique, updateUser, updateMeetings };
+module.exports = { userLogin, getUser, getUserByUrl, isUnique, updateUser, updateMeetings, oauth2Client };

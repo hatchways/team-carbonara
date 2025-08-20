@@ -23,7 +23,7 @@ class Auth {
     return this.authenticated;
   }
 
-  getSub() {
+  getId() {
     return this.sub;
   }
 
