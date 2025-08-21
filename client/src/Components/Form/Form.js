@@ -29,8 +29,11 @@ function Form({ classes, type }) {
         body: JSON.stringify({ code }),
       })
         .then(handleFetchErrors)
-        .then((res) => {
-          console.log('res', res);
+        .then(async (res) => {
+          const user = await res.json();
+          // Remove code from URL after login
+          window.history.replaceState({}, document.title, window.location.pathname);
+
           auth.login(() => {
             switch (res.status) {
               case 201:
@@ -43,9 +46,11 @@ function Form({ classes, type }) {
                 history.push('/signup');
                 break;
             }
-          });
+          }, user);
         })
-        .catch((error) => console.log(error));
+        .catch((error) => {
+          console.error('Error during login:', error);
+        });
     }
     // eslint-disable-next-line
   }, [type, history]);
@@ -54,7 +59,7 @@ function Form({ classes, type }) {
   function handleGoogleLogin() {
     const redirectUri = encodeURIComponent(window.location.origin + '/login');
     const clientId = process.env.REACT_APP_CLIENT_ID;
-    const scope = encodeURIComponent('openid email profile');
+    const scope = encodeURIComponent('openid email profile https://www.googleapis.com/auth/calendar');
     const oauthUrl = `https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&access_type=offline&prompt=consent`;
     window.location.href = oauthUrl;
   }
@@ -65,9 +70,9 @@ function Form({ classes, type }) {
         history.push('/dashboard');
       },
       {
-        getId: () => 'demo',
-        getEmail: () => 'email@email.com',
-        getName: () => 'John Doe',
+        sub: 'demo',
+        email: 'email@email.com',
+        name: 'John Doe',
       },
     );
   };
