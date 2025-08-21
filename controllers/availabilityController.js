@@ -48,6 +48,7 @@ const daysAvailable = async (req, res) => {
       );
       res.status(200).send({ days: availableDays });
     } catch (err) {
+      console.log(err);
       res.status(500).send('Internal server error.');
     }
   } catch (err) {

@@ -13,9 +13,18 @@ const mockPayload = {
   iss: 'accounts.google.com',
 };
 
-describe('usersController', () => {
+describe('usersController.userLogin', () => {
   let req, res;
   let findOneStub, saveStub, getTokenStub, verifyIdTokenStub;
+
+  // Mock user data for expected happy path
+  const expectedUser = {
+    email: 'test@example.com',
+    sub: 'testsub',
+    given_name: 'Test',
+    family_name: 'User',
+    picture: 'http://example.com/pic.jpg',
+  };
 
   beforeEach(() => {
     req = { body: {}, session: {} };
@@ -47,7 +56,9 @@ describe('usersController', () => {
 
     await usersController.userLogin(req, res);
     expect(res.status.calledWith(201)).to.be.true;
-    expect(res.send.called).to.be.true;
+    expect(res.json.called).to.be.true;
+
+    expect(res.json.firstCall.args[0]).to.include(expectedUser);
   });
 
   it('should handle Google OAuth sign-in with id_token', async () => {
@@ -58,7 +69,9 @@ describe('usersController', () => {
 
     await usersController.userLogin(req, res);
     expect(res.status.calledWith(201)).to.be.true;
-    expect(res.send.called).to.be.true;
+    expect(res.json.called).to.be.true;
+
+    expect(res.json.firstCall.args[0]).to.include(expectedUser);
   });
 
   it('should update tokens for existing user', async () => {
@@ -69,7 +82,7 @@ describe('usersController', () => {
 
     await usersController.userLogin(req, res);
     expect(res.status.calledWith(200)).to.be.true;
-    expect(res.end.called).to.be.true;
+    expect(res.json.called).to.be.true;
   });
 
   it('should handle invalid token', async () => {
@@ -79,6 +92,6 @@ describe('usersController', () => {
 
     await usersController.userLogin(req, res);
     expect(res.status.calledWith(500)).to.be.true;
-    expect(res.send.called).to.be.true;
+    expect(res.json.called).to.be.true;
   });
 });
