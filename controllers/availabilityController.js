@@ -20,7 +20,23 @@ const daysAvailable = async (req, res) => {
       const startISO = moment.tz([year, reqMonth, day], clientTz).format();
       const endISO = moment.tz([year, 0, 31], clientTz).month(reqMonth).add(1, 'day').format();
 
-      const freebusy = await getFreebusy(user.access_token, user.refresh_token, startISO, endISO, uniqueurl);
+      let freebusy;
+      if (user.sub === 'demo') {
+        // Sample freebusy data for demo accounts
+        freebusy = [
+          {
+            start: moment.tz([year, reqMonth, day], clientTz).add(2, 'days').startOf('day').format(),
+            end: moment.tz([year, reqMonth, day], clientTz).add(2, 'days').endOf('day').format(),
+          },
+          {
+            start: moment.tz([year, reqMonth, day], clientTz).add(5, 'days').hour(13).minute(0).format(),
+            end: moment.tz([year, reqMonth, day], clientTz).add(5, 'days').hour(15).minute(0).format(),
+          },
+        ];
+      } else {
+        freebusy = await getFreebusy(user.access_token, user.refresh_token, startISO, endISO, uniqueurl);
+      }
+      // const freebusy = await getFreebusy(user.access_token, user.refresh_token, startISO, endISO, uniqueurl);
 
       const availableDays = availDays(
         [year, reqMonth, day],
@@ -32,6 +48,7 @@ const daysAvailable = async (req, res) => {
       );
       res.status(200).send({ days: availableDays });
     } catch (err) {
+      console.log(err);
       res.status(500).send('Internal server error.');
     }
   } catch (err) {
@@ -55,8 +72,23 @@ const timeslotsAvailable = async (req, res) => {
     try {
       const startISO = moment.tz([year, reqMonth, reqDay], clientTz).format();
       const endISO = moment.tz([year, reqMonth, reqDay], clientTz).add(1, 'day').format();
-
-      const freebusy = await getFreebusy(user.access_token, user.refresh_token, startISO, endISO, uniqueurl);
+      let freebusy;
+      if (user.sub === 'demo') {
+        // Sample freebusy data for demo accounts
+        freebusy = [
+          {
+            start: moment.tz([year, reqMonth, reqDay], clientTz).hour(10).minute(0).format(),
+            end: moment.tz([year, reqMonth, reqDay], clientTz).hour(11).minute(0).format(),
+          },
+          {
+            start: moment.tz([year, reqMonth, reqDay], clientTz).hour(14).minute(0).format(),
+            end: moment.tz([year, reqMonth, reqDay], clientTz).hour(15).minute(0).format(),
+          },
+        ];
+      } else {
+        freebusy = await getFreebusy(user.access_token, user.refresh_token, startISO, endISO, uniqueurl);
+      }
+      // const freebusy = await getFreebusy(user.access_token, user.refresh_token, startISO, endISO, uniqueurl);
 
       const availableSlots = availSlots(
         date,

@@ -20,6 +20,47 @@ Now deployed on heroku at [calendappy.herokuapp.com](https://calendappy.herokuap
    - client/.env file
    - .env file
 4. To start the two processes, run `npm start` in the client directory, and `npm run dev` in the root directory
+5. Set up db using mongoDB, and insert below record into the `users` db to use the demo flow
+
+```json
+{
+  "_id": { "$oid": "uuid_1" },
+  "picture": "", ///insert an image link for an avatar icon
+  "family_name": "Smith",
+  "given_name": "Bob",
+  "sub": "demo",
+  "calendars": [],
+  "access_token": "sample_access_token",
+  "refresh_token": "sample_refresh_token",
+  "email": "sampleuser@example.com",
+  "meetings": [
+    {
+      "_id": { "$oid": "uuid_2" },
+      "meetingName": "60 minute meeting",
+      "duration": 60
+    }
+  ],
+  "subscriber": false,
+  "url": "demo",
+  "timezone": "America/New_York",
+  "__v": 0,
+  "availability": {
+    "days": {
+      "Monday": true,
+      "Tuesday": true,
+      "Wednesday": true,
+      "Thursday": true,
+      "Friday": true,
+      "Saturday": false,
+      "Sunday": false
+    },
+    "hours": {
+      "start": "09:00",
+      "end": "17:00"
+    }
+  }
+}
+```
 
 ---
 
@@ -52,3 +93,7 @@ Now deployed on heroku at [calendappy.herokuapp.com](https://calendappy.herokuap
 3. Cancel appointments. The event will also be removed from your google calendar and guests will be notified.
 
 ![Cancel Appointments](client/public/gifs/cancel.gif)
+
+```
+
+```

@@ -5,12 +5,15 @@ class Auth {
   name = null;
 
   login(cb, user) {
+    if (user) {
+      // localStorage.setItem('user', JSON.stringify(user));
+      this.sub = user.sub;
+      this.email = user.email;
+      this.name = user.given_name || user.name;
+    }
     this.authenticated = true;
     //store info
 
-    this.sub = user.getId();
-    this.email = user.getEmail();
-    this.name = user.getName();
     cb();
   }
 

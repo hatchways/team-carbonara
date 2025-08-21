@@ -1,31 +1,30 @@
 const User = require('../models/User');
 const _ = require('lodash');
 const { google } = require('googleapis');
-const oauth2Client = new google.auth.OAuth2(process.env.CLIENT_ID, process.env.CLIENT_SECRET, `postmessage`);
-//required to parse token
-// const { OAuth2Client } = require('google-auth-library');
+const oauth2Client = new google.auth.OAuth2(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  `http://localhost:3000/login`, // Must match the frontend redirect URI
+);
 
-//function to verify token
+//helper function to verify token
 async function verifyToken(token) {
-  try {
-    const ticket = await oauth2Client.verifyIdToken({
-      idToken: token,
-      audience: process.env.CLIENT_ID,
-    });
+  const ticket = await oauth2Client.verifyIdToken({
+    idToken: token,
+    audience: process.env.CLIENT_ID,
+  });
 
-    const payload = ticket.getPayload();
-    //second verification of token
-    if (
-      payload.aud !== process.env.CLIENT_ID ||
-      (payload.iss !== 'accounts.google.com' && payload.iss !== 'https://accounts.google.com')
-    ) {
-      throw 'Token is not from client or issued by Google';
-    }
-
-    return payload;
-  } catch (err) {
-    console.error(err);
+  const payload = ticket.getPayload();
+  //second verification of token
+  if (
+    payload.aud !== process.env.CLIENT_ID ||
+    (payload.iss !== 'accounts.google.com' && payload.iss !== 'https://accounts.google.com')
+  ) {
+    // catch error in userLogin
+    throw 'Token is not from client or issued by Google';
   }
+
+  return payload;
 }
 
 //Handle User Google Sign-in
@@ -57,16 +56,18 @@ const userLogin = async (req, res) => {
       }
       //implement sessions later
       req.session.userID = user.sub;
-      return res.status(200).end();
+      return res.status(200).json(user);
     }
 
     //Implied VALIDATION via Google
     const newUser = new User(user);
     //add default 60min meeting
     newUser.meetings = [{ meetingName: '60 minute meeting', duration: 60 }];
-    //add tokens
-    newUser.access_token = oauthResp.tokens.access_token;
-    newUser.refresh_token = oauthResp.tokens.refresh_token;
+    //add tokens if available
+    if (oauthResp && oauthResp.tokens) {
+      newUser.access_token = oauthResp.tokens.access_token;
+      newUser.refresh_token = oauthResp.tokens.refresh_token;
+    }
     newUser.subscriber = false;
 
     try {
@@ -74,14 +75,14 @@ const userLogin = async (req, res) => {
 
       //implement sessions later
       req.session.userID = user.sub;
-      res.status(201).send(savedUser);
+      res.status(201).json(savedUser);
     } catch (err) {
       console.error(err);
-      res.status(500).send(err);
+      res.status(500).json(err);
     }
   } catch (err) {
     console.error(err);
-    res.status(500).send(err);
+    res.status(500).json(err);
   }
 };
 
@@ -93,7 +94,7 @@ const getUser = async (req, res) => {
     res.status(200).json(user);
   } catch (err) {
     console.error(err);
-    res.status(400).send(err);
+    res.status(400).json({ error: err });
   }
 };
 
@@ -105,7 +106,7 @@ const getUserByUrl = async (req, res) => {
     res.status(200).json(user);
   } catch (err) {
     console.error(err);
-    res.status(400).send(err);
+    res.status(400).json({ error: err });
   }
 };
 
@@ -118,7 +119,7 @@ const isUnique = (req, res) => {
         res.status(200).json({ isUnique: false });
       }
     })
-    .catch((err) => res.status(500).send('Server Error:' + err));
+    .catch((err) => res.status(500).json({ error: 'Server Error:' + err }));
 };
 
 const updateUser = async (req, res) => {
@@ -136,7 +137,7 @@ const updateUser = async (req, res) => {
     res.status(200).send('User profile updated');
   } catch (err) {
     console.error(err);
-    res.status(400).send(err);
+    res.status(400).json({ error: err });
   }
 };
 
@@ -150,8 +151,8 @@ const updateMeetings = async (req, res) => {
     res.status(204).end();
   } catch (err) {
     console.error(err);
-    res.status(400).send(err);
+    res.status(400).json({ error: err });
   }
 };
 
-module.exports = { userLogin, getUser, getUserByUrl, isUnique, updateUser, updateMeetings };
+module.exports = { userLogin, getUser, getUserByUrl, isUnique, updateUser, updateMeetings, oauth2Client };
